@@ -24,7 +24,7 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dict }) {
               alt=""
               width={110}
               height={110}
-              className="h-7 w-7 object-contain"
+              className="h-7 w-7 object-contain dark:brightness-0 dark:invert"
             />
             <span className="font-display text-[11.5px] font-bold uppercase tracking-[0.08em] text-ink-2">
               {dict.products.madeInMx}

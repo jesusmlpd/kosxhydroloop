@@ -65,7 +65,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
         ) : null}
 
         <Reveal delay={60} className="mt-6">
-          <PuraAgua locale={locale} dict={dict} />
+          <PuraAgua locale={locale} dict={dict} wide />
         </Reveal>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

@@ -136,7 +136,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                       alt=""
                       width={110}
                       height={110}
-                      className="h-6 w-6 object-contain"
+                      className="h-6 w-6 object-contain dark:brightness-0 dark:invert"
                     />
                     {dict.products.madeInMx}
                   </span>

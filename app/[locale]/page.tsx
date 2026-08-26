@@ -349,8 +349,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* Recomendador: la respuesta a "cual me toca" en 30 segundos */}
-      <section className="section bg-mist">
-        <div className="shell">
+      <section className="section bg-mist pt-0">
+        <WaveBand from="var(--bg)" to="var(--bg-2)" height={80} />
+        <div className="shell pt-14">
           <Reveal className="text-center">
             <p className="eyebrow">{dict.quiz.eyebrow}</p>
             <h2 className="mx-auto mt-3 max-w-2xl text-[clamp(26px,3.8vw,42px)]">
@@ -395,7 +396,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <TrustBadges dict={dict} />
 
       {/* Cobertura */}
-      <section className="section">
+      <section className="section bg-mist">
         <div className="shell grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <Reveal>
             <p className="eyebrow">{dict.coverage.eyebrow}</p>
@@ -432,13 +433,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="section">
         <div className="shell">
           <Reveal>
-            <PuraAgua locale={locale} dict={dict} />
+            <PuraAgua locale={locale} dict={dict} wide />
           </Reveal>
         </div>
       </section>
 
       {/* Preguntas */}
-      <section className="section bg-mist">
+      <section className="section">
         <div className="shell">
           <Reveal>
             <p className="eyebrow">{dict.faq.eyebrow}</p>

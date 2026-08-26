@@ -19,7 +19,7 @@ const icons = [
 
 export function TrustBadges({ dict }: { dict: Dict }) {
   return (
-    <section className="section bg-mist" id="confianza">
+    <section className="section" id="confianza">
       <div className="shell">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -31,7 +31,7 @@ export function TrustBadges({ dict }: { dict: Dict }) {
             alt="Hecho en México"
             width={110}
             height={110}
-            className="h-[88px] w-auto"
+            className="h-[88px] w-auto dark:brightness-0 dark:invert"
           />
         </div>
 

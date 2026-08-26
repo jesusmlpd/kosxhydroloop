@@ -93,7 +93,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   alt="Hecho en México"
                   width={110}
                   height={110}
-                  className="h-16 w-16 shrink-0 object-contain"
+                  className="h-16 w-16 shrink-0 object-contain dark:brightness-0 dark:invert"
                 />
                 <div>
                   <p className="font-display text-[16px] font-bold">{dict.products.madeInMx}</p>
@@ -129,12 +129,12 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               <p className="mt-2 max-w-[22ch] text-[14px] text-ink-2">{stat.label}</p>
             </Reveal>
           ))}
-        </div>
-        <div className="shell mt-12">
-          <Link href={localePath(locale, "/products")} className="btn btn-primary">
+          <div className="md:col-span-4 mt-4">
+            <Link href={localePath(locale, "/products")} className="btn btn-primary">
             {dict.hero.ctaPrimary}{" "}
             {manual ? formatMoney(manual.priceCents, locale, manual.currency) : null}
-          </Link>
+            </Link>
+          </div>
         </div>
       </section>
     </>

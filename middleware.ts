@@ -3,7 +3,16 @@ import { defaultLocale, isLocale, locales } from "@/lib/i18n";
 
 const LOCALE_COOKIE = "hydroloop_locale";
 
-/** Cookie primero, luego Accept-Language, luego el default. */
+/**
+ * Cookie primero (eleccion explicita), luego el idioma del navegador, luego
+ * la region: Vercel manda el pais en x-vercel-ip-country, asi que un visitante
+ * de EUA sin espanol en su navegador aterriza en /en y uno de LatAm en /es.
+ */
+const SPANISH_COUNTRIES = new Set([
+  "MX", "GT", "SV", "HN", "NI", "CR", "PA", "CO", "VE", "EC", "PE", "BO",
+  "PY", "UY", "AR", "CL", "CU", "DO", "PR", "ES",
+]);
+
 function detectLocale(request: NextRequest) {
   const cookie = request.cookies.get(LOCALE_COOKIE)?.value;
   if (cookie && isLocale(cookie)) return cookie;
@@ -13,8 +22,12 @@ function detectLocale(request: NextRequest) {
     .split(",")
     .map((part) => part.split(";")[0].trim().slice(0, 2).toLowerCase())
     .find((code) => isLocale(code));
+  if (preferred && isLocale(preferred)) return preferred;
 
-  return preferred && isLocale(preferred) ? preferred : defaultLocale;
+  const country = request.headers.get("x-vercel-ip-country")?.toUpperCase();
+  if (country) return SPANISH_COUNTRIES.has(country) ? "es" : "en";
+
+  return defaultLocale;
 }
 
 export function middleware(request: NextRequest) {
