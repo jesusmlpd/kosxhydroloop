@@ -11,7 +11,7 @@ import { useNow } from "@/lib/clock";
 import { commerce, findCoupon, formatMoney } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
 import { fill, localePath, type Locale } from "@/lib/i18n";
-import { findProductById } from "@/lib/site";
+import { findProductById, products } from "@/lib/site";
 
 export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
   const now = useNow();
@@ -158,6 +158,58 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
                   );
                 })}
               </ul>
+
+              {/* Upsell de accesorios: solo si hay un equipo en el carrito y
+                  el accesorio todavia no esta. Una linea, no un catalogo. */}
+              {(() => {
+                const ids = new Set(totals.lines.map((line) => line.id));
+                const hasUnit = totals.lines.some((line) => {
+                  const product = findProductById(line.id);
+                  return product && !product.accessory;
+                });
+                const addons = hasUnit
+                  ? products.filter(
+                      (product) =>
+                        product.accessory &&
+                        product.buyable &&
+                        product.stock > 0 &&
+                        !ids.has(product.id),
+                    )
+                  : [];
+                if (!addons.length) return null;
+                return (
+                  <div className="mt-6 rounded-2xl border border-dashed border-line-strong bg-mist p-4">
+                    <p className="eyebrow">{dict.cart.addonTitle}</p>
+                    <ul className="mt-3 space-y-3">
+                      {addons.map((addon) => {
+                        const copy =
+                          dict.products.items[addon.slug as keyof Dict["products"]["items"]];
+                        return (
+                          <li key={addon.id} className="flex items-center gap-3">
+                            <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-line bg-white">
+                              <Image src={addon.image} alt={copy.name} fill sizes="56px" className="object-contain p-1" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-[14px] font-semibold">{copy.name}</p>
+                              <p className="text-[12px] text-ink-3">{dict.cart.addonHint}</p>
+                              <p className="mt-0.5 text-[13px] font-semibold tabular-nums">
+                                {formatMoney(addon.priceCents, locale, addon.currency)}
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => cart.add(addon.id, 1, { open: true })}
+                              className="btn btn-ghost shrink-0 px-4 py-2 text-[13px]"
+                            >
+                              {dict.cart.addonAdd}
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                );
+              })()}
 
               <div className="mt-6 border-t border-line pt-5">
                 <FreeShippingBar

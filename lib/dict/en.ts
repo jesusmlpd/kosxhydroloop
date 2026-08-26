@@ -53,29 +53,36 @@ export const en: Dict = {
   },
 
   hero: {
-    eyebrow: "Mexican hydro-return",
-    title: "The cold water you waste waiting for hot",
-    titleAccent: "can go back to the heater",
-    body: "Every time you open the shower and wait, the cold water trapped in the pipe runs down the drain. Hydroloop sends it back to the heater in seconds. No construction, no new heater, no change to your routine.",
-    ctaPrimary: "Buy Hydroloop",
+    eyebrow: "Hydro-return · Made in Mexico",
+    title: "Say goodbye to the bucket.",
+    titleAccent: "Hot water at the right moment, with nothing wasted.",
+    body: "The cold water you throw away today waiting for hot goes back to the heater at the press of a button. No construction, no new heater, and nobody changes their routine.",
+    ctaPrimary: "Buy Hydroloop®",
     ctaSecondary: "See how it works",
-    note: "Made in Mexico. One year warranty, up to two with certified installation.",
+    note: "One year warranty, up to two with certified installation.",
     scroll: "Scroll to see the savings",
+    chips: [
+      "Save up to 50% of your shower water",
+      "Uses less energy than an LED bulb",
+      "Pays for itself through the water bill",
+    ],
   },
 
   ticker: [
+    "Save up to 50% of your shower water",
     "7,300 liters a year per person",
     "18 hours a year you stop waiting",
+    "Uses less energy than an LED bulb",
     "Works with any water heater",
-    "Installed in one afternoon",
+    "20 year service life",
     "Mexican engineering",
   ],
 
   stats: [
+    { value: "50%", label: "less water consumed in your shower" },
     { value: "7,300 L", label: "of water a year per person in the house" },
     { value: "18 h", label: "a year you stop waiting for hot water" },
-    { value: "1.4 kg", label: "of hardware, no construction, no extra tank" },
-    { value: "2 years", label: "of warranty with certified installation" },
+    { value: "20 years", label: "of service life with no maintenance" },
   ],
 
   problem: {
@@ -100,40 +107,27 @@ export const en: Dict = {
 
   how: {
     eyebrow: "How it works",
-    title: "Hydroloop is a hydro-return",
+    title: "Hydroloop® is a hydro-return",
     body: "You press the button, or trigger it from your phone. An internal 12 V pump pushes the cold water trapped in the hot line back to the heater through the cold line. When hot water reaches the unit thermostat, the pump shuts itself off. Open the tap and it runs hot.",
-    steps: [
-      {
-        title: "Trigger it",
-        body: "A button on the wall, or the app on the WiFi model, with scheduled start times if you want them.",
-      },
-      {
-        title: "The water goes back",
-        body: "The 12 V pump returns the cold water to the heater through the cold line. Not one drop down the drain.",
-      },
-      {
-        title: "The thermostat cuts off",
-        body: "When hot water reaches the 40 degree thermostat, the unit stops on its own. Nothing to watch.",
-      },
-      {
-        title: "Open it and it runs hot",
-        body: "No waiting. And if there is no hot water or air in the line, a safety timer cuts off after 15 minutes.",
-      },
-    ],
-    note: "Hydroloop does not save gas: gas consumption stays the same. It saves water, time and money.",
-    diagramAlt: "Diagram of how a Hydroloop hydro-return works",
-    diagram: {
-      before: "Without Hydroloop",
-      after: "With Hydroloop",
-      heater: "Water heater",
-      shower: "Shower",
-      drain: "Drain",
-      device: "Hydroloop",
-      hotLine: "Hot water line",
+    note: "Hydroloop® does not save gas: gas consumption stays the same. It saves water, time and money.",
+    diagramAlt: "Animated diagram of how a Hydroloop hydro-return works",
+    autoplay: "The sequence plays on its own. Tap any step to see it.",
+    labels: {
+      feed: "Supply line",
       coldLine: "Cold water line",
-      beforeCaption: "The cold water trapped in the pipe runs down the drain until the hot arrives.",
-      afterCaption: "The pump returns that water to the heater through the cold line. Nothing is wasted.",
+      hotLine: "Hot water line",
+      heater: "Water heater",
+      button: "Start button",
+      device: "Hydroloop®",
+      noWaste: "Nothing wasted",
     },
+    steps: [
+      "Press the start button.",
+      "The water starts to move.",
+      "While the water runs cold, it returns to the heater through the cold line.",
+      "Once the water runs hot, the unit shuts off and lets it through.",
+      "Open the tap and get hot water at the right moment, with nothing wasted.",
+    ],
   },
 
   models: {
@@ -156,14 +150,21 @@ export const en: Dict = {
       seconds: "Seconds you wait, per use",
       price: "Water price per cubic meter",
     },
+    presets: [
+      { label: "Apartment (2)", people: 2, uses: 2 },
+      { label: "House (4)", people: 4, uses: 2 },
+      { label: "Big house (6)", people: 6, uses: 3 },
+    ],
     results: {
       liters: "Liters a year going down the drain",
       hours: "Hours a year spent waiting",
       money: "Pesos a year in wasted water",
       payback: "Months to pay the unit back",
-      paybackNote: "Against the price of Hydroloop Manual, with these values.",
+      paybackNote: "Against the price of Hydroloop® Manual, with these values.",
+      paybackLong: "over 2 years",
       showers: "That is",
       showersUnit: "full 8 minute showers",
+      tanks: "or {n} rooftop tanks of 1,100 liters",
     },
     disclaimer:
       "This is an estimate, not a promise. Real savings depend on the distance to the heater, the pipe diameter and your water rate. The price per cubic meter changes in every city, so use the one on your bill.",
@@ -398,6 +399,9 @@ export const en: Dict = {
     freeShippingMissing: "You are {amount} away from free shipping.",
     freeShippingGot: "You have free shipping.",
     reservedFor: "We are holding your cart {time}",
+    addonTitle: "Complete it with",
+    addonAdd: "Add",
+    addonHint: "Only needed if your electrical box is already full.",
     reservationExpired: "The hold expired. Your cart is still here, but the stock is no longer reserved.",
     extend: "Hold it 15 more minutes",
   },

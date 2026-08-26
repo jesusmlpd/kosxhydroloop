@@ -17,7 +17,7 @@ import { commerce, formatMoney } from "@/lib/commerce";
 import { getDict, type Dict } from "@/lib/dict";
 import { fill, isLocale, locales, localePath } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
-import { graph, productSchema } from "@/lib/schema";
+import { breadcrumbSchema, graph, productSchema } from "@/lib/schema";
 import { reviewsAreReal, reviewsFor, summarize } from "@/lib/reviews";
 import { findProduct, products, site } from "@/lib/site";
 
@@ -63,6 +63,11 @@ export default async function ProductPage({ params }: { params: Params }) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
             graph([
+              breadcrumbSchema([
+                { name: site.name, url: `${site.url}/${locale}` },
+                { name: dict.products.eyebrow, url: `${site.url}/${locale}/products` },
+                { name: copy.name, url: `${site.url}/${locale}/products/${slug}` },
+              ]),
               productSchema({
                 name: copy.name,
                 description: copy.body,

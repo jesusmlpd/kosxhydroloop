@@ -69,3 +69,28 @@ export function productSchema(input: {
     },
   };
 }
+
+/** Preguntas frecuentes para el buscador y para los modelos de lenguaje. */
+export function faqSchema(items: Array<{ q: string; a: string }>) {
+  return {
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+}
+
+/** Migas de pan: le dan al buscador la jerarquia real de la pagina. */
+export function breadcrumbSchema(items: Array<{ name: string; url: string }>) {
+  return {
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}

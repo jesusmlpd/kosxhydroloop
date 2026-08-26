@@ -38,9 +38,42 @@ export async function generateMetadata({
   // Solo lo que de verdad es comun. Canonical, hreflang y OG salen por ruta
   // desde lib/metadata, si no cada subpagina hereda el canonical del home.
   return {
-    title: dict.meta.home.title,
+    title: {
+      default: dict.meta.home.title,
+      template: `%s | Hydroloop®`,
+    },
     description: dict.meta.home.description,
     metadataBase: new URL(site.url),
+    applicationName: "Hydroloop®",
+    category: "home improvement",
+    keywords:
+      locale === "es"
+        ? [
+            "hidro-retorno",
+            "ahorrar agua regadera",
+            "agua caliente instantánea sin desperdicio",
+            "recirculador de agua caliente México",
+            "bomba recirculadora regadera",
+            "Hydroloop precio",
+            "ahorro de agua en casa",
+            "dispositivo para no desperdiciar agua",
+          ]
+        : [
+            "hydro-return",
+            "hot water recirculation Mexico",
+            "save shower water device",
+            "instant hot water no waste",
+            "Hydroloop price",
+            "water saving device home",
+          ],
+    authors: [{ name: "Hydroloop®", url: site.url }],
+    creator: "Hydroloop®",
+    publisher: "Hydroloop®",
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+    },
   };
 }
 

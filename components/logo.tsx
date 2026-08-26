@@ -1,11 +1,11 @@
 import Image from "next/image";
 
 /**
- * Isologo real de Hydroloop (gota con el ciclo de retorno), tomado del sitio
- * actual, mas la palabra en la tipografia del sitio. La gota funciona igual en
- * claro y en oscuro porque el teal tiene contraste en los dos fondos.
+ * Isologo real de Hydroloop (gota con el ciclo de retorno) tomado del sitio
+ * actual, con el wordmark y la R de marca registrada en superindice, que es
+ * como la marca se escribe a si misma en todo su material.
  */
-export function Logo({ className = "", light = false }: { className?: string; light?: boolean }) {
+export function Logo({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
       <Image
@@ -16,12 +16,9 @@ export function Logo({ className = "", light = false }: { className?: string; li
         priority
         className="h-[30px] w-auto"
       />
-      <span
-        className={`font-display text-[19px] font-bold tracking-[-0.03em] ${
-          light ? "text-white" : ""
-        }`}
-      >
+      <span className="font-display text-[19px] font-bold tracking-[-0.03em]">
         Hydroloop
+        <sup className="ml-px align-super text-[9px] font-semibold opacity-70">®</sup>
       </span>
     </span>
   );

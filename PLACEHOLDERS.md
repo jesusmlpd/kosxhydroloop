@@ -8,11 +8,13 @@ distribuidores, preguntas frecuentes e imagenes salen de ahi.
 Lo que sigue pendiente:
 
 ## 1. Opiniones de clientes (importante)
-- [ ] **Las resenas de `lib/reviews.ts` son de MUESTRA, no son reales.** El sitio
-      actual no tiene ninguna publicada. Mientras `reviewsAreReal` siga en false,
-      la seccion muestra un aviso y **no** se emite `aggregateRating` en el
-      JSON-LD, para no mandarle estrellas inventadas a Google. Hay que
-      reemplazarlas por opiniones reales antes de publicar.
+- [ ] **Las 30 resenas de `lib/reviews.ts` son de MUESTRA, no son reales.** El
+      sitio actual no tiene ninguna publicada. La mezcla esta calibrada a un
+      promedio global de 4.8 con algunas de 4 estrellas que cuentan fricciones
+      reales. Mientras `reviewsAreReal` siga en false, la seccion muestra un
+      aviso y **no** se emite `aggregateRating` en el JSON-LD, para no mandarle
+      estrellas inventadas a Google. Reemplazar por opiniones reales antes de
+      publicar.
 
 ## 2. Datos de contacto y marca
 - [ ] Correo real de pedidos y `emailConfirmed: true` en `lib/site.ts`

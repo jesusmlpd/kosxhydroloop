@@ -27,13 +27,19 @@ export function pageMeta({
     alternates: { canonical: url, languages: { ...languages, "x-default": languages.es } },
     openGraph: {
       type: "website",
-      siteName: site.name,
+      siteName: `${site.name}®`,
       locale: locale === "es" ? "es_MX" : "en_US",
       title,
       description,
       url,
+      images: [{ url: `${site.url}/og.jpg`, width: 1200, height: 630, alt: `${site.name}®` }],
     },
-    twitter: { card: "summary_large_image", title, description },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${site.url}/og.jpg`],
+    },
     robots: {
       index: true,
       follow: true,

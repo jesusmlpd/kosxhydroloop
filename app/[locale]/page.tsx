@@ -11,13 +11,14 @@ import { ReviewsBlock } from "@/components/reviews-block";
 import { SavingsCalculator } from "@/components/savings-calculator";
 import { TrustBadges } from "@/components/trust-badges";
 import { Bubbles } from "@/components/water/bubbles";
-import { LoopDiagram } from "@/components/water/loop-diagram";
+import { HowDiagram } from "@/components/water/how-diagram";
 import { WaveBand } from "@/components/water/wave-band";
 import { getDict } from "@/lib/dict";
 import { isLocale, localePath } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
+import { faqSchema, graph } from "@/lib/schema";
 import { reviews } from "@/lib/reviews";
-import { buyableProducts, coverage, products, site } from "@/lib/site";
+import { buyableProducts, coverage, products } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -30,6 +31,31 @@ export async function generateMetadata({
   return pageMeta({ locale, path: "/", ...dict.meta.home });
 }
 
+function Droplet() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0 text-aqua">
+      <path d="M12 3c4.2 4.4 6.5 7.6 6.5 10.4a6.5 6.5 0 1 1-13 0C5.5 10.6 7.8 7.4 12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function Bolt() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0 text-aqua">
+      <path d="M13 2.5 5 13.5h5.4L10.6 21.5l8-11h-5.4L13 2.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function Coin() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M12 7.5v9M9.4 9.8c0-1 1.1-1.7 2.6-1.7s2.6.7 2.6 1.7c0 2.6-5.2 1.7-5.2 4.3 0 1 1.1 1.8 2.6 1.8s2.6-.8 2.6-1.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
@@ -38,34 +64,36 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
+      {/* FAQ estructurado: mismo contenido visible abajo, legible para
+          buscadores y para los modelos que responden preguntas. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(graph([faqSchema(dict.faq.items)])) }}
+      />
       {/* ---------------------------------------------------------------
-          Hero. La foto va al fondo, arriba las causticas y las burbujas,
-          y el texto siempre encima con contraste propio.
+          Hero. Fondo de agua profunda con causticas y burbujas, y la foto
+          real del producto cayendo al agua (de la libreria del cliente)
+          como pieza central, con los claims publicados por Hydroloop.
           --------------------------------------------------------------- */}
       <section className="relative isolate overflow-hidden bg-deep-2 text-white">
-        <Image
-          src="/media/photos/ducha.webp"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-[60%_center] opacity-45"
-        />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[linear-gradient(104deg,rgba(1,32,45,0.94)_8%,rgba(0,103,129,0.72)_52%,rgba(0,136,168,0.35)_100%)]"
+          className="absolute inset-0 bg-[radial-gradient(120%_90%_at_78%_10%,rgba(0,136,168,0.55)_0%,rgba(1,42,58,0.9)_48%,rgba(1,26,37,1)_100%)]"
         />
-        <div aria-hidden="true" className="caustics mix-blend-screen opacity-60" />
+        <div aria-hidden="true" className="caustics mix-blend-screen opacity-55" />
         <Bubbles />
 
-        <div className="shell relative grid gap-10 pb-28 pt-20 md:pb-36 md:pt-28 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+        <div className="shell relative grid gap-12 pb-24 pt-16 md:pt-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
           <Reveal>
-            <p className="font-display text-[12px] font-semibold uppercase tracking-[0.18em] text-aqua">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-display text-[12px] font-semibold uppercase tracking-[0.16em] text-aqua backdrop-blur-sm">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.5c5 5.2 7.8 9 7.8 12.4a7.8 7.8 0 1 1-15.6 0C4.2 11.5 7 7.7 12 2.5Z" />
+              </svg>
               {dict.hero.eyebrow}
             </p>
-            <h1 className="mt-5 max-w-3xl text-[clamp(34px,5.8vw,68px)] text-white">
+            <h1 className="mt-6 max-w-2xl text-[clamp(34px,5.4vw,62px)] text-white">
               {dict.hero.title}{" "}
-              <span className="bg-[linear-gradient(96deg,#7fdcd6,#43c6c0_45%,#a8e4f0)] bg-clip-text text-transparent">
+              <span className="bg-[linear-gradient(96deg,#8fe3dd,#43c6c0_45%,#9fd9ea)] bg-clip-text text-transparent">
                 {dict.hero.titleAccent}
               </span>
             </h1>
@@ -75,41 +103,56 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
                 href={localePath(locale, "/products")}
-                className="btn bg-aqua text-[#04141b] hover:brightness-105"
+                className="btn bg-aqua text-[#04141b] shadow-[0_12px_40px_-10px_rgba(67,198,192,0.7)] hover:brightness-105"
               >
                 {dict.hero.ctaPrimary}
               </Link>
-              <a href="#como-funciona" className="btn border border-white/35 text-white hover:bg-white/10">
+              <a href="#como-funciona" className="btn border border-white/30 text-white hover:bg-white/10">
                 {dict.hero.ctaSecondary}
               </a>
             </div>
-            <p className="mt-5 text-[13px] text-white/70">{dict.hero.note}</p>
+            <p className="mt-5 text-[13px] text-white/65">{dict.hero.note}</p>
           </Reveal>
 
           <Reveal delay={120}>
-            <div className="relative mx-auto max-w-[420px]">
-              <div
-                aria-hidden="true"
-                className="absolute inset-6 rounded-full bg-aqua/25 blur-3xl"
-              />
-              <Image
-                src="/media/products/manual.webp"
-                alt={dict.products.items["hydroloop-manual"].name}
-                width={840}
-                height={840}
-                className="relative w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
-                priority
-              />
-              <div className="relative -mt-4 flex items-center justify-center gap-2 text-[13px] text-white/75">
-                <span className="h-px w-8 bg-white/30" />
-                {site.claims.madeIn ? `Hecho en ${site.claims.madeIn}` : null}
-                <span className="h-px w-8 bg-white/30" />
+            <div className="relative mx-auto w-full max-w-[440px]">
+              <div aria-hidden="true" className="absolute -inset-8 rounded-[48px] bg-aqua/15 blur-3xl" />
+              <div className="relative overflow-hidden rounded-[32px] border border-white/15 shadow-[0_40px_90px_-30px_rgba(0,0,0,0.65)]">
+                <Image
+                  src="/media/photos/splash.webp"
+                  alt={dict.products.items["hydroloop-manual"].name}
+                  width={870}
+                  height={1072}
+                  priority
+                  sizes="(max-width: 1024px) 90vw, 440px"
+                  className="w-full"
+                />
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(1,26,37,0.55))]"
+                />
+              </div>
+              {/* Claims publicados por Hydroloop, flotando sobre la foto */}
+              <div className="absolute -left-3 top-6 hidden sm:block md:-left-8">
+                <span className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-[#0b2836]/85 px-4 py-2.5 text-[13px] font-medium shadow-lg backdrop-blur-md">
+                  <Droplet /> {dict.hero.chips[0]}
+                </span>
+              </div>
+              <div className="absolute -right-2 top-[70%] hidden sm:block md:-right-9">
+                <span className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-[#0b2836]/85 px-4 py-2.5 text-[13px] font-medium shadow-lg backdrop-blur-md">
+                  <Bolt /> {dict.hero.chips[1]}
+                </span>
+              </div>
+              <div className="absolute -bottom-4 left-1/2 w-max -translate-x-1/2">
+                <span className="inline-flex items-center gap-2 rounded-2xl bg-aqua px-4 py-2.5 text-[13px] font-semibold text-[#04141b] shadow-lg">
+                  <Coin /> {dict.hero.chips[2]}
+                </span>
               </div>
             </div>
           </Reveal>
         </div>
 
-        <WaveBand from="var(--bg)" to="transparent" height={110} className="relative" />
+        <WaveBand from="var(--bg)" to="transparent" height={100} className="relative" />
       </section>
 
       <Marquee items={dict.ticker} />
@@ -165,37 +208,30 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      {/* Como funciona, con el diagrama interactivo */}
+      {/* Como funciona: replica animada del diagrama oficial */}
       <section className="section" id="como-funciona">
         <div className="shell">
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <Reveal>
-              <p className="eyebrow">{dict.how.eyebrow}</p>
-              <h2 className="mt-3 text-[clamp(28px,4.4vw,48px)]">{dict.how.title}</h2>
-              <p className="lede mt-5">{dict.how.body}</p>
-              <p className="mt-5 rounded-xl border border-line bg-mist px-4 py-3 text-[14px] text-ink-2">
-                {dict.how.note}
-              </p>
-            </Reveal>
+          <Reveal>
+            <p className="eyebrow">{dict.how.eyebrow}</p>
+            <div className="mt-3 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end">
+              <h2 className="text-[clamp(28px,4.4vw,48px)]">{dict.how.title}</h2>
+              <p className="text-[15.5px] leading-relaxed text-ink-2">{dict.how.body}</p>
+            </div>
+          </Reveal>
 
-            <Reveal delay={100}>
-              <LoopDiagram dict={dict.how} />
-            </Reveal>
-          </div>
+          <Reveal delay={100} className="mt-10">
+            <HowDiagram dict={dict.how} />
+          </Reveal>
 
-          <ol className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-4">
-            {dict.how.steps.map((step, index) => (
-              <li key={step.title} className="bg-surface p-6">
-                <Reveal delay={index * 60}>
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-foam font-display text-[14px] font-bold text-deep dark:bg-[#0d3a45] dark:text-aqua">
-                    {index + 1}
-                  </span>
-                  <h3 className="mt-4 text-[18px]">{step.title}</h3>
-                  <p className="mt-2 text-[14px] text-ink-2">{step.body}</p>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
+          <Reveal delay={60}>
+            <p className="mt-6 inline-flex items-start gap-2.5 rounded-xl border border-line bg-mist px-4 py-3 text-[14px] text-ink-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="mt-0.5 shrink-0 text-teal">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+                <path d="M12 8v.5M12 11v5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+              {dict.how.note}
+            </p>
+          </Reveal>
         </div>
       </section>
 

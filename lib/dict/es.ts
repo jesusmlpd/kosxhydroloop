@@ -54,29 +54,36 @@ export const es = {
   },
 
   hero: {
-    eyebrow: "Hidro-retorno mexicano",
-    title: "El agua fría que tiras esperando la caliente",
-    titleAccent: "puede regresar al calentador",
-    body: "Cada vez que abres la regadera y esperas, el agua fría atrapada en la tubería se va al drenaje. Hydroloop la regresa al calentador en segundos. Sin obra, sin cambiar tu calentador, sin cambiar tu rutina.",
-    ctaPrimary: "Comprar Hydroloop",
+    eyebrow: "Hidro-retorno · Creación mexicana",
+    title: "Dile adiós a la cubeta.",
+    titleAccent: "Agua caliente en el momento justo, sin desperdicio.",
+    body: "El agua fría que hoy tiras esperando la caliente regresa al calentador con solo apretar un botón. Sin obra, sin cambiar tu calentador y sin cambiar la rutina de nadie.",
+    ctaPrimary: "Comprar Hydroloop®",
     ctaSecondary: "Ver cómo funciona",
-    note: "Hecho en México. Garantía de 1 año y hasta 2 con instalación certificada.",
+    note: "Garantía de 1 año y hasta 2 con instalación certificada.",
     scroll: "Baja para ver el ahorro",
+    chips: [
+      "Ahorra hasta 50% del agua de tu regadera",
+      "Consume menos energía que un foco LED",
+      "Se paga solo con el ahorro del recibo",
+    ],
   },
 
   ticker: [
+    "Ahorra hasta 50% del agua de tu regadera",
     "7,300 litros al año por persona",
     "18 horas al año que no vuelves a esperar",
+    "Consume menos energía que un foco LED",
     "Compatible con cualquier calentador",
-    "Instalación en una tarde",
+    "Vida útil de 20 años",
     "Creación mexicana",
   ],
 
   stats: [
+    { value: "50%", label: "menos agua consumida en tu regadera" },
     { value: "7,300 L", label: "de agua al año por habitante de la casa" },
     { value: "18 h", label: "al año que dejas de esperar la caliente" },
-    { value: "1.4 kg", label: "de equipo, sin obra ni tinaco extra" },
-    { value: "2 años", label: "de garantía con instalación certificada" },
+    { value: "20 años", label: "de vida útil sin mantenimientos" },
   ],
 
   problem: {
@@ -101,40 +108,27 @@ export const es = {
 
   how: {
     eyebrow: "Cómo funciona",
-    title: "Hydroloop es un hidro-retorno",
+    title: "Hydroloop® es un hidro-retorno",
     body: "Oprimes el botón, o lo activas desde tu celular. Una bomba interna de 12 V empuja el agua fría atrapada en el tubo de agua caliente de regreso al calentador, usando el tubo de agua fría. Cuando el agua caliente llega al termostato del equipo, la bomba se apaga sola. Abres la llave y sale caliente.",
-    steps: [
-      {
-        title: "Actívalo",
-        body: "Un botón en la pared, o la app si tienes el modelo WiFi, con horarios programados si así lo quieres.",
-      },
-      {
-        title: "El agua regresa",
-        body: "La bomba de 12 V manda el agua fría de vuelta al calentador por el tubo de agua fría. Ni una gota al drenaje.",
-      },
-      {
-        title: "El termostato corta",
-        body: "Al llegar el agua caliente al termostato de 40 grados, el equipo se apaga solo. No hay que estar pendiente.",
-      },
-      {
-        title: "Abres y sale caliente",
-        body: "Sin espera. Y si no hay agua caliente o hay aire en la línea, un temporizador de seguridad corta a los 15 minutos.",
-      },
-    ],
-    note: "Hydroloop no ahorra gas: el consumo de gas es el mismo. Ahorra agua, tiempo y dinero.",
-    diagramAlt: "Diagrama del funcionamiento de un hidro-retorno Hydroloop",
-    diagram: {
-      before: "Sin Hydroloop",
-      after: "Con Hydroloop",
+    note: "Hydroloop® no ahorra gas: el consumo de gas es el mismo. Ahorra agua, tiempo y dinero.",
+    diagramAlt: "Diagrama animado del funcionamiento de un hidro-retorno Hydroloop",
+    autoplay: "El recorrido avanza solo. Toca cualquier paso para verlo.",
+    labels: {
+      feed: "Tubo de alimentación",
+      coldLine: "Tubería de agua fría",
+      hotLine: "Tubería de agua caliente",
       heater: "Calentador",
-      shower: "Regadera",
-      drain: "Drenaje",
-      device: "Hydroloop",
-      hotLine: "Tubo de agua caliente",
-      coldLine: "Tubo de agua fría",
-      beforeCaption: "El agua fría atrapada en la tubería se va al drenaje hasta que llega la caliente.",
-      afterCaption: "La bomba regresa esa agua al calentador por el tubo de agua fría. Nada se tira.",
+      button: "Botón de inicio",
+      device: "Hydroloop®",
+      noWaste: "Sin desperdiciar",
     },
+    steps: [
+      "Activa el botón de inicio.",
+      "El agua empieza a correr.",
+      "Si el agua está fría, regresa al calentador por la línea de agua fría.",
+      "Cuando el agua ya está caliente, el dispositivo se apaga y permite el paso.",
+      "Abres la llave y obtienes agua caliente en el momento justo, sin desperdiciar.",
+    ],
   },
 
   models: {
@@ -157,14 +151,21 @@ export const es = {
       seconds: "Segundos que esperas, por uso",
       price: "Precio del agua por metro cúbico",
     },
+    presets: [
+      { label: "Depa (2)", people: 2, uses: 2 },
+      { label: "Casa (4)", people: 4, uses: 2 },
+      { label: "Casa grande (6)", people: 6, uses: 3 },
+    ],
     results: {
       liters: "Litros al año que se van al drenaje",
       hours: "Horas al año esperando",
       money: "Pesos al año en agua desperdiciada",
       payback: "Meses para recuperar el equipo",
-      paybackNote: "Contra el precio del Hydroloop Manual, con estos valores.",
+      paybackNote: "Contra el precio del Hydroloop® Manual, con estos valores.",
+      paybackLong: "más de 2 años",
       showers: "Equivale a",
       showersUnit: "duchas completas de 8 minutos",
+      tanks: "o {n} tinacos de 1,100 litros",
     },
     disclaimer:
       "Es una estimación, no una promesa. El ahorro real depende de la distancia al calentador, del diámetro de la tubería y de tu tarifa de agua. El precio del agua por metro cúbico cambia en cada ciudad, cámbialo por el de tu recibo.",
@@ -399,6 +400,9 @@ export const es = {
     freeShippingMissing: "Te faltan {amount} para el envío gratis.",
     freeShippingGot: "Ya tienes envío gratis.",
     reservedFor: "Te guardamos el carrito {time}",
+    addonTitle: "Complétalo con",
+    addonAdd: "Agregar",
+    addonHint: "Solo si tu caja eléctrica ya está llena.",
     reservationExpired: "Se venció la reserva. El carrito sigue aquí, pero el inventario ya no está apartado.",
     extend: "Apartar otros 15 minutos",
   },

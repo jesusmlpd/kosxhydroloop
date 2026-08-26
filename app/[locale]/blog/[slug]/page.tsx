@@ -7,7 +7,7 @@ import { findPost, posts, relatedPosts } from "@/lib/blog";
 import { getDict } from "@/lib/dict";
 import { fill, isLocale, locales, localePath, type Locale } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
-import { graph } from "@/lib/schema";
+import { breadcrumbSchema, graph } from "@/lib/schema";
 import { site } from "@/lib/site";
 
 type Params = Promise<{ locale: string; slug: string }>;
@@ -51,6 +51,11 @@ export default async function PostPage({ params }: { params: Params }) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
             graph([
+              breadcrumbSchema([
+                { name: site.name, url: `${site.url}/${locale}` },
+                { name: "Blog", url: `${site.url}/${locale}/blog` },
+                { name: post.title[locale], url: `${site.url}/${locale}/blog/${slug}` },
+              ]),
               {
                 "@type": "BlogPosting",
                 headline: post.title[locale],
