@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Counter } from "@/components/counter";
 import { FaqList } from "@/components/faq-list";
 import { Marquee } from "@/components/marquee";
+import { ModelQuiz } from "@/components/model-quiz";
 import { ProductCard } from "@/components/product-card";
 import { Reveal } from "@/components/reveal";
 import { ReviewsBlock } from "@/components/reviews-block";
@@ -343,6 +344,22 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </Reveal>
             ) : null}
           </div>
+        </div>
+      </section>
+
+      {/* Recomendador: la respuesta a "cual me toca" en 30 segundos */}
+      <section className="section bg-mist">
+        <div className="shell">
+          <Reveal className="text-center">
+            <p className="eyebrow">{dict.quiz.eyebrow}</p>
+            <h2 className="mx-auto mt-3 max-w-2xl text-[clamp(26px,3.8vw,42px)]">
+              {dict.quiz.title}
+            </h2>
+            <p className="lede mx-auto mt-4 max-w-xl">{dict.quiz.body}</p>
+          </Reveal>
+          <Reveal delay={80} className="mt-9">
+            <ModelQuiz locale={locale} dict={dict} />
+          </Reveal>
         </div>
       </section>
 

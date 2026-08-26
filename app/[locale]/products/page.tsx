@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ModelQuiz } from "@/components/model-quiz";
 import { ProductCard } from "@/components/product-card";
 import { Reveal } from "@/components/reveal";
 import { getDict } from "@/lib/dict";
@@ -45,6 +46,18 @@ export default async function ProductsPage({
               <ProductCard product={product} locale={locale} dict={dict} />
             </Reveal>
           ))}
+        </div>
+
+        <div className="mt-16">
+          <Reveal className="text-center">
+            <p className="eyebrow">{dict.quiz.eyebrow}</p>
+            <h2 className="mx-auto mt-3 max-w-2xl text-[clamp(24px,3.4vw,36px)]">
+              {dict.quiz.title}
+            </h2>
+          </Reveal>
+          <Reveal delay={80} className="mt-8">
+            <ModelQuiz locale={locale} dict={dict} />
+          </Reveal>
         </div>
       </div>
     </section>

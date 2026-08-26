@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/add-to-cart";
+import { DeliveryEstimate } from "@/components/delivery-estimate";
 import { FaqList } from "@/components/faq-list";
 import { OfferCountdown } from "@/components/offer-countdown";
 import { PaymentBadges } from "@/components/payment-badges";
@@ -21,7 +22,7 @@ import { fill, isLocale, locales, localePath } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
 import { breadcrumbSchema, graph, productSchema } from "@/lib/schema";
 import { reviewsAreReal, reviewsFor, summarize } from "@/lib/reviews";
-import { findProduct, products, site } from "@/lib/site";
+import { findProduct, products, site, whatsappUrl } from "@/lib/site";
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -161,6 +162,11 @@ export default async function ProductPage({ params }: { params: Params }) {
                       ) : null}
                       <span className="text-[13px] text-ink-3">{dict.products.ivaIncluded}</span>
                     </div>
+                    <p className="mt-1.5 text-[13.5px] text-ink-2">
+                      {fill(dict.pdp.msi, {
+                        monthly: formatMoney(Math.ceil(product.priceCents / 12 / 100) * 100, locale),
+                      })}
+                    </p>
 
                     <div className="mt-2">
                       <OfferCountdown dict={dict.urgency} variant="inline" />
@@ -172,6 +178,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                       <AddToCart
                         product={product}
                         dict={dict}
+                        locale={locale}
                         checkoutHref={localePath(locale, "/checkout")}
                       />
                       {productReviews.length ? (
@@ -183,6 +190,34 @@ export default async function ProductPage({ params }: { params: Params }) {
                           {fill(dict.products.readReviews, { n: summary.count })}
                         </a>
                       ) : null}
+
+                      <div className="mt-5 space-y-2.5 rounded-2xl border border-line bg-surface-2 p-4">
+                        <DeliveryEstimate locale={locale} dict={dict.pdp} />
+                        <p className="flex items-center gap-2 text-[14px] text-ink-2">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0 text-teal">
+                            <path d="M12 3.5 4.5 7v5.2c0 4.3 3 8 7.5 9.3 4.5-1.3 7.5-5 7.5-9.3V7L12 3.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+                            <path d="m8.6 12.2 2.5 2.5 4.6-4.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          <span>
+                            {dict.pdp.risk}{" "}
+                            <Link href={localePath(locale, "/legal/terminos")} className="font-semibold text-teal hover:underline">
+                              {dict.pdp.riskLink}
+                            </Link>
+                          </span>
+                        </p>
+                      </div>
+
+                      <a
+                        href={whatsappUrl(fill(dict.pdp.waMessage, { product: copy.name }))}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-3 inline-flex items-center gap-2 text-[14px] font-semibold text-[#1da851] hover:underline"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5Zm4.2 11.7c-.2.6-1.2 1.1-1.7 1.1-.4.1-1 .1-1.6-.1a13 13 0 0 1-1.5-.6c-2.6-1.1-4.2-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.3.5-.3.7-.3h.5c.2 0 .4-.1.6.4l.8 2c.1.2.1.4 0 .6l-.3.5-.4.5c-.1.1-.3.3-.1.6.1.3.6 1 1.3 1.7.9.8 1.7 1.1 2 1.2.3.1.4.1.6-.1l.9-1c.2-.3.4-.2.7-.1l1.8.8c.3.2.5.2.5.4.1 0 .1.5-.3 1Z" />
+                        </svg>
+                        {dict.pdp.waBuy}
+                      </a>
                     </div>
                   </>
                 ) : (
@@ -216,6 +251,27 @@ export default async function ProductPage({ params }: { params: Params }) {
                   <h2 className="eyebrow">{dict.trust.paymentsTitle}</h2>
                   <PaymentBadges className="mt-3" />
                 </div>
+
+                {(() => {
+                  const top = [...productReviews]
+                    .filter((review) => review.rating === 5)
+                    .sort((a, b) => b.helpful - a.helpful)[0];
+                  if (!top) return null;
+                  return (
+                    <figure className="mt-5 rounded-2xl border border-line bg-mist p-4">
+                      <figcaption className="flex items-center justify-between gap-3">
+                        <span className="eyebrow">{dict.pdp.topReview}</span>
+                        <Stars rating={5} size={13} />
+                      </figcaption>
+                      <blockquote className="mt-2 text-[14.5px] italic leading-relaxed text-ink-2">
+                        “{top.title}”. {top.body.split(". ")[0]}.
+                      </blockquote>
+                      <p className="mt-2 text-[12.5px] font-semibold text-ink-3">
+                        {top.author} · {top.city}
+                      </p>
+                    </figure>
+                  );
+                })()}
 
                 <p className="mt-4 text-[12px] text-ink-3">
                   {dict.products.sku}: {product.sku}

@@ -378,6 +378,50 @@ export const es = {
     },
   },
 
+  pdp: {
+    msi: "o hasta 12 pagos de {monthly} con tarjetas participantes",
+    delivery: "Recíbelo entre el {from} y el {to}",
+    deliveryNote: "pidiendo hoy, con envío estándar",
+    risk: "Devolución de 7 días y garantía de hasta 2 años. Compra sin riesgo.",
+    riskLink: "Ver términos",
+    waBuy: "¿Dudas? Cómpralo por WhatsApp",
+    waMessage: "Hola, quiero comprar el {product}",
+    bundleAdd: "Agrégale el Kit caja de instalación",
+    bundleHint: "Solo si tu caja eléctrica ya está llena",
+    topReview: "Opinión destacada",
+  },
+
+  quiz: {
+    eyebrow: "Test de 30 segundos",
+    title: "¿No sabes cuál te toca?",
+    body: "Tres preguntas y te decimos exactamente qué agregar al carrito.",
+    steps: [
+      {
+        q: "¿Dónde lo vas a usar?",
+        a: ["En mi casa o depa", "En un negocio o renta vacacional"],
+      },
+      {
+        q: "¿Cómo prefieres encenderlo?",
+        a: ["Un botón y ya", "Desde el celular, con horarios"],
+      },
+      {
+        q: "¿La caja eléctrica de tu baño tiene espacio?",
+        a: ["Sí, hay espacio", "Está llena o no sé"],
+      },
+    ],
+    back: "Atrás",
+    resultTitle: "Tu Hydroloop® es:",
+    withKit: "más el Kit caja de instalación",
+    reason: {
+      wifi: "Por los horarios y el control a distancia, el WiFi es el tuyo.",
+      manual: "Sin apps ni configuración: el Manual hace exactamente lo que necesitas.",
+      kit: "Como tu caja eléctrica está llena (o no estás seguro), el kit evita una segunda compra.",
+    },
+    add: "Agregar al carrito",
+    see: "Ver detalle",
+    restart: "Volver a empezar",
+  },
+
   compare: {
     eyebrow: "Comparativa",
     title: "¿Manual o WiFi?",

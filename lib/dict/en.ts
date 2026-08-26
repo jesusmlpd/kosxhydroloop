@@ -377,6 +377,50 @@ export const en: Dict = {
     },
   },
 
+  pdp: {
+    msi: "or up to 12 payments of {monthly} with participating cards",
+    delivery: "Get it between {from} and {to}",
+    deliveryNote: "ordering today, standard shipping",
+    risk: "7 day returns and up to a 2 year warranty. Zero-risk purchase.",
+    riskLink: "See terms",
+    waBuy: "Questions? Buy it over WhatsApp",
+    waMessage: "Hi, I want to buy the {product}",
+    bundleAdd: "Add the installation box kit",
+    bundleHint: "Only if your electrical box is already full",
+    topReview: "Featured review",
+  },
+
+  quiz: {
+    eyebrow: "30 second test",
+    title: "Not sure which one is yours?",
+    body: "Three questions and we tell you exactly what to add to the cart.",
+    steps: [
+      {
+        q: "Where will you use it?",
+        a: ["At my house or apartment", "At a business or vacation rental"],
+      },
+      {
+        q: "How do you prefer to switch it on?",
+        a: ["A button, that is it", "From my phone, on a schedule"],
+      },
+      {
+        q: "Does your bathroom's electrical box have room?",
+        a: ["Yes, there is room", "It is full, or I am not sure"],
+      },
+    ],
+    back: "Back",
+    resultTitle: "Your Hydroloop® is:",
+    withKit: "plus the installation box kit",
+    reason: {
+      wifi: "With schedules and remote control on your list, the WiFi is yours.",
+      manual: "No apps, no setup: the Manual does exactly what you need.",
+      kit: "Since your electrical box is full (or you are not sure), the kit saves you a second order.",
+    },
+    add: "Add to cart",
+    see: "See details",
+    restart: "Start over",
+  },
+
   compare: {
     eyebrow: "Comparison",
     title: "Manual or WiFi?",

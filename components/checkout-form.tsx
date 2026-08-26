@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { FreeShippingBar } from "@/components/free-shipping-bar";
+import { PaymentBadges } from "@/components/payment-badges";
 import { OfferCountdown } from "@/components/offer-countdown";
 import { ReservationTimer } from "@/components/reservation-timer";
 import { useCart } from "@/lib/cart";
@@ -249,6 +250,17 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
           </p>
         ) : null}
         {notice ? <p className="mt-3 text-[13px] text-ink-2">{notice}</p> : null}
+
+        <div className="mt-4 border-t border-line pt-4">
+          <PaymentBadges />
+          <p className="mt-3 flex items-start gap-2 text-[12px] text-ink-3">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="mt-0.5 shrink-0 text-teal">
+              <path d="M12 3.5 4.5 7v5.2c0 4.3 3 8 7.5 9.3 4.5-1.3 7.5-5 7.5-9.3V7L12 3.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+              <path d="m8.6 12.2 2.5 2.5 4.6-4.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {dict.checkout.secure}
+          </p>
+        </div>
 
         <Link
           href={localePath(locale, "/products")}
