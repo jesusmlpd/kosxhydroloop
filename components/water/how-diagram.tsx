@@ -28,6 +28,24 @@ const MANUAL_HOLD_MS = 9000;
 export function HowDiagram({ dict }: { dict: Dict["how"] }) {
   const [step, setStep] = useState(0);
   const holdUntil = useRef(0);
+  const cursorRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * La gota sigue al mouse mutando transform directo sobre el nodo: cero
+   * renders de React por movimiento. Solo existe donde hay hover de verdad
+   * (la clase .water-cursor se esconde sola en touch).
+   */
+  function onMove(event: React.MouseEvent<HTMLDivElement>) {
+    const node = cursorRef.current;
+    if (!node) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    node.style.transform = `translate3d(${event.clientX - rect.left + 14}px, ${event.clientY - rect.top + 10}px, 0)`;
+    node.classList.add("is-on");
+  }
+
+  function onLeave() {
+    cursorRef.current?.classList.remove("is-on");
+  }
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -46,7 +64,23 @@ export function HowDiagram({ dict }: { dict: Dict["how"] }) {
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1.35fr_1fr] lg:items-stretch">
-      <figure className="card overflow-hidden">
+      <figure className="card relative overflow-hidden" onMouseMove={onMove} onMouseLeave={onLeave}>
+        <div ref={cursorRef} className="water-cursor" aria-hidden="true">
+          <svg width="26" height="30" viewBox="0 0 26 30" fill="none">
+            <path
+              d="M13 2c6.2 6.6 9.6 11.4 9.6 15.6a9.6 9.6 0 1 1-19.2 0C3.4 13.4 6.8 8.6 13 2Z"
+              fill="#43c6c0"
+              fillOpacity="0.9"
+              stroke="#ffffff"
+              strokeOpacity="0.8"
+              strokeWidth="1.6"
+            />
+            <path d="M9.4 18.2a4 4 0 0 0 2.6 3.6" stroke="#ffffff" strokeOpacity="0.85" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+          <span className="cursor-bubble" style={{ width: 7, height: 7, ["--bx" as string]: "12px", animationDelay: "0s" }} />
+          <span className="cursor-bubble" style={{ width: 5, height: 5, ["--bx" as string]: "-9px", animationDelay: "0.6s" }} />
+          <span className="cursor-bubble" style={{ width: 4, height: 4, ["--bx" as string]: "4px", animationDelay: "1.2s" }} />
+        </div>
         <div style={{ background: `linear-gradient(160deg, ${NAVY_1}, ${NAVY_2})` }}>
           <svg viewBox="0 0 900 560" className="w-full" role="img" aria-label={dict.diagramAlt}>
             <defs>

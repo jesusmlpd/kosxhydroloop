@@ -14,15 +14,18 @@ export const site = {
   builtByUrl: "https://kickoffsocial.com",
   url: "https://kosxhydroloop.vercel.app", // TODO dominio final
   currentSite: "https://hydroloop.com.mx",
-  email: "hola@hydroloop.com.mx", // TODO correo real de pedidos
+  /** Correo publicado en hydroloop.com.mx/contacto. */
+  email: "ventas@hydroloop.com.mx",
   /**
    * Interruptor de seguridad: mientras siga en false, ningun formulario ni
    * pedido intenta enviar correo. Un correo placeholder no recibe nada, y un
    * pedido que se cree entregado y no llego es peor que un error visible.
    */
   emailConfirmed: false,
-  phone: "", // TODO telefono de atencion
-  whatsapp: "", // TODO numero de WhatsApp
+  phone: "",
+  /** WhatsApp publicado en el sitio actual: 442 334 4455. */
+  whatsapp: "5214423344455",
+  whatsappDisplay: "442 334 4455",
   city: "México",
   country: "MX",
 
@@ -36,10 +39,16 @@ export const site = {
   },
 };
 
+/** Redes publicadas en hydroloop.com.mx (verificadas en su footer y contacto). */
 export const socials = [
-  { name: "Instagram", href: "https://www.instagram.com/hydroloopmx/" }, // TODO confirmar
-  { name: "Facebook", href: "https://www.facebook.com/hydroloopmx/" }, // TODO confirmar
-];
+  { name: "Instagram", id: "instagram", href: "https://www.instagram.com/hydroloopmexico/" },
+  { name: "Facebook", id: "facebook", href: "https://www.facebook.com/HydroloopMx" },
+  { name: "YouTube", id: "youtube", href: "https://www.youtube.com/@hydroloopmexico" },
+] as const;
+
+export function whatsappUrl(text = "Hola") {
+  return `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
+}
 
 /** Zonas donde Hydroloop instala con personal propio. */
 export const coverage = [
@@ -67,17 +76,65 @@ export const coverage = [
   },
 ];
 
-/** Puntos de venta tomados de la pagina de contacto del sitio actual. */
-export const distributors = [
-  { state: "Guanajuato", name: "Ferretería Azteca León", detail: "Blvd. Vicente Valtierra 4043, San Miguel de Rentería", phone: "4791356740" },
-  { state: "Guanajuato", name: "Don Pedro", detail: "Carr. San Miguel de Allende a Celaya KM 2.4", phone: "4151245574" },
-  { state: "Guanajuato", name: "HidroKinesis León", detail: "Muralla de Manzanares 606, Parque Manzanares", phone: "4777037560" },
-  { state: "Guanajuato", name: "Cerámica León", detail: "Blvd. Miguel Hidalgo 1805, San Jerónimo I", phone: "4777794540" },
-  { state: "Guanajuato", name: "Material Eléctrico Salvatierra", detail: "Vicente Guerrero 323", phone: "4666631330" },
-  { state: "Coahuila", name: "Soflux Torreón", detail: "Blvd. Diagonal Reforma 2842, Centro", phone: "8717912691" },
-  { state: "San Luis Potosí", name: "Ferreterías Javi", detail: "Coronel Romero 505, Independencia", phone: "4448158159" },
-  { state: "Baja California Sur", name: "Molar Loreto", detail: "Calle Pargos local 8 y 9, Miramar", phone: "6131312125" },
-  { state: "Estado de México", name: "Ferretería Panorámica", detail: "Calle Panorámica, La Capilla", phone: "" },
+/**
+ * Puntos de venta completos de hydroloop.com.mx/contacto, agrupados por
+ * region tal como los publica la marca, Guatemala incluida.
+ */
+export type Distributor = {
+  name: string;
+  address: string;
+  phone: string;
+  url?: string;
+};
+
+export const distributorRegions: Array<{ region: string; items: Distributor[] }> = [
+  {
+    region: "Guanajuato",
+    items: [
+      { name: "Ferretería Azteca León", address: "Blvd. Vicente Valtierra 4043, Col. San Miguel de Rentería, CP 37256", phone: "4791356740", url: "https://ferreteriazteca.com.mx" },
+      { name: "Ferretería Azteca", address: "Blvd. J.J. Torres Landa Ote. 2705, CP 37520", phone: "4771612630", url: "https://ferreteriazteca.com.mx" },
+      { name: "Don Pedro", address: "Carr. San Miguel de Allende a Celaya KM 2.4", phone: "4151245574", url: "http://www.grupodonpedro.com" },
+      { name: "HidroKinesis León", address: "Muralla de Manzanares 606, Parque Manzanares, CP 37510", phone: "4777037560", url: "http://www.hidrokinesis.com" },
+      { name: "Cerámica León", address: "Blvd. Miguel Hidalgo 1805, Col. San Jerónimo I, CP 37148", phone: "4777794540" },
+      { name: "Material Eléctrico Salvatierra", address: "Vicente Guerrero 323, CP 38900", phone: "4666631330" },
+    ],
+  },
+  {
+    region: "Querétaro",
+    items: [
+      { name: "Motobombas y Reductores Jordán", address: "Plaza de las Naciones, Prol. Av. México 5-1 Local 11, San Juan del Río, CP 76806", phone: "2071011168", url: "http://www.motobombasyreductoresjordan.com" },
+    ],
+  },
+  {
+    region: "Coahuila",
+    items: [
+      { name: "Soflux Torreón", address: "Blvd. Diagonal Reforma 2842, Col. Centro, CP 27000", phone: "8717912691", url: "http://www.soflux.mx" },
+    ],
+  },
+  {
+    region: "San Luis Potosí",
+    items: [
+      { name: "Ferreterías Javi", address: "Coronel Romero 505, Col. Independencia", phone: "4448158159", url: "https://www.facebook.com/javiferretevias/" },
+    ],
+  },
+  {
+    region: "Baja California Sur",
+    items: [
+      { name: "Molmar Loreto", address: "Calle Pargos local 8 y 9, Col. Miramar, CP 23880", phone: "6131312125" },
+    ],
+  },
+  {
+    region: "Estado de México",
+    items: [
+      { name: "Ferretería Panorámica", address: "Calle Panorámica, Col. La Capilla, Valle de Bravo, CP 51200", phone: "7224575239" },
+    ],
+  },
+  {
+    region: "Ciudad de Guatemala",
+    items: [
+      { name: "Duratto", address: "Guatemala 25, Av. 1-89 zona 15, Col. Vista Hermosa II, Oficina 809", phone: "50241263381" },
+    ],
+  },
 ];
 
 export type Product = {

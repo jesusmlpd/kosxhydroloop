@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Reveal } from "@/components/reveal";
-import { findPost, posts, relatedPosts } from "@/lib/blog";
+import { author, findPost, posts, relatedPosts } from "@/lib/blog";
 import { getDict } from "@/lib/dict";
 import { fill, isLocale, locales, localePath, type Locale } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
@@ -66,48 +66,65 @@ export default async function PostPage({ params }: { params: Params }) {
                 inLanguage: locale,
                 mainEntityOfPage: `${site.url}/${locale}/blog/${slug}`,
                 publisher: { "@id": `${site.url}/#organization` },
-                author: { "@id": `${site.url}/#organization` },
+                author: { "@type": "Person", name: author.name, worksFor: { "@id": `${site.url}/#organization` } },
               },
             ]),
           ),
         }}
       />
 
-      <div className="shell max-w-3xl pt-14">
-        <Link
-          href={localePath(locale, "/blog")}
-          className="text-[13px] text-ink-3 transition-colors hover:text-ink"
-        >
-          {dict.blog.backToBlog}
-        </Link>
-
-        <p className="mt-6 flex flex-wrap items-center gap-x-2 text-[12px] uppercase tracking-[0.1em] text-ink-3">
-          <span className="font-semibold text-teal">{post.tag[locale]}</span>
-          <span aria-hidden="true">·</span>
-          <span>{date}</span>
-          <span aria-hidden="true">·</span>
-          <span>{fill(dict.blog.readingTime, { n: post.readingMinutes })}</span>
-        </p>
-
-        <h1 className="mt-4 text-[clamp(30px,4.6vw,52px)]">{post.title[locale]}</h1>
-        <p className="lede mt-5">{post.excerpt[locale]}</p>
-      </div>
-
-      <div className="shell max-w-4xl">
-        <div className="relative mt-10 aspect-[16/9] w-full overflow-hidden rounded-3xl border border-line">
-          <Image
-            src={post.image}
-            alt={post.imageAlt[locale]}
-            fill
-            sizes="(max-width: 1024px) 100vw, 900px"
-            className="object-cover"
-            priority
-          />
+      {/* Hero del articulo: la imagen manda y el titulo vive encima */}
+      <section className="relative isolate overflow-hidden bg-deep-2">
+        <Image
+          src={post.image}
+          alt={post.imageAlt[locale]}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-60"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(1,26,37,0.55)_0%,rgba(1,26,37,0.35)_45%,rgba(1,26,37,0.92)_100%)]"
+        />
+        <div className="shell relative flex min-h-[420px] flex-col justify-end pb-12 pt-28 text-white md:min-h-[500px]">
+          <Link
+            href={localePath(locale, "/blog")}
+            className="mb-6 inline-flex w-fit items-center gap-1.5 text-[13px] font-medium text-white/70 transition-colors hover:text-white"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m14 6-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {dict.blog.backToBlog}
+          </Link>
+          <p className="flex flex-wrap items-center gap-x-2 text-[12px] uppercase tracking-[0.1em] text-white/70">
+            <span className="rounded-full bg-aqua px-2.5 py-1 font-semibold normal-case tracking-normal text-[#04141b]">
+              {post.tag[locale]}
+            </span>
+            <span>{date}</span>
+            <span aria-hidden="true">·</span>
+            <span>{fill(dict.blog.readingTime, { n: post.readingMinutes })}</span>
+          </p>
+          <h1 className="mt-4 max-w-3xl text-[clamp(30px,4.8vw,54px)] text-white">
+            {post.title[locale]}
+          </h1>
+          <div className="mt-6 flex items-center gap-3">
+            <span className="grid h-11 w-11 place-items-center rounded-full bg-aqua font-display text-[16px] font-bold text-[#04141b]">
+              {author.name.slice(0, 1)}
+            </span>
+            <div>
+              <p className="font-display text-[14px] font-semibold">
+                {dict.blog.by} {author.name}
+              </p>
+              <p className="text-[12px] text-white/65">{author.role[locale]}</p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
       <div className="shell max-w-3xl pb-4 pt-12">
-        <div className="space-y-6">
+        <p className="lede">{post.excerpt[locale]}</p>
+        <div className="mt-8 space-y-6">
           {post.body[locale].map((block, index) => {
             if (block.type === "h2") {
               return (

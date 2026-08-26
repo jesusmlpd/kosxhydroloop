@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Logo } from "@/components/logo";
 import type { Dict } from "@/lib/dict";
 import { localePath, type Locale } from "@/lib/i18n";
-import { site, socials } from "@/lib/site";
+import { SocialLinks } from "@/components/social-icons";
+import { site, whatsappUrl } from "@/lib/site";
 
 export function Footer({ locale, dict }: { locale: Locale; dict: Dict }) {
   const year = 2026;
@@ -50,23 +51,34 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dict }) {
                 </a>
               </li>
             ) : null}
+            <li>
+              <a
+                href={whatsappUrl()}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors hover:text-ink"
+              >
+                WhatsApp: {site.whatsappDisplay}
+              </a>
+            </li>
             <li>{site.city}</li>
           </ul>
         </div>
 
         <div>
           <h2 className="eyebrow">{dict.footer.social}</h2>
-          <ul className="mt-3 space-y-2 text-[15px] text-ink-2">
-            {socials.map((social) => (
-              <li key={social.name}>
-                <a
-                  href={social.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="transition-colors hover:text-ink"
-                >
-                  {social.name}
-                </a>
+          <SocialLinks withWhatsapp className="mt-3" />
+          <h2 className="eyebrow mt-7">{dict.footer.legal}</h2>
+          <ul className="mt-3 space-y-2 text-[15px]">
+            {[
+              { href: localePath(locale, "/legal/terminos"), label: dict.footer.terms },
+              { href: localePath(locale, "/legal/privacidad"), label: dict.footer.privacy },
+              { href: localePath(locale, "/legal/envios"), label: dict.footer.shippingPolicy },
+            ].map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="text-ink-2 transition-colors hover:text-ink">
+                  {link.label}
+                </Link>
               </li>
             ))}
           </ul>

@@ -8,6 +8,12 @@ import type { Locale } from "@/lib/i18n";
  * cobertura de hydroloop.com.mx. Nada de cifras inventadas: cuando un numero es
  * una estimacion, el texto lo dice.
  */
+/** Autor editorial del blog. */
+export const author = {
+  name: "Manolo",
+  role: { es: "Equipo Hydroloop®", en: "Hydroloop® team" },
+};
+
 export type Block =
   | { type: "p"; text: string }
   | { type: "h2"; text: string }

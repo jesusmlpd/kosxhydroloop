@@ -56,14 +56,18 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           En movil el copy va sobre gradiente y la foto cierra abajo.
           --------------------------------------------------------------- */}
       <section className="relative isolate overflow-hidden bg-deep-2 text-white">
-        <Image
-          src="/media/photos/hero-bg.webp"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="hidden object-cover object-left md:block"
-        />
+        {/* La foto va en un lienzo 12% mas ancho corrido a la izquierda: el
+            producto se recorre y queda mas aire de agua antes del texto. */}
+        <div aria-hidden="true" className="absolute inset-y-0 left-[-12%] hidden w-[112%] md:block">
+          <Image
+            src="/media/photos/hero-bg.webp"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-left"
+          />
+        </div>
         <div
           aria-hidden="true"
           className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(1,26,37,0.06)_0%,rgba(1,26,37,0.16)_38%,rgba(1,30,42,0.87)_58%,rgba(1,32,45,0.96)_100%)] md:block"
@@ -132,6 +136,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   }),
                   n: proof.count,
                 })}
+              </span>
+              <span aria-hidden="true" className="h-4 w-px bg-white/25" />
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/95 py-1 pl-1 pr-3">
+                <Image
+                  src="/media/brand/hecho-en-mexico.png"
+                  alt=""
+                  width={110}
+                  height={110}
+                  className="h-7 w-7 rounded-full object-contain"
+                />
+                <span className="font-display text-[12px] font-bold uppercase tracking-[0.08em] text-[#0b2836]">
+                  Hecho en México
+                </span>
               </span>
             </div>
             <p className="mt-4 text-[12.5px] text-white/55">{dict.hero.note}</p>

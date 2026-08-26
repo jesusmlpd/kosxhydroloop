@@ -252,6 +252,8 @@ export const en: Dict = {
     galleryPrev: "Previous",
     galleryNext: "Next",
     galleryThumb: "See image {n}",
+    readReviews: "Read all {n} reviews",
+    madeInMx: "Made in Mexico",
     backToProducts: "Back to the store",
     sku: "SKU",
     ivaIncluded: "Tax included",
@@ -390,7 +392,9 @@ export const en: Dict = {
   distributors: {
     eyebrow: "Dealers",
     title: "Points of sale",
-    body: "Hydroloop is also sold in hardware stores and building supply shops around the country. If you would rather see it in person or pay cash, find the closest one.",
+    body: "Hydroloop® is also sold in hardware and building supply stores in Mexico's main cities, plus a point of sale in Guatemala City. If you would rather see it in person or pay cash, this is the map.",
+    call: "Call",
+    website: "Website",
   },
 
   cart: {
@@ -490,6 +494,7 @@ export const en: Dict = {
     title: "Everything about the water that leaves unused",
     body: "How a hydro-return works, how much water really goes down the drain, what to check before installing and how all of it lands on your bill.",
     readMore: "Read",
+    by: "By",
     readingTime: "{n} min read",
     published: "Published on",
     updated: "Updated on",
@@ -524,9 +529,14 @@ export const en: Dict = {
   },
 
   contact: {
-    eyebrow: "Contact",
-    title: "Tell us about your installation",
+    eyebrow: "Contact and dealers",
+    title: "Hydroloop® is close to you",
     body: "If you are not sure how many units you need or what kind of plumbing you have, write to us. We answer within 24 business hours.",
+    doubtsTitle: "Still have questions?",
+    doubtsBody: "No worries, we are here to help. Reach us through whichever channel you prefer and we will gladly assist.",
+    whatsappCta: "Message us on WhatsApp",
+    emailCta: "Write to us at",
+    followUs: "Follow us",
     form: {
       name: "Name",
       email: "Email",
@@ -555,6 +565,10 @@ export const en: Dict = {
     nav: "Navigation",
     contact: "Contact",
     social: "Social",
+    legal: "Legal",
+    terms: "Terms and refunds",
+    privacy: "Privacy notice",
+    shippingPolicy: "Shipping policy",
     rights: "All rights reserved.",
     builtBy: "Site built by",
   },

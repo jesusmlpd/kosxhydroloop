@@ -427,6 +427,46 @@
     animation: drop-fall 2.8s ease-in infinite;
   }
 
+  /*
+    Cursor de gota sobre el diagrama, solo donde hay hover real (escritorio).
+    Se mueve con transform directo desde JS, sin re-render, y las burbujitas
+    suben en loop desde la posicion del cursor.
+  */
+  .water-cursor {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    will-change: transform;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .water-cursor {
+      display: block;
+    }
+  }
+  .water-cursor.is-on {
+    opacity: 1;
+  }
+  .water-cursor .cursor-bubble {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 999px;
+    border: 1.5px solid rgb(255 255 255 / 0.75);
+    background: radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.15) 65%, transparent 75%);
+    animation: cursor-bubble-rise 1.9s ease-out infinite;
+  }
+
+  @keyframes cursor-bubble-rise {
+    0% { transform: translate3d(0, 0, 0) scale(0.5); opacity: 0; }
+    18% { opacity: 0.9; }
+    100% { transform: translate3d(var(--bx, 10px), -46px, 0) scale(1); opacity: 0; }
+  }
+
   /* Gota que recorre una tuberia del diagrama siguiendo su path. */
   .travel {
     offset-rotate: 0deg;
@@ -446,9 +486,11 @@
   .marquee,
   .drop,
   .ripple,
-  .travel {
+  .travel,
+  .cursor-bubble {
     animation: none !important;
   }
   .travel { opacity: 0; }
+  .water-cursor { display: none !important; }
   .bubble { opacity: 0.3; }
 }

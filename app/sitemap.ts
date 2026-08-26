@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/lib/i18n";
 import { posts } from "@/lib/blog";
+import { legalPages } from "@/lib/legal";
 import { products, site } from "@/lib/site";
 
 const routes = ["", "/products", "/blog", "/about", "/contact"];
@@ -40,5 +41,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   );
 
-  return [...pages, ...productPages, ...postPages];
+  const legal = locales.flatMap((locale) =>
+    legalPages.map((page) => ({
+      url: `${site.url}/${locale}/legal/${page.slug}`,
+      lastModified: new Date(page.updated),
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
+    })),
+  );
+
+  return [...pages, ...productPages, ...postPages, ...legal];
 }

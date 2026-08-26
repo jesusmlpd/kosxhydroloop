@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Reveal } from "@/components/reveal";
-import { sortedPosts } from "@/lib/blog";
+import { author, sortedPosts } from "@/lib/blog";
 import { getDict } from "@/lib/dict";
 import { fill, isLocale, localePath, type Locale } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
@@ -118,6 +118,8 @@ function Meta({
       <span>{date}</span>
       <span aria-hidden="true">·</span>
       <span>{fill(dict.blog.readingTime, { n: post.readingMinutes })}</span>
+      <span aria-hidden="true">·</span>
+      <span>{dict.blog.by} {author.name}</span>
     </p>
   );
 }

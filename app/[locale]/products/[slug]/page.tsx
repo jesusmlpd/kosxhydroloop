@@ -122,6 +122,16 @@ export default async function ProductPage({ params }: { params: Params }) {
                       {dict.products.accessory}
                     </span>
                   ) : null}
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface py-0.5 pl-1 pr-2.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-ink-2">
+                    <Image
+                      src="/media/brand/hecho-en-mexico.png"
+                      alt=""
+                      width={110}
+                      height={110}
+                      className="h-6 w-6 object-contain"
+                    />
+                    {dict.products.madeInMx}
+                  </span>
                 </div>
 
                 <h1 className="mt-3 text-[clamp(28px,4.2vw,44px)]">{copy.name}</h1>
@@ -163,6 +173,15 @@ export default async function ProductPage({ params }: { params: Params }) {
                         dict={dict}
                         checkoutHref={localePath(locale, "/checkout")}
                       />
+                      {productReviews.length ? (
+                        <a
+                          href="#opiniones"
+                          className="mt-3 inline-flex items-center gap-2 text-[14px] font-semibold text-teal hover:underline"
+                        >
+                          <Stars rating={summary.average} size={14} />
+                          {fill(dict.products.readReviews, { n: summary.count })}
+                        </a>
+                      ) : null}
                     </div>
                   </>
                 ) : (

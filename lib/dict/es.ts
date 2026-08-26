@@ -253,6 +253,8 @@ export const es = {
     galleryPrev: "Anterior",
     galleryNext: "Siguiente",
     galleryThumb: "Ver imagen {n}",
+    readReviews: "Leer las {n} opiniones",
+    madeInMx: "Hecho en México",
     backToProducts: "Volver a la tienda",
     sku: "SKU",
     ivaIncluded: "IVA incluido",
@@ -391,7 +393,9 @@ export const es = {
   distributors: {
     eyebrow: "Distribuidores",
     title: "Puntos de venta",
-    body: "Hydroloop también se vende en ferreterías y casas de materiales del país. Si prefieres verlo en persona o pagar en efectivo, busca el punto más cercano.",
+    body: "Hydroloop® se vende también en ferreterías y casas de materiales en las principales ciudades del país, y en un punto de venta en la Ciudad de Guatemala. Si prefieres verlo en persona o pagar en efectivo, este es el mapa.",
+    call: "Llamar",
+    website: "Sitio web",
   },
 
   cart: {
@@ -491,6 +495,7 @@ export const es = {
     title: "Todo sobre el agua que se va sin usarse",
     body: "Cómo funciona un hidro-retorno, cuánta agua se tira de verdad, qué revisar antes de instalar y cómo se traduce todo eso en tu recibo.",
     readMore: "Leer",
+    by: "Por",
     readingTime: "{n} min de lectura",
     published: "Publicado el",
     updated: "Actualizado el",
@@ -525,9 +530,14 @@ export const es = {
   },
 
   contact: {
-    eyebrow: "Contacto",
-    title: "Cuéntanos de tu instalación",
+    eyebrow: "Contacto y distribuidores",
+    title: "Hydroloop® está cerca de ti",
     body: "Si no sabes cuántos equipos necesitas o qué tipo de instalación tienes, escríbenos. Respondemos en menos de 24 horas hábiles.",
+    doubtsTitle: "¿Aún tienes dudas?",
+    doubtsBody: "No te preocupes, estamos aquí para ayudarte. Contáctanos por el canal que prefieras y con gusto te atendemos.",
+    whatsappCta: "Escríbenos por WhatsApp",
+    emailCta: "Escríbenos a",
+    followUs: "Síguenos",
     form: {
       name: "Nombre",
       email: "Correo",
@@ -556,6 +566,10 @@ export const es = {
     nav: "Navegación",
     contact: "Contacto",
     social: "Redes",
+    legal: "Legal",
+    terms: "Términos y reembolsos",
+    privacy: "Aviso de privacidad",
+    shippingPolicy: "Política de envíos",
     rights: "Todos los derechos reservados.",
     builtBy: "Sitio hecho por",
   },
