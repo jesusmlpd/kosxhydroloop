@@ -147,7 +147,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   className="h-7 w-7 rounded-full object-contain"
                 />
                 <span className="font-display text-[12px] font-bold uppercase tracking-[0.08em] text-[#0b2836]">
-                  Hecho en México
+                  {dict.products.madeInMx}
                 </span>
               </span>
             </div>
