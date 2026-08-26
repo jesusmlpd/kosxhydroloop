@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Hydroloop">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a5f78"/>
+      <stop offset="0.55" stop-color="#10879b"/>
+      <stop offset="1" stop-color="#43c6c0"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="10" stroke-linecap="round">
+    <path d="M140 400c40 0 40-46 80-46s40 46 80 46 40-46 80-46 40 46 80 46 40-46 80-46 40 46 80 46"/>
+    <path d="M140 460c40 0 40-46 80-46s40 46 80 46 40-46 80-46 40 46 80 46 40-46 80-46 40 46 80 46" stroke-opacity="0.28"/>
+  </g>
+  <path d="M400 130c62 66 96 114 96 158a96 96 0 1 1-192 0c0-44 34-92 96-158Z" fill="#ffffff" fill-opacity="0.92"/>
+  <path d="M400 200c34 38 52 65 52 89a52 52 0 1 1-104 0c0-24 18-51 52-89Z" fill="#10879b"/>
+</svg>
