@@ -56,5 +56,5 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   // Fuera API, internos de Next y cualquier cosa con extension de archivo.
-  matcher: ["/((?!api|_next|.*\\..*).*)"],
+  matcher: ["/((?!api|admin|_next|.*\\..*).*)"],
 };
