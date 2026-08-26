@@ -18,7 +18,8 @@ export type Block =
   | { type: "p"; text: string }
   | { type: "h2"; text: string }
   | { type: "ul"; items: string[] }
-  | { type: "note"; text: string };
+  | { type: "note"; text: string }
+  | { type: "table"; headers: string[]; rows: string[][] };
 
 export type Post = {
   slug: string;
@@ -1105,6 +1106,115 @@ export const posts: Post[] = [
         { type: "h2", text: "The business case, coldly" },
         { type: "p", text: "Typical commercial rate: 1.5 to 3 times domestic, unsubsidized. At [$40+ per m³](/blog/cuanto-cuesta-el-agua-en-mexico), every measure pays back in half the time it takes at home. And unlike almost any other cost cut, this one takes nothing from anyone: the client does not notice the aerator, they do notice instant hot water." },
         { type: "note", text: "Running several locations or a hotel and want a volume quote? [Write to us](/contact): certified installation extends the warranty to 2 years and in coverage areas our own crew does it." },
+      ],
+    },
+  },
+  {
+    slug: "hydroloop-vs-bombas-recirculadoras",
+    date: "2026-08-26",
+    readingMinutes: 12,
+    image: "/media/photos/splash.webp",
+    imageAlt: {
+      es: "Equipo Hydroloop sobre agua",
+      en: "Hydroloop unit over water",
+    },
+    tag: { es: "Comparativa", en: "Comparison" },
+    title: {
+      es: "Hydroloop vs bombas recirculadoras: la comparación honesta (Coflex, Grundfos, Watts, AquaReturn)",
+      en: "Hydroloop vs recirculation pumps: the honest comparison (Coflex, Grundfos, Watts, AquaReturn)",
+    },
+    excerpt: {
+      es: "Todos resuelven la espera del agua caliente, pero no igual ni al mismo precio. Timer vs demanda, importado vs mexicano, y la tabla completa con precios reales de 2026.",
+      en: "They all solve the hot-water wait, but not the same way nor at the same price. Timer vs on-demand, imported vs Mexican, and the full table with real 2026 prices.",
+    },
+    body: {
+      es: [
+        { type: "p", text: "Si llegaste aquí comparando opciones, bien hecho: es exactamente lo que deberías hacer. En el mercado mexicano hay al menos seis formas de dejar de tirar el agua fría de la espera, y aunque nosotros vendemos una de ellas, esta comparación juega limpio: precios reales, ventajas de cada quien, y para qué casa conviene cada una." },
+        { type: "h2", text: "La división que importa: timer contra demanda" },
+        { type: "p", text: "Antes de las marcas, entiende las dos filosofías. Los sistemas de TIMER (Grundfos Comfort, Watts, Rheem, Coflex en modo programado) mantienen el agua caliente circulando por horarios: comodidad máxima, pero recirculan aunque nadie se vaya a bañar y el calentador repone ese calor perdido todo el día. Los sistemas POR DEMANDA (Hydroloop, TacoGenie, ACT D'MAND) solo trabajan cuando alguien lo pide con un botón o la app: la bomba corre uno o dos minutos y se apaga sola al llegar la temperatura. Para ahorrar de verdad, la demanda gana; para no pensar nunca en el tema y pagar el gas extra, el timer." },
+        { type: "h2", text: "La tabla completa" },
+        { type: "table",
+          headers: ["Sistema", "Precio aprox.", "Activación", "Instalación", "Garantía", "Origen"],
+          rows: [
+            ["Hydroloop® Manual", "$3,799", "Botón (demanda)", "Bajo lavabo, sin obra", "1 año, 2 certificada", "México"],
+            ["Hydroloop® WiFi", "$3,999", "Botón, app, voz y horarios", "Bajo lavabo, sin obra", "1 año, 2 certificada", "México"],
+            ["Coflex PS-R125", "$5,000-6,000", "App y horarios (timer)", "Bomba en el calentador + bypass", "1 año", "México"],
+            ["VARS Smart Loop", "No publicado", "Panel táctil, app, voz", "Bajo lavabo", "No publicada", "México"],
+            ["Grundfos Comfort UP15", "$4,000-5,000 + instalación", "Timer 24 h", "Bomba en el calentador + válvula", "2 años", "Importado"],
+            ["Watts 500800", "$4,500-6,000 + instalación", "Timer programable", "Bomba en el calentador + válvula", "1-3 años", "Importado"],
+            ["AquaReturn", "~$7,000 (347€)", "Automático por temperatura", "Bajo lavabo, sin obra", "2 años", "España"],
+            ["Ecobiolab hidro-retorno", "$4,750", "WiFi", "Bajo lavabo", "1 año", "México"],
+          ],
+        },
+        { type: "h2", text: "Lo que cada rival hace bien (en serio)" },
+        { type: "ul", items: [
+          "Coflex: distribución imbatible (está en Home Depot de todo el país) y una app pulida. Si quieres comprarlo hoy en tienda física, es el más fácil de encontrar.",
+          "Grundfos y Watts: décadas de reputación en bombas y refacciones en cualquier ciudad. Su modo timer es comodidad pura si el gas no te preocupa.",
+          "AquaReturn: el único totalmente automático, arranca solo cuando detecta agua por debajo de 35°C. Cero botones, certificación europea del CSIC... y el precio más alto de la tabla.",
+          "VARS: 25 años de trayectoria regia y un panel táctil inalámbrico incluido que está muy bien pensado.",
+          "TacoGenie y ACT D'MAND (EUA): inventaron la categoría por demanda; excelentes equipos, difíciles de conseguir y dar servicio en México.",
+        ] },
+        { type: "h2", text: "Dónde gana Hydroloop, con argumentos verificables" },
+        { type: "ul", items: [
+          "Precio de entrada más bajo de la categoría: [$3,799 con IVA](/products/hydroloop-manual), sin bomba adicional ni válvulas importadas que cotizar.",
+          "Demanda pura: no recircula de más, no le regala calor a la tubería a las 3 de la mañana. El gas se queda igual y el agua deja de tirarse; [así funciona](/blog/que-es-un-hidro-retorno).",
+          "Instalación sin obra en una tarde, con [tutorial oficial de 10 minutos](/products/hydroloop-manual) y soporte remoto en español; los kits de bomba en calentador suelen necesitar plomero y ajustes.",
+          "Garantía de hasta 2 años con instalación certificada: el doble del estándar nacional de 1 año.",
+          "Hecho en México con refacciones e ingeniería locales: cuando algo pasa, no esperas una pieza importada seis semanas.",
+          "WiFi opcional a $200 de diferencia: horarios, Alexa, Google y SmartThings [en el modelo WiFi](/products/hydroloop-wifi), al precio del modelo básico de otros.",
+        ] },
+        { type: "h2", text: "Y dónde no somos la mejor opción" },
+        { type: "ul", items: [
+          "Si quieres cero interacción para siempre y el presupuesto no importa: AquaReturn es automático de verdad.",
+          "Si tu casa ya tiene línea de retorno dedicada (algunas residencias nuevas): una recirculadora tradicional con timer la aprovecha mejor.",
+          "Si necesitas comprarlo físicamente hoy a las 7 pm: Coflex está en Home Depot y nosotros [en estos puntos de venta](/contact).",
+        ] },
+        { type: "p", text: "El resto de la decisión es la de siempre: mide tu espera, [calcula tus litros](/#como-funciona) y compara contra tu [tarifa real](/blog/cuanto-cuesta-el-agua-en-mexico). Con números en la mano, cualquier equipo de esta tabla es mejor que seguir tirando el agua." },
+        { type: "note", text: "Precios consultados en agosto de 2026 en sitios oficiales, Home Depot México, MercadoLibre y Amazon; los de instalación varían por ciudad. Si un dato quedó viejo, [escríbenos](/contact) y lo corregimos: la comparación solo sirve si es honesta." },
+      ],
+      en: [
+        { type: "p", text: "If you got here comparing options, good: that is exactly what you should do. The Mexican market has at least six ways to stop wasting the cold-water wait, and although we sell one of them, this comparison plays fair: real prices, everyone's strengths, and which house each one suits." },
+        { type: "h2", text: "The split that matters: timer versus demand" },
+        { type: "p", text: "Before brands, understand the two philosophies. TIMER systems (Grundfos Comfort, Watts, Rheem, Coflex on schedule) keep hot water circulating on a schedule: maximum comfort, but they recirculate even when nobody will shower and the heater replaces that lost heat all day. ON-DEMAND systems (Hydroloop, TacoGenie, ACT D'MAND) only work when someone asks via button or app: the pump runs a minute or two and stops itself at temperature. For real savings, demand wins; for never thinking about it and paying the extra gas, timer." },
+        { type: "h2", text: "The full table" },
+        { type: "table",
+          headers: ["System", "Approx. price", "Activation", "Install", "Warranty", "Origin"],
+          rows: [
+            ["Hydroloop® Manual", "$3,799 MXN", "Button (demand)", "Under-sink, no construction", "1 yr, 2 certified", "Mexico"],
+            ["Hydroloop® WiFi", "$3,999 MXN", "Button, app, voice, schedules", "Under-sink, no construction", "1 yr, 2 certified", "Mexico"],
+            ["Coflex PS-R125", "$5,000-6,000 MXN", "App and schedules (timer)", "Pump at heater + bypass", "1 yr", "Mexico"],
+            ["VARS Smart Loop", "Not published", "Touch panel, app, voice", "Under-sink", "Not published", "Mexico"],
+            ["Grundfos Comfort UP15", "$4,000-5,000 + install", "24 h timer", "Pump at heater + valve", "2 yr", "Imported"],
+            ["Watts 500800", "$4,500-6,000 + install", "Programmable timer", "Pump at heater + valve", "1-3 yr", "Imported"],
+            ["AquaReturn", "~$7,000 MXN (347€)", "Automatic by temperature", "Under-sink, no construction", "2 yr", "Spain"],
+            ["Ecobiolab hydro-return", "$4,750 MXN", "WiFi", "Under-sink", "1 yr", "Mexico"],
+          ],
+        },
+        { type: "h2", text: "What each rival does well (seriously)" },
+        { type: "ul", items: [
+          "Coflex: unbeatable distribution (it is in Home Depot nationwide) and a polished app. If you want to buy in a physical store today, it is the easiest to find.",
+          "Grundfos and Watts: decades of pump reputation and parts in any city. Their timer mode is pure comfort if gas is not your worry.",
+          "AquaReturn: the only fully automatic one, starts itself when it detects water under 35°C. Zero buttons, European CSIC certification... and the highest price on the table.",
+          "VARS: 25 years of Monterrey track record and a well-designed wireless touch panel included.",
+          "TacoGenie and ACT D'MAND (US): they invented the on-demand category; excellent units, hard to buy and service in Mexico.",
+        ] },
+        { type: "h2", text: "Where Hydroloop wins, with verifiable arguments" },
+        { type: "ul", items: [
+          "Lowest entry price in the category: [$3,799 MXN tax included](/products/hydroloop-manual), no extra pump or imported valves to quote.",
+          "Pure demand: it never over-recirculates or gifts heat to the pipe at 3 a.m. Gas stays the same and water stops being wasted; [here is how it works](/blog/que-es-un-hidro-retorno).",
+          "No-construction install in an afternoon, with an [official 10-minute tutorial](/products/hydroloop-manual) and remote support in Spanish; heater-pump kits usually need a plumber and tuning.",
+          "Warranty up to 2 years with certified installation: double the national 1-year standard.",
+          "Made in Mexico with local parts and engineering: when something happens, you are not waiting six weeks for an imported piece.",
+          "Optional WiFi for a $200 difference: schedules, Alexa, Google and SmartThings [on the WiFi model](/products/hydroloop-wifi), at other brands' base-model price.",
+        ] },
+        { type: "h2", text: "And where we are not the best option" },
+        { type: "ul", items: [
+          "If you want zero interaction forever and budget does not matter: AquaReturn is truly automatic.",
+          "If your house already has a dedicated return line (some new builds): a traditional timer recirculator uses it better.",
+          "If you need to buy it physically today at 7 pm: Coflex is at Home Depot and we are [at these points of sale](/contact).",
+        ] },
+        { type: "p", text: "The rest of the decision is the usual one: measure your wait, [calculate your liters](/#como-funciona) and compare against your [real rate](/blog/cuanto-cuesta-el-agua-en-mexico). With numbers in hand, any unit on this table beats continuing to waste the water." },
+        { type: "note", text: "Prices checked in August 2026 on official sites, Home Depot México, MercadoLibre and Amazon; installation varies by city. If a figure went stale, [write to us](/contact) and we will fix it: a comparison is only useful if it is honest." },
       ],
     },
   },

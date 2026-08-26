@@ -180,6 +180,37 @@ export default async function PostPage({ params }: { params: Params }) {
                 </ul>
               );
             }
+            if (block.type === "table") {
+              return (
+                <div key={index} className="overflow-x-auto">
+                  <table className="w-full min-w-[640px] overflow-hidden rounded-2xl border border-line text-[14px]">
+                    <thead>
+                      <tr className="bg-mist text-left font-display">
+                        {block.headers.map((header) => (
+                          <th key={header} className="px-4 py-3 font-bold">
+                            {header}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-line bg-surface">
+                      {block.rows.map((row, rowIndex) => (
+                        <tr key={rowIndex}>
+                          {row.map((cell, cellIndex) => (
+                            <td
+                              key={cellIndex}
+                              className={`px-4 py-3 ${cellIndex === 0 ? "font-semibold text-ink" : "text-ink-2"}`}
+                            >
+                              <Inline text={cell} locale={locale} />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            }
             if (block.type === "note") {
               return (
                 <p
