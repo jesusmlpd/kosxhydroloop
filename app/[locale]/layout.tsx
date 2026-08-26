@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Inter, Sora } from "next/font/google";
 import { notFound } from "next/navigation";
+import { CartDrawer } from "@/components/cart-drawer";
+import { CartFromUrl } from "@/components/cart-from-url";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { OfferCountdown } from "@/components/offer-countdown";
 import { ThemeScript } from "@/components/theme-script";
 import { getDict } from "@/lib/dict";
 import { isLocale, locales } from "@/lib/i18n";
@@ -82,9 +86,15 @@ export default async function LocaleLayout({
         </a>
         <Header locale={locale} dict={dict} />
         <main id="main" className="flex-1 pt-[68px]">
+          <OfferCountdown dict={dict.urgency} />
           {children}
         </main>
         <Footer locale={locale} dict={dict} />
+        <CartDrawer locale={locale} dict={dict} />
+        {/* useSearchParams necesita Suspense para no volver dinamica cada pagina. */}
+        <Suspense fallback={null}>
+          <CartFromUrl />
+        </Suspense>
       </body>
     </html>
   );

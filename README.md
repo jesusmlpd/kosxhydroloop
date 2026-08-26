@@ -14,11 +14,28 @@ pnpm dev      # localhost:3340
 pnpm verify   # typecheck + lint + build
 ```
 
+## Tienda
+Carrito completo con drawer, cupones, inventario, envio y IVA, mas cuatro
+mecanismos de urgencia (reloj de promocion, reserva del carrito de 15 minutos,
+aviso de stock bajo y barra de envio gratis). Todo se prende y se apaga en
+`lib/commerce.ts`.
+
+El checkout tiene tres caminos: Stripe, Mercado Pago y pedido con confirmacion
+por correo. El navegador manda **ids y cantidades**, nunca precios: los totales
+se recalculan en el servidor antes de cobrar.
+
+Sin llaves configuradas, en desarrollo el checkout corre una simulacion que no
+cobra nada y lo avisa en pantalla. En produccion responde un error claro.
+
 ## Donde vive cada cosa
 - `lib/site.ts`: datos del negocio y catalogo de productos
 - `lib/dict/{es,en}.ts`: todo el copy del sitio
 - `lib/metadata.ts`: canonical, hreflang y Open Graph por ruta
 - `lib/schema.ts`: JSON-LD (Organization, WebSite, Product)
+- `lib/commerce.ts`: reglas de la tienda y calculo de totales
+- `lib/cart.ts`: carrito del navegador, persistido en localStorage
+- `app/api/checkout`: los tres caminos de pago
+- `app/api/webhooks`: confirmacion de Stripe y Mercado Pago
 - `app/api/contact`: formulario, sale por FormSubmit
 
 ## Estado

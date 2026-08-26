@@ -1,0 +1,294 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { FreeShippingBar } from "@/components/free-shipping-bar";
+import { OfferCountdown } from "@/components/offer-countdown";
+import { ReservationTimer } from "@/components/reservation-timer";
+import { useCart } from "@/lib/cart";
+import { useNow } from "@/lib/clock";
+import { formatMoney } from "@/lib/commerce";
+import type { Dict } from "@/lib/dict";
+import { localePath, type Locale } from "@/lib/i18n";
+import { findProductById } from "@/lib/site";
+
+type Method = "stripe" | "mercadopago" | "manual";
+
+export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
+  const now = useNow();
+  const { state, totals, reservationMsLeft, reservationExpired } = useCart(now);
+  const [method, setMethod] = useState<Method>("stripe");
+  const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
+  const [notice, setNotice] = useState<string | null>(null);
+
+  if (totals.itemCount === 0) {
+    return (
+      <div className="card p-8 text-center">
+        <p className="text-ink-2">{dict.checkout.emptyCart}</p>
+        <Link href={localePath(locale, "/products")} className="btn btn-primary mt-5">
+          {dict.cart.emptyCta}
+        </Link>
+      </div>
+    );
+  }
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus("sending");
+    setNotice(null);
+
+    const form = new FormData(event.currentTarget);
+    const customer = Object.fromEntries(form) as Record<string, string>;
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          method,
+          // Solo ids y cantidades: el servidor vuelve a poner los precios.
+          lines: state.lines,
+          coupon: state.coupon,
+          customer,
+          locale,
+        }),
+      });
+      const result = (await response.json()) as { ok?: boolean; url?: string; mock?: boolean };
+      if (!result.ok || !result.url) throw new Error("checkout");
+
+      if (result.mock) {
+        setNotice(
+          locale === "en"
+            ? "No payment keys configured yet, so this run is a simulation."
+            : "Todavía no hay llaves de pago configuradas, así que este cobro es una simulación.",
+        );
+      }
+
+      // El carrito NO se vacia aqui: si alguien cancela en Stripe o en Mercado
+      // Pago y regresa, tiene que encontrar su pedido intacto. Se limpia en la
+      // pantalla de exito.
+      window.location.href = result.url;
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  const methods: Array<{ id: Method; title: string; body: string }> = [
+    { id: "stripe", title: dict.checkout.methods.stripe, body: dict.checkout.methods.stripeBody },
+    {
+      id: "mercadopago",
+      title: dict.checkout.methods.mercadopago,
+      body: dict.checkout.methods.mercadopagoBody,
+    },
+    { id: "manual", title: dict.checkout.methods.manual, body: dict.checkout.methods.manualBody },
+  ];
+
+  return (
+    <form onSubmit={onSubmit} className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:items-start">
+      <div className="space-y-8">
+        <fieldset className="card p-6">
+          <legend className="eyebrow px-1">{dict.checkout.contactTitle}</legend>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <Field name="name" label={dict.checkout.fields.name} autoComplete="name" required />
+            <Field
+              name="email"
+              type="email"
+              label={dict.checkout.fields.email}
+              autoComplete="email"
+              required
+            />
+            <Field name="phone" label={dict.checkout.fields.phone} autoComplete="tel" required />
+          </div>
+        </fieldset>
+
+        <fieldset className="card p-6">
+          <legend className="eyebrow px-1">{dict.checkout.shippingTitle}</legend>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <Field
+              name="street"
+              label={dict.checkout.fields.street}
+              autoComplete="address-line1"
+              required
+              className="sm:col-span-2"
+            />
+            <Field name="interior" label={dict.checkout.fields.interior} autoComplete="address-line2" />
+            <Field
+              name="neighborhood"
+              label={dict.checkout.fields.neighborhood}
+              autoComplete="address-level3"
+              required
+            />
+            <Field name="city" label={dict.checkout.fields.city} autoComplete="address-level2" required />
+            <Field name="state" label={dict.checkout.fields.state} autoComplete="address-level1" required />
+            <Field
+              name="zip"
+              label={dict.checkout.fields.zip}
+              autoComplete="postal-code"
+              inputMode="numeric"
+              required
+            />
+            <label className="block sm:col-span-2">
+              <span className="text-[13px] font-medium text-ink-2">{dict.checkout.fields.notes}</span>
+              <textarea name="notes" rows={3} className="field mt-1.5 resize-y" />
+            </label>
+          </div>
+          <p className="mt-3 text-[12px] text-ink-3">{dict.checkout.requiredNote}</p>
+        </fieldset>
+
+        <fieldset className="card p-6">
+          <legend className="eyebrow px-1">{dict.checkout.paymentTitle}</legend>
+          <div className="mt-3 space-y-3">
+            {methods.map((option) => (
+              <label
+                key={option.id}
+                className={`flex cursor-pointer gap-3 rounded-xl border p-4 transition-colors ${
+                  method === option.id ? "border-teal bg-surface-2" : "border-line hover:border-line-strong"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="method"
+                  value={option.id}
+                  checked={method === option.id}
+                  onChange={() => setMethod(option.id)}
+                  className="mt-1 accent-[#0a5f78]"
+                />
+                <span>
+                  <span className="block font-display text-[15px] font-semibold">{option.title}</span>
+                  <span className="mt-0.5 block text-[14px] text-ink-2">{option.body}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+          <p className="mt-4 text-[12px] text-ink-3">{dict.checkout.secure}</p>
+        </fieldset>
+      </div>
+
+      <aside className="card p-6 lg:sticky lg:top-[88px]">
+        <h2 className="font-display text-[17px] font-bold">{dict.checkout.summaryTitle}</h2>
+
+        <div className="mt-4 space-y-3">
+          <ReservationTimer msLeft={reservationMsLeft} expired={reservationExpired} dict={dict.cart} />
+          <OfferCountdown dict={dict.urgency} variant="inline" />
+        </div>
+
+        <ul className="mt-4 space-y-3 border-t border-line pt-4">
+          {totals.lines.map((line) => {
+            const product = findProductById(line.id);
+            if (!product) return null;
+            const copy = dict.products.items[line.slug as keyof Dict["products"]["items"]];
+            return (
+              <li key={line.id} className="flex items-center gap-3">
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-line">
+                  <Image src={product.image} alt={copy.name} fill sizes="48px" className="object-cover" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[14px] font-medium">{copy.name}</p>
+                  <p className="text-[13px] text-ink-3">x{line.qty}</p>
+                </div>
+                <p className="text-[14px] tabular-nums">{formatMoney(line.lineCents, locale)}</p>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="mt-4 border-t border-line pt-4">
+          <FreeShippingBar
+            missingCents={totals.freeShippingMissingCents}
+            locale={locale}
+            dict={dict.cart}
+          />
+        </div>
+
+        <dl className="mt-4 space-y-1.5 border-t border-line pt-4 text-[14px]">
+          <div className="flex justify-between">
+            <dt className="text-ink-2">{dict.cart.subtotal}</dt>
+            <dd className="tabular-nums">{formatMoney(totals.subtotalCents, locale)}</dd>
+          </div>
+          {totals.discountCents > 0 ? (
+            <div className="flex justify-between text-[#0f7a5f] dark:text-[#5fd6b0]">
+              <dt>
+                {dict.cart.discount} {totals.couponCode ? `(${totals.couponCode})` : null}
+              </dt>
+              <dd className="tabular-nums">-{formatMoney(totals.discountCents, locale)}</dd>
+            </div>
+          ) : null}
+          <div className="flex justify-between">
+            <dt className="text-ink-2">{dict.cart.shipping}</dt>
+            <dd className="tabular-nums">
+              {totals.shippingCents === 0
+                ? dict.cart.shippingFree
+                : formatMoney(totals.shippingCents, locale)}
+            </dd>
+          </div>
+          <div className="flex justify-between border-t border-line pt-2 font-display text-[18px] font-bold">
+            <dt>{dict.cart.total}</dt>
+            <dd className="tabular-nums">{formatMoney(totals.totalCents, locale)}</dd>
+          </div>
+          {totals.taxIncludedCents > 0 ? (
+            <p className="text-right text-[12px] text-ink-3">
+              {dict.cart.taxIncluded}: {formatMoney(totals.taxIncludedCents, locale)}
+            </p>
+          ) : null}
+        </dl>
+
+        <button
+          type="submit"
+          disabled={status === "sending"}
+          className="btn btn-primary mt-5 w-full disabled:opacity-60"
+        >
+          {status === "sending"
+            ? dict.checkout.processing
+            : dict.checkout.pay.replace("{amount}", formatMoney(totals.totalCents, locale))}
+        </button>
+
+        {status === "error" ? (
+          <p role="alert" className="mt-3 text-[13px] text-ink-2">
+            {dict.checkout.error}
+          </p>
+        ) : null}
+        {notice ? <p className="mt-3 text-[13px] text-ink-2">{notice}</p> : null}
+
+        <Link
+          href={localePath(locale, "/products")}
+          className="mt-3 block text-center text-[13px] text-ink-3 transition-colors hover:text-ink"
+        >
+          {dict.cart.keepShopping}
+        </Link>
+      </aside>
+    </form>
+  );
+}
+
+function Field({
+  name,
+  label,
+  type = "text",
+  required = false,
+  autoComplete,
+  inputMode,
+  className = "",
+}: {
+  name: string;
+  label: string;
+  type?: string;
+  required?: boolean;
+  autoComplete?: string;
+  inputMode?: "numeric" | "text" | "tel";
+  className?: string;
+}) {
+  return (
+    <label className={`block ${className}`}>
+      <span className="text-[13px] font-medium text-ink-2">{label}</span>
+      <input
+        name={name}
+        type={type}
+        required={required}
+        autoComplete={autoComplete}
+        inputMode={inputMode}
+        className="field mt-1.5"
+      />
+    </label>
+  );
+}

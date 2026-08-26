@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CartButton } from "@/components/cart-button";
 import { Logo } from "@/components/logo";
 import { LocaleSwitch } from "@/components/locale-switch";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -55,6 +56,7 @@ export function Header({ locale, dict }: { locale: Locale; dict: Dict }) {
             <LocaleSwitch locale={locale} label={dict.nav.language} />
           </div>
           <ThemeToggle label={dict.nav.theme} />
+          <CartButton dict={dict.cart} />
           <Link
             href={localePath(locale, "/contact")}
             className="btn btn-primary hidden md:inline-flex"

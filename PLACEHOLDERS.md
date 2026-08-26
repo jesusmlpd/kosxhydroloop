@@ -33,7 +33,27 @@ definitivo.
       "Activate Form" que llega en el primer envio. Se activa por origen:
       produccion y localhost se activan por separado.
 
-## 6. Claude Commerce
-- [ ] Conectar el checkout en la pagina de producto. Ya esta el lugar marcado en
-      `app/[locale]/products/[slug]/page.tsx` y el modelo de datos en
-      `lib/site.ts` trae id, precio en centavos y moneda para no rehacerlo.
+## 6. Tienda y cobro
+El carrito, la urgencia y el checkout ya funcionan completos. Lo que falta es
+todo lo que depende de una cuenta o de un dato del cliente:
+
+- [ ] **Llaves de pago** en `.env.local` (ver `.env.example`). Sin ellas, en
+      desarrollo el checkout corre una simulacion que no cobra y lo dice en
+      pantalla; en produccion responde error.
+- [ ] **Metodos de pago en el dashboard de Stripe**: tarjeta, OXXO, SPEI y MSI
+      se prenden ahi, no en el codigo. Apple Pay pide ademas verificar el
+      dominio y servir el archivo de asociacion en `/.well-known/`.
+- [ ] **Webhooks**: apuntar Stripe a `/api/webhooks/stripe` y Mercado Pago a
+      `/api/webhooks/mercadopago`, y pegar los secretos.
+- [ ] **Buzon de pedidos**: `FORMSUBMIT_TO` o poner `emailConfirmed: true` en
+      `lib/site.ts` cuando el correo sea real. Mientras siga en false, ningun
+      pedido ni mensaje intenta enviarse, a proposito.
+- [ ] **Precios, inventario y nombres reales** en `lib/site.ts`.
+- [ ] **Reglas de la tienda** en `lib/commerce.ts`: costo de envio, monto para
+      envio gratis, IVA, minutos de reserva, fecha de fin de promo y cupones.
+- [ ] **Base de datos de pedidos**: hoy el pedido se avisa por correo y se
+      escribe en el log. No hay historial ni descuento de inventario
+      automatico. Los webhooks tienen marcado el lugar donde entraria.
+- [ ] **Firma del webhook de Mercado Pago**: falta validar `x-signature`.
+- [ ] **Legales**: terminos, privacidad, politica de envios y devoluciones.
+      Un checkout en produccion los necesita.

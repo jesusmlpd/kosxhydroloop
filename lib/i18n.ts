@@ -28,3 +28,10 @@ export function switchLocalePath(pathname: string, next: Locale) {
 export function localePath(locale: Locale, path = "/") {
   return path === "/" ? `/${locale}` : `/${locale}${path}`;
 }
+
+/** Rellena {llaves} en una cadena del diccionario. */
+export function fill(template: string, vars: Record<string, string | number>) {
+  return template.replace(/\{(\w+)\}/g, (_, key: string) =>
+    key in vars ? String(vars[key]) : `{${key}}`,
+  );
+}

@@ -17,6 +17,17 @@ import { site } from "@/lib/site";
  */
 const ENDPOINT = "https://formsubmit.co/ajax";
 
+/**
+ * Buzon destino, o null si todavia no hay uno de verdad. FORMSUBMIT_TO manda
+ * sobre todo; si no existe, solo se usa el correo de lib/site cuando el
+ * interruptor emailConfirmed esta prendido.
+ */
+export function resolveInbox() {
+  const fromEnv = process.env.FORMSUBMIT_TO?.trim();
+  if (fromEnv) return fromEnv;
+  return site.emailConfirmed ? site.email : null;
+}
+
 export type ContactPayload = {
   name: string;
   email: string;
@@ -26,7 +37,8 @@ export type ContactPayload = {
 };
 
 export async function sendContact(payload: ContactPayload, origin: string) {
-  const to = process.env.FORMSUBMIT_TO ?? site.email;
+  const to = resolveInbox();
+  if (!to) return { ok: false, message: "inbox_not_configured" };
 
   const response = await fetch(`${ENDPOINT}/${encodeURIComponent(to)}`, {
     method: "POST",

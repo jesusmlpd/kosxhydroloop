@@ -2,12 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AddToCart } from "@/components/add-to-cart";
+import { OfferCountdown } from "@/components/offer-countdown";
 import { Reveal } from "@/components/reveal";
+import { StockBadge } from "@/components/stock-badge";
 import { getDict, type Dict } from "@/lib/dict";
 import { isLocale, locales, localePath } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
 import { graph, productSchema } from "@/lib/schema";
-import { findProduct, formatPrice, products, site } from "@/lib/site";
+import { formatMoney } from "@/lib/commerce";
+import { findProduct, products, site } from "@/lib/site";
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -54,7 +58,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                 sku: product.id,
                 priceCents: product.priceCents,
                 currency: product.currency,
-                available: product.available,
+                available: product.stock > 0,
                 url: `${site.url}/${locale}/products/${slug}`,
               }),
             ]),
@@ -84,25 +88,38 @@ export default async function ProductPage({ params }: { params: Params }) {
           </Reveal>
 
           <Reveal delay={80}>
-            <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-ink-3">
-              {product.available ? dict.products.available : dict.products.soldOut}
-            </span>
+            <StockBadge stock={product.stock} dict={dict.urgency} />
             <h1 className="mt-2 text-[clamp(30px,4.4vw,48px)]">{copy.name}</h1>
             <p className="mt-2 text-[17px] text-ink-2">{copy.tagline}</p>
-            <p className="mt-6 font-display text-[26px] font-bold">
-              <span className="mr-2 text-[14px] font-medium text-ink-3">{dict.products.price}</span>
-              {formatPrice(product, locale)}
-            </p>
+
+            <div className="mt-6 flex flex-wrap items-baseline gap-3">
+              <p className="font-display text-[28px] font-bold">
+                {formatMoney(product.priceCents, locale, product.currency)}
+              </p>
+              {product.compareAtCents ? (
+                <p className="text-[17px] text-ink-3 line-through">
+                  {formatMoney(product.compareAtCents, locale, product.currency)}
+                </p>
+              ) : null}
+            </div>
+            <div className="mt-2">
+              <OfferCountdown dict={dict.urgency} variant="inline" />
+            </div>
+
             <p className="mt-5 text-[16px] text-ink-2">{copy.body}</p>
 
-            {/*
-              Aqui entra el checkout de Claude Commerce. Mientras tanto la
-              accion manda a contacto para no prometer un carrito que no existe.
-            */}
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={localePath(locale, "/contact")} className="btn btn-primary">
-                {dict.products.quote}
-              </Link>
+            <div className="mt-8">
+              {product.stock > 0 ? (
+                <AddToCart
+                  product={product}
+                  dict={dict}
+                  checkoutHref={localePath(locale, "/checkout")}
+                />
+              ) : (
+                <Link href={localePath(locale, "/contact")} className="btn btn-primary">
+                  {dict.products.quote}
+                </Link>
+              )}
             </div>
 
             <div className="mt-10">

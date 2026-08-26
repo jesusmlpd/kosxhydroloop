@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/*
+  El tema se maneja con data-theme en <html>, no con prefers-color-scheme, asi
+  que la variante dark: de Tailwind tiene que apuntar al atributo. Sin esto,
+  cualquier clase dark:* se prende por la preferencia del sistema y rompe la
+  regla de que el sitio siempre abre en claro.
+*/
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* ---------------------------------------------------------------
    KOS x Hydroloop. Sora (display) + Inter (body), cargadas con
    next/font para que el build no dependa de una hoja externa.
