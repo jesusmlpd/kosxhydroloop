@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return pageMeta({
     locale,
     path: `/blog/${slug}`,
-    title: `${post.title[locale]} | ${site.name}`,
+    title: post.title[locale],
     description: post.excerpt[locale],
   });
 }

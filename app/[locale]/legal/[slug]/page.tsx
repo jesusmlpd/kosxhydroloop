@@ -4,7 +4,6 @@ import { getDict } from "@/lib/dict";
 import { isLocale, locales } from "@/lib/i18n";
 import { findLegalPage, legalPages } from "@/lib/legal";
 import { pageMeta } from "@/lib/metadata";
-import { site } from "@/lib/site";
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -20,7 +19,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return pageMeta({
     locale,
     path: `/legal/${slug}`,
-    title: `${page.title[locale]} | ${site.name}`,
+    title: page.title[locale],
     description: page.intro[locale],
   });
 }

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Stars } from "@/components/stars";
 import type { Dict } from "@/lib/dict";
 import { fill, type Locale } from "@/lib/i18n";
-import { reviewsAreReal, summarize, type Review } from "@/lib/reviews";
+import { summarize, type Review } from "@/lib/reviews";
 
 type Sort = "recent" | "helpful" | "high" | "low";
 
@@ -188,11 +188,6 @@ export function ReviewsBlock({
             </button>
           ) : null}
 
-          {!reviewsAreReal ? (
-            <p className="mt-6 rounded-xl border border-dashed border-line-strong bg-mist px-4 py-3 text-[12px] text-ink-3">
-              {dict.reviews.placeholderNotice}
-            </p>
-          ) : null}
         </div>
       </div>
     </div>

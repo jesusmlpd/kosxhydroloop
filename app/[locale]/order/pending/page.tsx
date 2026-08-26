@@ -13,7 +13,7 @@ export async function generateMetadata({
   if (!isLocale(locale)) return {};
   const dict = getDict(locale);
   return {
-    title: `${dict.order.pendingTitle} | Hydroloop`,
+    title: dict.order.pendingTitle,
     description: dict.order.pendingBody,
     robots: { index: false, follow: false },
   };

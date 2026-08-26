@@ -17,7 +17,7 @@ export async function generateMetadata({
     ...pageMeta({
       locale,
       path: "/checkout",
-      title: `${dict.checkout.title} | Hydroloop`,
+      title: dict.checkout.title,
       description: dict.checkout.summaryTitle,
     }),
     // Un checkout indexado no sirve de nada y ensucia el crawl.

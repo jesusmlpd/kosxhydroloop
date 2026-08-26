@@ -14,7 +14,7 @@ export async function generateMetadata({
   if (!isLocale(locale)) return {};
   const dict = getDict(locale);
   return {
-    title: `${dict.order.successTitle} | Hydroloop`,
+    title: dict.order.successTitle,
     description: dict.order.successBody,
     robots: { index: false, follow: false },
   };

@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return pageMeta({
     locale,
     path: `/products/${slug}`,
-    title: `${copy.name} | ${site.name}`,
+    title: copy.name,
     description: copy.body.slice(0, 180),
   });
 }

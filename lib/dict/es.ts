@@ -13,27 +13,27 @@ export const es = {
         "Hydroloop es un hidro-retorno mexicano que devuelve al calentador el agua fría que hoy se va al drenaje mientras esperas la caliente. Ahorra 7,300 litros y 18 horas al año por persona.",
     },
     products: {
-      title: "Comprar Hydroloop® | Modelos Manual, WiFi y accesorios",
+      title: "Comprar: modelos Manual, WiFi y accesorios",
       description:
         "Hydroloop Manual desde $3,799 y Hydroloop WiFi desde $3,999, IVA incluido. Envío a todo México, garantía de 1 año y hasta 2 con instalación certificada.",
     },
     about: {
-      title: "Nosotros | Hydroloop®",
+      title: "Nosotros",
       description:
         "Somos un equipo mexicano con un propósito: dejar nuestra gota de agua en el mundo. Tecnología para ahorrar agua sin renunciar al confort.",
     },
     contact: {
-      title: "Contacto y distribuidores | Hydroloop®",
+      title: "Contacto y distribuidores",
       description:
         "Escríbenos o encuentra tu distribuidor Hydroloop más cercano. Puntos de venta en Guanajuato, Coahuila, San Luis Potosí, Estado de México y Baja California Sur.",
     },
     blog: {
-      title: "Blog del agua | Hydroloop®",
+      title: "Blog del agua",
       description:
         "Cómo funciona un hidro-retorno, cuánta agua se tira esperando la caliente, instalación, compatibilidad con calentadores y ahorro real en el recibo.",
     },
     thankYou: {
-      title: "Gracias | Hydroloop®",
+      title: "Gracias",
       description: "Recibimos tu mensaje. Te contactamos en menos de 24 horas hábiles.",
     },
   },
@@ -228,8 +228,6 @@ export const es = {
     showLess: "Ver menos",
     write: "Escribir una opinión",
     distribution: "Distribución",
-    placeholderNotice:
-      "Muestra de la sección de opiniones. Estas reseñas son de ejemplo y deben reemplazarse por opiniones reales de clientes antes de publicar el sitio.",
   },
 
   products: {

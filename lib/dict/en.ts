@@ -12,27 +12,27 @@ export const en: Dict = {
         "Hydroloop is a Mexican hydro-return that sends the cold water sitting in your pipes back to the heater instead of down the drain. It saves 7,300 liters and 18 hours per person every year.",
     },
     products: {
-      title: "Buy Hydroloop® | Manual, WiFi and accessories",
+      title: "Buy: Manual, WiFi and accessories",
       description:
         "Hydroloop Manual from $3,799 and Hydroloop WiFi from $3,999 MXN, tax included. Shipping across Mexico, one year warranty and up to two with certified installation.",
     },
     about: {
-      title: "About | Hydroloop®",
+      title: "About",
       description:
         "We are a Mexican team with one purpose: leave our drop of water in the world. Technology that saves water without giving up comfort.",
     },
     contact: {
-      title: "Contact and dealers | Hydroloop®",
+      title: "Contact and dealers",
       description:
         "Write to us or find your nearest Hydroloop dealer. Points of sale in Guanajuato, Coahuila, San Luis Potosí, Estado de México and Baja California Sur.",
     },
     blog: {
-      title: "Water blog | Hydroloop®",
+      title: "Water blog",
       description:
         "How a hydro-return works, how much water really goes down the drain while you wait, installation, heater compatibility and real savings on your bill.",
     },
     thankYou: {
-      title: "Thank you | Hydroloop®",
+      title: "Thank you",
       description: "We got your message. We will reach out within 24 business hours.",
     },
   },
@@ -227,8 +227,6 @@ export const en: Dict = {
     showLess: "See fewer",
     write: "Write a review",
     distribution: "Breakdown",
-    placeholderNotice:
-      "Preview of the reviews section. These are sample reviews and must be replaced with real customer reviews before the site goes live.",
   },
 
   products: {
