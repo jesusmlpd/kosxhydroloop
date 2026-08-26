@@ -19,7 +19,7 @@ import { SoldBadge, StockBar, ViewersNow } from "@/components/social-proof";
 import { StockBadge } from "@/components/stock-badge";
 import { VariantSwitcher } from "@/components/variant-switcher";
 import { VideoEmbed } from "@/components/video-embed";
-import { commerce, formatMoney } from "@/lib/commerce";
+import { commerce, formatMoney, promoRemaining } from "@/lib/commerce";
 import { getDict, type Dict } from "@/lib/dict";
 import { fill, isLocale, locales, localePath } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
@@ -180,6 +180,21 @@ export default async function ProductPage({ params }: { params: Params }) {
                         monthly: formatMoney(Math.ceil(product.priceCents / 12 / 100) * 100, locale),
                       })}
                     </p>
+                    {promoRemaining() !== null ? (
+                      <p className="mt-2 inline-flex items-center gap-2 rounded-full bg-foam px-3.5 py-1.5 text-[13.5px] font-semibold text-deep dark:bg-[#0d3a45] dark:text-aqua">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M20 12.5 12.5 20a2 2 0 0 1-2.8 0L4 14.3a2 2 0 0 1 0-2.8L11.5 4H18a2 2 0 0 1 2 2v6.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+                          <circle cx="15" cy="9" r="1.4" fill="currentColor" />
+                        </svg>
+                        {fill(dict.pdp.promoPrice, {
+                          code: commerce.promo.code,
+                          price: formatMoney(
+                            Math.round(product.priceCents * (1 - commerce.promo.percentOff / 100)),
+                            locale,
+                          ),
+                        })}
+                      </p>
+                    ) : null}
 
                     <div className="mt-2">
                       <OfferCountdown dict={dict.urgency} variant="inline" />

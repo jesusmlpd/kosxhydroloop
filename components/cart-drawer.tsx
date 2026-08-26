@@ -8,7 +8,7 @@ import { QuantityStepper } from "@/components/quantity-stepper";
 import { ReservationTimer } from "@/components/reservation-timer";
 import { cart, useCart } from "@/lib/cart";
 import { useNow } from "@/lib/clock";
-import { commerce, findCoupon, formatMoney } from "@/lib/commerce";
+import { commerce, findCoupon, formatMoney, promoRemaining } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
 import { fill, localePath, type Locale } from "@/lib/i18n";
 import { findProductById, products } from "@/lib/site";
@@ -237,6 +237,23 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
                     </button>
                   </div>
                 ) : (
+                  <>
+                  {promoRemaining() !== null ? (
+                    <button
+                      type="button"
+                      onClick={() => cart.applyCoupon(commerce.promo.code)}
+                      className="mb-2.5 inline-flex items-center gap-2 rounded-full border border-dashed border-teal bg-foam px-4 py-2 text-[13px] font-bold text-deep transition-colors hover:brightness-95 dark:bg-[#0d3a45] dark:text-aqua"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M20 12.5 12.5 20a2 2 0 0 1-2.8 0L4 14.3a2 2 0 0 1 0-2.8L11.5 4H18a2 2 0 0 1 2 2v6.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+                        <circle cx="15" cy="9" r="1.4" fill="currentColor" />
+                      </svg>
+                      {fill(dict.cart.applyPromo, {
+                        code: commerce.promo.code,
+                        percent: commerce.promo.percentOff,
+                      })}
+                    </button>
+                  ) : null}
                   <div className="flex gap-2">
                     <input
                       value={coupon}
@@ -252,6 +269,7 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
                       {dict.cart.couponApply}
                     </button>
                   </div>
+                  </>
                 )}
                 {couponError ? (
                   <p role="alert" className="mt-2 text-[13px] text-ink-2">

@@ -388,6 +388,7 @@ export const es = {
     waMessage: "Hola, quiero comprar el {product}",
     bundleAdd: "Agrégale el Kit caja de instalación",
     bundleHint: "Solo si tu caja eléctrica ya está llena",
+    promoPrice: "Con el código {code} hoy: {price}",
     topReview: "Opinión destacada",
   },
 
@@ -420,6 +421,21 @@ export const es = {
     add: "Agregar al carrito",
     see: "Ver detalle",
     restart: "Volver a empezar",
+  },
+
+  puraAgua: {
+    name: "PURA AGUA",
+    eyebrow: "Newsletter",
+    title: "PURA AGUA",
+    tagline: "Noticias, tarifas y trucos de ahorro de agua. Nada más.",
+    body: "Una vez al mes: lo nuevo del blog, cambios de tarifas, sequía y las medidas que sí ahorran. Sin spam y con baja en un clic.",
+    emailPlaceholder: "tu@correo.com",
+    namePlaceholder: "Tu nombre (opcional)",
+    submit: "Suscribirme gratis",
+    sending: "Enviando",
+    success: "Listo. Bienvenido a PURA AGUA: nos leemos en la próxima edición.",
+    error: "No se pudo completar la suscripción. Inténtalo otra vez o escríbenos por WhatsApp.",
+    privacy: "Solo agua. Cero spam. Tus datos nunca se comparten.",
   },
 
   socialProof: {
@@ -549,6 +565,7 @@ export const es = {
     freeShippingMissing: "Te faltan {amount} para el envío gratis.",
     freeShippingGot: "Ya tienes envío gratis.",
     reservedFor: "Te guardamos el carrito {time}",
+    applyPromo: "Aplicar {code}: {percent}% de descuento",
     addonTitle: "Complétalo con",
     addonAdd: "Agregar",
     addonHint: "Solo si tu caja eléctrica ya está llena.",

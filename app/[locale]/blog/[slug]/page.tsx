@@ -2,8 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { PuraAgua } from "@/components/pura-agua";
 import { Reveal } from "@/components/reveal";
 import { author, findPost, posts, relatedPosts } from "@/lib/blog";
+import { Fragment } from "react";
 import { getDict } from "@/lib/dict";
 import { fill, isLocale, locales, localePath, type Locale } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
@@ -29,6 +31,36 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     description: post.excerpt[locale],
     image: `/og/blog-${slug}.jpg`,
   });
+}
+
+/**
+ * Enlaces [texto](href) dentro de los parrafos del blog. Los internos (que
+ * empiezan con /) se prefijan con el locale y usan <Link>; los externos abren
+ * en pestana nueva. Es todo el markdown que este blog necesita.
+ */
+function Inline({ text, locale }: { text: string; locale: "es" | "en" }) {
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+  return (
+    <>
+      {parts.map((part, index) => {
+        const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+        if (!match) return <Fragment key={index}>{part}</Fragment>;
+        const [, label, href] = match;
+        if (href.startsWith("/")) {
+          return (
+            <Link key={index} href={localePath(locale, href)} className="font-semibold text-teal hover:underline">
+              {label}
+            </Link>
+          );
+        }
+        return (
+          <a key={index} href={href} target="_blank" rel="noreferrer" className="font-semibold text-teal hover:underline">
+            {label}
+          </a>
+        );
+      })}
+    </>
+  );
 }
 
 export default async function PostPage({ params }: { params: Params }) {
@@ -140,7 +172,9 @@ export default async function PostPage({ params }: { params: Params }) {
                   {block.items.map((item) => (
                     <li key={item} className="flex gap-3">
                       <span aria-hidden="true" className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-aqua" />
-                      {item}
+                      <span>
+                        <Inline text={item} locale={locale} />
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -152,19 +186,23 @@ export default async function PostPage({ params }: { params: Params }) {
                   key={index}
                   className="rounded-2xl border-l-4 border-teal bg-mist px-5 py-4 text-[16px] text-ink-2"
                 >
-                  {block.text}
+                  <Inline text={block.text} locale={locale} />
                 </p>
               );
             }
             return (
               <p key={index} className="text-[17px] leading-relaxed text-ink-2">
-                {block.text}
+                <Inline text={block.text} locale={locale} />
               </p>
             );
           })}
         </div>
 
-        <div className="mt-14 rounded-3xl bg-invert p-8 text-invert-fg md:p-10">
+        <div className="mt-14">
+          <PuraAgua locale={locale} dict={dict} />
+        </div>
+
+        <div className="mt-10 rounded-3xl bg-invert p-8 text-invert-fg md:p-10">
           <h2 className="max-w-xl text-[clamp(22px,3vw,32px)] text-invert-fg">{dict.blog.ctaBody}</h2>
           <Link
             href={localePath(locale, "/products")}

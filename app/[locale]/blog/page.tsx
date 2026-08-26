@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { PuraAgua } from "@/components/pura-agua";
 import { Reveal } from "@/components/reveal";
 import { author, sortedPosts } from "@/lib/blog";
 import { getDict } from "@/lib/dict";
@@ -62,6 +63,10 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
             </Link>
           </Reveal>
         ) : null}
+
+        <Reveal delay={60} className="mt-6">
+          <PuraAgua locale={locale} dict={dict} />
+        </Reveal>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {rest.map((post, index) => (

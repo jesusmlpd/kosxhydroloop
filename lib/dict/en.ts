@@ -387,6 +387,7 @@ export const en: Dict = {
     waMessage: "Hi, I want to buy the {product}",
     bundleAdd: "Add the installation box kit",
     bundleHint: "Only if your electrical box is already full",
+    promoPrice: "With code {code} today: {price}",
     topReview: "Featured review",
   },
 
@@ -419,6 +420,21 @@ export const en: Dict = {
     add: "Add to cart",
     see: "See details",
     restart: "Start over",
+  },
+
+  puraAgua: {
+    name: "PURA AGUA",
+    eyebrow: "Newsletter",
+    title: "PURA AGUA",
+    tagline: "Water news, rates and saving tricks. Nothing else.",
+    body: "Once a month: new blog posts, rate changes, drought updates and the measures that actually save. No spam, one-click unsubscribe.",
+    emailPlaceholder: "you@email.com",
+    namePlaceholder: "Your name (optional)",
+    submit: "Subscribe free",
+    sending: "Sending",
+    success: "Done. Welcome to PURA AGUA: see you in the next edition.",
+    error: "The subscription could not be completed. Try again or message us on WhatsApp.",
+    privacy: "Water only. Zero spam. Your data is never shared.",
   },
 
   socialProof: {
@@ -548,6 +564,7 @@ export const en: Dict = {
     freeShippingMissing: "You are {amount} away from free shipping.",
     freeShippingGot: "You have free shipping.",
     reservedFor: "We are holding your cart {time}",
+    applyPromo: "Apply {code}: {percent}% off",
     addonTitle: "Complete it with",
     addonAdd: "Add",
     addonHint: "Only needed if your electrical box is already full.",

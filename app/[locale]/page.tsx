@@ -7,6 +7,7 @@ import { FaqList } from "@/components/faq-list";
 import { Marquee } from "@/components/marquee";
 import { ModelQuiz } from "@/components/model-quiz";
 import { ProductCard } from "@/components/product-card";
+import { PuraAgua } from "@/components/pura-agua";
 import { Reveal } from "@/components/reveal";
 import { ReviewsBlock } from "@/components/reviews-block";
 import { Stars } from "@/components/stars";
@@ -423,6 +424,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 </div>
               ))}
             </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Newsletter PURA AGUA */}
+      <section className="section">
+        <div className="shell">
+          <Reveal>
+            <PuraAgua locale={locale} dict={dict} />
           </Reveal>
         </div>
       </section>

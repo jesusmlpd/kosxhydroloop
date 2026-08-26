@@ -22,6 +22,15 @@ export function CartFromUrl() {
   const coupon = params.get("coupon");
 
   useEffect(() => {
+    // ?coupon=AGUA10 solo tambien aplica: sirve para campanas y anuncios.
+    if (!spec && coupon && findCoupon(coupon, Date.now())) {
+      cart.applyCoupon(coupon);
+      const next = new URLSearchParams(params.toString());
+      next.delete("coupon");
+      const query = next.toString();
+      router.replace(query ? `?${query}` : window.location.pathname, { scroll: false });
+      return;
+    }
     if (!spec) return;
 
     let added = false;
