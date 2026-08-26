@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     path: `/blog/${slug}`,
     title: post.title[locale],
     description: post.excerpt[locale],
+    image: `/og/blog-${slug}.jpg`,
   });
 }
 
@@ -60,7 +61,7 @@ export default async function PostPage({ params }: { params: Params }) {
                 "@type": "BlogPosting",
                 headline: post.title[locale],
                 description: post.excerpt[locale],
-                image: `${site.url}${post.image}`,
+                image: `${site.url}/og/blog-${slug}.jpg`,
                 datePublished: post.date,
                 dateModified: post.date,
                 inLanguage: locale,

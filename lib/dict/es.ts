@@ -10,12 +10,12 @@ export const es = {
     home: {
       title: "Hydroloop® | Agua caliente al instante, sin desperdiciar agua fría",
       description:
-        "Hydroloop es un hidro-retorno mexicano que devuelve al calentador el agua fría que hoy se va al drenaje mientras esperas la caliente. Ahorra 7,300 litros y 18 horas al año por persona.",
+        "Hydroloop® es el hidro-retorno mexicano que regresa al calentador el agua fría que hoy tiras esperando la caliente. Ahorra hasta 50% del agua de tu regadera, 7,300 litros y 18 horas al año por persona. Desde $3,799 con envío a todo México.",
     },
     products: {
-      title: "Comprar: modelos Manual, WiFi y accesorios",
+      title: "Comprar Hydroloop®: precios de los modelos Manual y WiFi",
       description:
-        "Hydroloop Manual desde $3,799 y Hydroloop WiFi desde $3,999, IVA incluido. Envío a todo México, garantía de 1 año y hasta 2 con instalación certificada.",
+        "Precio de Hydroloop®: Manual $3,799 y WiFi $3,999 MXN con IVA incluido. Bomba recirculadora de hidro-retorno hecha en México, envío a todo el país, pago con tarjeta, MSI, OXXO y SPEI, garantía de hasta 2 años.",
     },
     about: {
       title: "Nosotros",
@@ -259,6 +259,16 @@ export const es = {
     items: {
       "hydroloop-manual": {
         name: "Hydroloop® Manual",
+        metaDescription:
+          "Hydroloop® Manual: $3,799 MXN con IVA. Bomba recirculadora de hidro-retorno con botón que regresa el agua fría al calentador y ahorra hasta 50% del agua de tu regadera. Envío a todo México y garantía de hasta 2 años.",
+        seo: {
+          title: "La bomba recirculadora que ahorra agua sin obra",
+          paragraphs: [
+            "Hydroloop® Manual es un hidro-retorno: una bomba recirculadora de agua caliente que trabaja al revés de lo que estás pensando. En lugar de dejar correr la llave, oprimes un botón junto al apagador y la bomba interna de 12 V empuja el agua fría atrapada en la tubería de regreso al calentador por la línea de agua fría. Cuando el termostato de 40 grados detecta agua caliente, el equipo se apaga solo. Abres la regadera y sale caliente desde el primer segundo.",
+            "La diferencia contra los recirculadores importados está en la instalación y el precio: Hydroloop® se monta bajo el lavabo o en el mueble del baño sin obra, sin línea de retorno dedicada y sin cambiar tu calentador, sea de depósito, de paso o solar. Con eso dejas de tirar hasta 7,300 litros de agua al año por persona y recortas hasta la mitad del consumo de tu regadera.",
+            "Es la opción para quien quiere ahorrar agua en la regadera sin configurar nada: cero apps, cero programación, un botón. Hecho en México, con garantía de un año que sube a dos con instalación certificada, refacciones locales y soporte técnico remoto en español.",
+          ],
+        },
         tagline: "Activación simple y control directo",
         body: "La opción más práctica: un botón en la pared y listo. Se activa cuando tú quieres, se apaga solo al llegar la temperatura. Viene en versión sin tapa con botón sencillo, para que le pongas la tapa que combine con los apagadores de tu casa.",
         ideal: "Quien quiere ahorrar agua sin configurar nada.",
@@ -285,6 +295,16 @@ export const es = {
       },
       "hydroloop-wifi": {
         name: "Hydroloop® WiFi",
+        metaDescription:
+          "Hydroloop® WiFi: $3,999 MXN con IVA. Recirculador de agua caliente con app, Alexa, Google Assistant y SmartThings. Programa el agua caliente por día y hora y no tires ni un litro esperando.",
+        seo: {
+          title: "Agua caliente programada desde tu celular",
+          paragraphs: [
+            "Hydroloop® WiFi es el hidro-retorno inteligente de la familia: la misma bomba recirculadora de 12 V y el mismo termostato de corte automático del modelo Manual, más control total desde tu celular. Programa el encendido por día y hora para que el agua caliente esté lista antes de que suene el despertador, o actívalo a distancia cuando vas llegando a casa.",
+            "Se integra a la casa inteligente sin dramas: funciona con Alexa, Google Assistant y SmartThings, así que el agua caliente puede entrar a tu rutina de buenos días junto con la cafetera y las luces. Solo necesita señal de WiFi en el punto donde se instala el equipo.",
+            "Para hoteles, Airbnb y rentas vacacionales es la solución directa a la queja más repetida de los huéspedes: la espera del agua caliente. Se programa según las reservas, ahorra hasta 50% del agua de la regadera y se instala en una tarde sin obra. Hecho en México con garantía de hasta 2 años.",
+          ],
+        },
         tagline: "Comodidad inteligente a tu medida",
         body: "Todo lo del modelo Manual, más control desde el celular. Programa encendido por día y hora, o actívalo a distancia antes de llegar a casa. Funciona con Alexa, Google Assistant y SmartThings. Necesita señal de WiFi en el punto donde se instala.",
         ideal: "Quien quiere que el agua caliente ya esté lista cuando llega al baño.",
@@ -312,6 +332,15 @@ export const es = {
       },
       "kit-caja-de-instalacion": {
         name: "Kit caja de instalación",
+        metaDescription:
+          "Kit caja de instalación para Hydroloop®: $139.20 MXN con IVA. Chalupa de sobreponer y tapa ciega a la medida exacta del módulo de control, para baños con la caja eléctrica llena.",
+        seo: {
+          title: "El accesorio para cajas eléctricas llenas",
+          paragraphs: [
+            "En casas con años de historia, la caja eléctrica del baño suele venir llena y el módulo de control del Hydroloop® ya no cabe adentro. Este kit lo resuelve en cinco minutos: una chalupa de sobreponer de plástico blanco con las medidas exactas del módulo y una tapa ciega con la perforación justa para el botón.",
+            "La recomendación de los instaladores es simple: si tu casa tiene más de diez años, agrégalo al pedido junto con tu equipo y evita una segunda espera de paquetería. Compatible con Hydroloop® Manual y WiFi.",
+          ],
+        },
         tagline: "Para cuando no hay espacio en la caja eléctrica",
         body: "Solo lo necesitas si las instalaciones eléctricas de tu baño no tienen espacio para alojar el módulo de control adentro. Trae la chalupa de sobreponer con las medidas exactas y la tapa ciega perforada para el botón.",
         ideal: "Baños donde la caja eléctrica ya viene llena.",
@@ -327,6 +356,15 @@ export const es = {
       },
       "hydroloop-bateria": {
         name: "Hydroloop® Batería",
+        metaDescription:
+          "Hydroloop® Batería, próximamente: hidro-retorno con batería recargable y botón, para ahorrar agua caliente en baños sin toma de corriente. Escríbenos y te avisamos cuando salga.",
+        seo: {
+          title: "Hidro-retorno sin conexión eléctrica",
+          paragraphs: [
+            "La versión Batería está pensada para el baño donde no hay una toma de corriente cerca: la bomba recirculadora funciona con batería recargable y se activa con un botón, así que se instala prácticamente en cualquier punto sin trabajo eléctrico.",
+            "Está en desarrollo y saldrá próximamente. Si quieres que te avisemos cuando esté a la venta, escríbenos por WhatsApp o desde la página de contacto.",
+          ],
+        },
         tagline: "Próximamente, mayor libertad de instalación",
         body: "Una versión pensada para espacios donde no hay conexión directa a la corriente. Batería recargable y encendido manual con botón, para instalarlo prácticamente en cualquier baño sin trabajo eléctrico.",
         ideal: "Baños sin toma de corriente cerca.",
@@ -338,6 +376,22 @@ export const es = {
         includes: ["Por confirmar cuando salga a la venta"],
       },
     },
+  },
+
+  compare: {
+    eyebrow: "Comparativa",
+    title: "¿Manual o WiFi?",
+    body: "Los dos ahorran la misma agua. La diferencia es cómo lo enciendes.",
+    feature: "Característica",
+    rows: [
+      { label: "Activación", manual: "Botón en la pared", wifi: "Botón, app o voz" },
+      { label: "Programación por horario", manual: "No", wifi: "Sí, por día y hora" },
+      { label: "Alexa, Google y SmartThings", manual: "No", wifi: "Sí" },
+      { label: "Necesita señal WiFi", manual: "No", wifi: "Sí, en el punto de instalación" },
+      { label: "Ahorro de agua", manual: "Hasta 50% en regadera", wifi: "Hasta 50% en regadera" },
+      { label: "Garantía", manual: "1 año, 2 certificada", wifi: "1 año, 2 certificada" },
+    ],
+    cta: "Ver el otro modelo",
   },
 
   faq: {

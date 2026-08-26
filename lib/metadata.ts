@@ -10,12 +10,16 @@ export function pageMeta({
   path = "/",
   title,
   description,
+  image,
 }: {
   locale: Locale;
   path?: string;
   title: string;
   description: string;
+  /** Ruta local de la imagen para compartir; sin ella se usa la general. */
+  image?: string;
 }): Metadata {
+  const ogImage = `${site.url}${image ?? "/og.jpg"}`;
   const url = `${site.url}/${locale}${path === "/" ? "" : path}`;
   const languages = Object.fromEntries(
     locales.map((code) => [code, `${site.url}/${code}${path === "/" ? "" : path}`]),
@@ -32,13 +36,13 @@ export function pageMeta({
       title,
       description,
       url,
-      images: [{ url: `${site.url}/og.jpg`, width: 1200, height: 630, alt: `${site.name}®` }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [`${site.url}/og.jpg`],
+      images: [ogImage],
     },
     robots: {
       index: true,

@@ -9,12 +9,12 @@ export const en: Dict = {
     home: {
       title: "Hydroloop® | Hot water on demand without wasting the cold",
       description:
-        "Hydroloop is a Mexican hydro-return that sends the cold water sitting in your pipes back to the heater instead of down the drain. It saves 7,300 liters and 18 hours per person every year.",
+        "Hydroloop® is the Mexican hydro-return that sends the cold water you waste waiting for hot back to the heater. Save up to 50% of your shower water, 7,300 liters and 18 hours per person a year. From $3,799 MXN with nationwide shipping.",
     },
     products: {
-      title: "Buy: Manual, WiFi and accessories",
+      title: "Buy Hydroloop®: Manual and WiFi model prices",
       description:
-        "Hydroloop Manual from $3,799 and Hydroloop WiFi from $3,999 MXN, tax included. Shipping across Mexico, one year warranty and up to two with certified installation.",
+        "Hydroloop® pricing: Manual $3,799 and WiFi $3,999 MXN tax included. A hydro-return recirculation pump made in Mexico, nationwide shipping, card, installments, OXXO and SPEI, warranty up to 2 years.",
     },
     about: {
       title: "About",
@@ -258,6 +258,16 @@ export const en: Dict = {
     items: {
       "hydroloop-manual": {
         name: "Hydroloop® Manual",
+        metaDescription:
+          "Hydroloop® Manual: $3,799 MXN tax included. A hydro-return recirculation pump with a wall button that sends cold water back to the heater and saves up to 50% of your shower water. Ships across Mexico, up to 2 year warranty.",
+        seo: {
+          title: "The recirculation pump that saves water with no construction",
+          paragraphs: [
+            "Hydroloop® Manual is a hydro-return: a hot water recirculation pump that works the opposite way you are picturing. Instead of letting the tap run, you press a button next to the light switch and the internal 12 V pump pushes the cold water trapped in the pipe back to the heater through the cold line. When the 40 degree thermostat detects hot water, the unit shuts itself off. Open the shower and it runs hot from the first second.",
+            "The difference against imported recirculators is the install and the price: Hydroloop® mounts under the sink or inside the vanity with no construction, no dedicated return line and no heater replacement, whether yours is tank, tankless or solar. That stops up to 7,300 liters per person per year from going down the drain and cuts up to half of your shower's consumption.",
+            "It is the option for anyone who wants to save shower water without configuring anything: zero apps, zero scheduling, one button. Made in Mexico, with a one year warranty that extends to two with certified installation, local parts and remote support in Spanish.",
+          ],
+        },
         tagline: "Simple activation, direct control",
         body: "The most practical option: one button on the wall and that is it. It starts when you want and stops on its own once the temperature arrives. It ships without a faceplate and with a plain button, so you can match the switches you already have.",
         ideal: "Anyone who wants to save water without configuring anything.",
@@ -284,6 +294,16 @@ export const en: Dict = {
       },
       "hydroloop-wifi": {
         name: "Hydroloop® WiFi",
+        metaDescription:
+          "Hydroloop® WiFi: $3,999 MXN tax included. Hot water recirculator with app, Alexa, Google Assistant and SmartThings. Schedule hot water by day and time and stop wasting a single liter waiting.",
+        seo: {
+          title: "Hot water scheduled from your phone",
+          paragraphs: [
+            "Hydroloop® WiFi is the smart hydro-return of the family: the same 12 V recirculation pump and automatic-cutoff thermostat as the Manual model, plus full control from your phone. Schedule start times by day and hour so hot water is ready before the alarm rings, or trigger it remotely on your way home.",
+            "It joins the smart home without drama: it works with Alexa, Google Assistant and SmartThings, so hot water can enter your good-morning routine along with the coffee maker and the lights. It only needs WiFi signal at the point where the unit is installed.",
+            "For hotels, Airbnbs and vacation rentals it is the direct fix for the most repeated guest complaint: waiting for hot water. Schedule it around bookings, save up to 50% of shower water and install it in one afternoon with no construction. Made in Mexico with up to a 2 year warranty.",
+          ],
+        },
         tagline: "Smart comfort on your terms",
         body: "Everything the Manual does, plus control from your phone. Schedule it by day and time, or trigger it remotely before you get home. Works with Alexa, Google Assistant and SmartThings. It needs WiFi signal where the unit is installed.",
         ideal: "Anyone who wants hot water ready before they walk into the bathroom.",
@@ -311,6 +331,15 @@ export const en: Dict = {
       },
       "kit-caja-de-instalacion": {
         name: "Installation box kit",
+        metaDescription:
+          "Installation box kit for Hydroloop®: $139.20 MXN tax included. Surface mount box and blank faceplate cut to the exact size of the control module, for bathrooms with a full electrical box.",
+        seo: {
+          title: "The accessory for full electrical boxes",
+          paragraphs: [
+            "In houses with some history, the bathroom electrical box tends to be full and the Hydroloop® control module no longer fits inside. This kit solves it in five minutes: a white surface mount box with the module's exact measurements and a blank faceplate with the button hole already drilled.",
+            "The installers' advice is simple: if your house is over ten years old, add it to the order along with your unit and skip a second shipping wait. Compatible with Hydroloop® Manual and WiFi.",
+          ],
+        },
         tagline: "For bathrooms with no room in the electrical box",
         body: "You only need this if the electrical box in your bathroom has no room for the control module inside. It includes the surface mount box cut to size and the blank faceplate drilled for the button.",
         ideal: "Bathrooms where the electrical box is already full.",
@@ -326,6 +355,15 @@ export const en: Dict = {
       },
       "hydroloop-bateria": {
         name: "Hydroloop® Battery",
+        metaDescription:
+          "Hydroloop® Battery, coming soon: a hydro-return with a rechargeable battery and a button, to save hot water in bathrooms with no outlet nearby. Write to us and we will tell you when it ships.",
+        seo: {
+          title: "A hydro-return with no electrical hookup",
+          paragraphs: [
+            "The Battery version is built for the bathroom with no outlet nearby: the recirculation pump runs on a rechargeable battery and starts with a button, so it installs almost anywhere with no electrical work.",
+            "It is in development and shipping soon. If you want a heads-up when it goes on sale, message us on WhatsApp or through the contact page.",
+          ],
+        },
         tagline: "Coming soon, more freedom to install",
         body: "A version built for spots with no direct power connection. Rechargeable battery and manual button start, so it goes into almost any bathroom with no electrical work.",
         ideal: "Bathrooms with no outlet nearby.",
@@ -337,6 +375,22 @@ export const en: Dict = {
         includes: ["To be confirmed at launch"],
       },
     },
+  },
+
+  compare: {
+    eyebrow: "Comparison",
+    title: "Manual or WiFi?",
+    body: "Both save the same water. The difference is how you switch it on.",
+    feature: "Feature",
+    rows: [
+      { label: "Activation", manual: "Wall button", wifi: "Button, app or voice" },
+      { label: "Scheduling", manual: "No", wifi: "Yes, by day and time" },
+      { label: "Alexa, Google and SmartThings", manual: "No", wifi: "Yes" },
+      { label: "Needs WiFi signal", manual: "No", wifi: "Yes, at the install point" },
+      { label: "Water savings", manual: "Up to 50% in the shower", wifi: "Up to 50% in the shower" },
+      { label: "Warranty", manual: "1 year, 2 certified", wifi: "1 year, 2 certified" },
+    ],
+    cta: "See the other model",
   },
 
   faq: {

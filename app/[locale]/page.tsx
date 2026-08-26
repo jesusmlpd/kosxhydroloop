@@ -48,7 +48,18 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           buscadores y para los modelos que responden preguntas. */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(graph([faqSchema(dict.faq.items)])) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            graph([
+              faqSchema(dict.faq.items),
+              {
+                "@type": "WebPage",
+                "@id": `https://kosxhydroloop.vercel.app/${locale}#webpage`,
+                speakable: { "@type": "SpeakableSpecification", cssSelector: ["h1", "main p"] },
+              },
+            ]),
+          ),
+        }}
       />
       {/* ---------------------------------------------------------------
           Hero. La foto real del equipo cayendo al agua, a sangre completa:

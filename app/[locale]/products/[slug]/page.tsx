@@ -41,7 +41,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     locale,
     path: `/products/${slug}`,
     title: copy.name,
-    description: copy.body.slice(0, 180),
+    description: copy.metaDescription,
+    image: `/og/${slug}.jpg`,
   });
 }
 
@@ -302,6 +303,63 @@ export default async function ProductPage({ params }: { params: Params }) {
         </section>
       ) : null}
 
+      {/* Comparativa Manual vs WiFi, solo en los equipos */}
+      {slug === "hydroloop-manual" || slug === "hydroloop-wifi" ? (
+        <section className="section pt-0">
+          <div className="shell max-w-4xl">
+            <Reveal>
+              <p className="eyebrow">{dict.compare.eyebrow}</p>
+              <h2 className="mt-3 text-[clamp(24px,3.4vw,38px)]">{dict.compare.title}</h2>
+              <p className="lede mt-3">{dict.compare.body}</p>
+            </Reveal>
+            <Reveal delay={80}>
+              <div className="mt-8 overflow-x-auto">
+                <table className="w-full min-w-[560px] overflow-hidden rounded-2xl border border-line text-[14.5px]">
+                  <thead>
+                    <tr className="bg-mist text-left font-display">
+                      <th className="px-5 py-3.5 font-semibold text-ink-3">{dict.compare.feature}</th>
+                      <th className={`px-5 py-3.5 font-bold ${slug === "hydroloop-manual" ? "text-teal" : ""}`}>
+                        Hydroloop® Manual
+                      </th>
+                      <th className={`px-5 py-3.5 font-bold ${slug === "hydroloop-wifi" ? "text-teal" : ""}`}>
+                        Hydroloop® WiFi
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line bg-surface">
+                    {dict.compare.rows.map((row) => (
+                      <tr key={row.label}>
+                        <td className="px-5 py-3.5 text-ink-3">{row.label}</td>
+                        <td className="px-5 py-3.5 text-ink-2">{row.manual}</td>
+                        <td className="px-5 py-3.5 text-ink-2">{row.wifi}</td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <td className="px-5 py-3.5 text-ink-3">{dict.products.price}</td>
+                      <td className="px-5 py-3.5 font-display font-bold">
+                        {formatMoney(379900, locale)}
+                      </td>
+                      <td className="px-5 py-3.5 font-display font-bold">
+                        {formatMoney(399900, locale)}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <Link
+                href={localePath(
+                  locale,
+                  `/products/${slug === "hydroloop-manual" ? "hydroloop-wifi" : "hydroloop-manual"}`,
+                )}
+                className="btn btn-ghost mt-5"
+              >
+                {dict.compare.cta}
+              </Link>
+            </Reveal>
+          </div>
+        </section>
+      ) : null}
+
       {/* Calculadora en el PDP: el argumento de compra en numeros */}
       {!product.accessory ? (
         <section className="section bg-mist">
@@ -342,6 +400,21 @@ export default async function ProductPage({ params }: { params: Params }) {
           </Reveal>
           <div className="mt-8">
             <FaqList items={dict.faq.items} />
+          </div>
+        </div>
+      </section>
+
+      {/* Texto largo del producto: el contenido que responde la pregunta
+          completa, para lectores, buscadores y modelos de lenguaje */}
+      <section className="section pt-0">
+        <div className="shell max-w-3xl">
+          <h2 className="text-[clamp(22px,3vw,32px)]">{copy.seo.title}</h2>
+          <div className="mt-5 space-y-4">
+            {copy.seo.paragraphs.map((paragraph) => (
+              <p key={paragraph.slice(0, 40)} className="text-[16px] leading-relaxed text-ink-2">
+                {paragraph}
+              </p>
+            ))}
           </div>
         </div>
       </section>
