@@ -54,18 +54,19 @@ export const en: Dict = {
 
   hero: {
     eyebrow: "Hydro-return · Made in Mexico",
-    title: "Say goodbye to the bucket.",
-    titleAccent: "Hot water at the right moment, with nothing wasted.",
-    body: "The cold water you throw away today waiting for hot goes back to the heater at the press of a button. No construction, no new heater, and nobody changes their routine.",
-    ctaPrimary: "Buy Hydroloop®",
+    title: "Instant hot water.",
+    titleAccent: "Without wasting a drop.",
+    body: "Press a button and the cold water that runs down the drain today goes back to the heater. No construction, no new heater, no change to your routine.",
+    ctaPrimary: "Buy from",
     ctaSecondary: "See how it works",
-    note: "One year warranty, up to two with certified installation.",
+    note: "Shipping across Mexico · Up to 2 year warranty · Card, installments, OXXO and SPEI",
     scroll: "Scroll to see the savings",
     chips: [
       "Save up to 50% of your shower water",
       "Uses less energy than an LED bulb",
       "Pays for itself through the water bill",
     ],
+    proof: "{rating} out of 5 · {n} reviews",
   },
 
   ticker: [
@@ -128,6 +129,24 @@ export const en: Dict = {
       "Once the water runs hot, the unit shuts off and lets it through.",
       "Open the tap and get hot water at the right moment, with nothing wasted.",
     ],
+  },
+
+  video: {
+    how: {
+      title: "Watch it work in 90 seconds",
+      body: "The official Hydroloop video: what happens inside the pipe and why not a single drop is wasted.",
+      cta: "Play video",
+    },
+    install: {
+      title: "Install it in 10 minutes",
+      body: "The official step by step tutorial. If your plumber has an afternoon, they have plenty.",
+      cta: "Watch tutorial",
+    },
+    consent: "The video loads from YouTube when you play it.",
+  },
+
+  buyBar: {
+    from: "From",
   },
 
   models: {

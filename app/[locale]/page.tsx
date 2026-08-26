@@ -8,16 +8,19 @@ import { Marquee } from "@/components/marquee";
 import { ProductCard } from "@/components/product-card";
 import { Reveal } from "@/components/reveal";
 import { ReviewsBlock } from "@/components/reviews-block";
+import { Stars } from "@/components/stars";
+import { VideoEmbed } from "@/components/video-embed";
 import { SavingsCalculator } from "@/components/savings-calculator";
 import { TrustBadges } from "@/components/trust-badges";
 import { Bubbles } from "@/components/water/bubbles";
 import { HowDiagram } from "@/components/water/how-diagram";
 import { WaveBand } from "@/components/water/wave-band";
 import { getDict } from "@/lib/dict";
-import { isLocale, localePath } from "@/lib/i18n";
+import { fill, isLocale, localePath } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
 import { faqSchema, graph } from "@/lib/schema";
-import { reviews } from "@/lib/reviews";
+import { reviews, summarize } from "@/lib/reviews";
+import { formatMoney } from "@/lib/commerce";
 import { buyableProducts, coverage, products } from "@/lib/site";
 
 export async function generateMetadata({
@@ -31,36 +34,13 @@ export async function generateMetadata({
   return pageMeta({ locale, path: "/", ...dict.meta.home });
 }
 
-function Droplet() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0 text-aqua">
-      <path d="M12 3c4.2 4.4 6.5 7.6 6.5 10.4a6.5 6.5 0 1 1-13 0C5.5 10.6 7.8 7.4 12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function Bolt() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0 text-aqua">
-      <path d="M13 2.5 5 13.5h5.4L10.6 21.5l8-11h-5.4L13 2.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function Coin() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
-      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M12 7.5v9M9.4 9.8c0-1 1.1-1.7 2.6-1.7s2.6.7 2.6 1.7c0 2.6-5.2 1.7-5.2 4.3 0 1 1.1 1.8 2.6 1.8s2.6-.8 2.6-1.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dict = getDict(locale);
   const bateria = products.find((product) => product.comingSoon);
+  const manual = products.find((product) => product.slug === "hydroloop-manual");
+  const proof = summarize(reviews);
 
   return (
     <>
@@ -71,19 +51,32 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         dangerouslySetInnerHTML={{ __html: JSON.stringify(graph([faqSchema(dict.faq.items)])) }}
       />
       {/* ---------------------------------------------------------------
-          Hero. Fondo de agua profunda con causticas y burbujas, y la foto
-          real del producto cayendo al agua (de la libreria del cliente)
-          como pieza central, con los claims publicados por Hydroloop.
+          Hero. La foto real del equipo cayendo al agua, a sangre completa:
+          producto a la izquierda, copy a la derecha sobre agua oscurecida.
+          En movil el copy va sobre gradiente y la foto cierra abajo.
           --------------------------------------------------------------- */}
       <section className="relative isolate overflow-hidden bg-deep-2 text-white">
+        <Image
+          src="/media/photos/hero-bg.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="hidden object-cover object-left md:block"
+        />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(120%_90%_at_78%_10%,rgba(0,136,168,0.55)_0%,rgba(1,42,58,0.9)_48%,rgba(1,26,37,1)_100%)]"
+          className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(1,26,37,0.06)_0%,rgba(1,26,37,0.16)_38%,rgba(1,30,42,0.87)_58%,rgba(1,32,45,0.96)_100%)] md:block"
         />
-        <div aria-hidden="true" className="caustics mix-blend-screen opacity-55" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[radial-gradient(130%_100%_at_20%_0%,rgba(0,136,168,0.5)_0%,rgba(1,42,58,0.92)_55%,rgba(1,26,37,1)_100%)] md:hidden"
+        />
+        <div aria-hidden="true" className="caustics mix-blend-screen opacity-40" />
         <Bubbles />
 
-        <div className="shell relative grid gap-12 pb-24 pt-16 md:pt-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
+        <div className="shell relative grid min-h-[560px] items-center gap-10 py-16 md:min-h-[640px] md:grid-cols-[0.85fr_1.15fr] md:py-20">
+          <div aria-hidden="true" className="hidden md:block" />
           <Reveal>
             <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-display text-[12px] font-semibold uppercase tracking-[0.16em] text-aqua backdrop-blur-sm">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -91,68 +84,74 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </svg>
               {dict.hero.eyebrow}
             </p>
-            <h1 className="mt-6 max-w-2xl text-[clamp(34px,5.4vw,62px)] text-white">
+            <h1 className="mt-6 text-[clamp(36px,5.6vw,64px)] text-white">
               {dict.hero.title}{" "}
               <span className="bg-[linear-gradient(96deg,#8fe3dd,#43c6c0_45%,#9fd9ea)] bg-clip-text text-transparent">
                 {dict.hero.titleAccent}
               </span>
             </h1>
-            <p className="mt-6 max-w-xl text-[clamp(16px,1.9vw,19px)] leading-relaxed text-white/85">
+            <p className="mt-5 max-w-xl text-[clamp(16px,1.9vw,19px)] leading-relaxed text-white/85">
               {dict.hero.body}
             </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+
+            <ul className="mt-6 space-y-2.5">
+              {dict.hero.chips.map((chip) => (
+                <li key={chip} className="flex items-center gap-2.5 text-[15px] text-white/90">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-aqua/20 text-aqua">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  {chip}
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 href={localePath(locale, "/products")}
-                className="btn bg-aqua text-[#04141b] shadow-[0_12px_40px_-10px_rgba(67,198,192,0.7)] hover:brightness-105"
+                className="btn w-full bg-aqua text-[#04141b] shadow-[0_14px_44px_-10px_rgba(67,198,192,0.75)] hover:brightness-105 sm:w-auto"
               >
-                {dict.hero.ctaPrimary}
+                {dict.hero.ctaPrimary}{" "}
+                {manual ? formatMoney(manual.priceCents, locale, manual.currency) : null}
               </Link>
-              <a href="#como-funciona" className="btn border border-white/30 text-white hover:bg-white/10">
+              <a
+                href="#como-funciona"
+                className="btn w-full border border-white/30 text-white hover:bg-white/10 sm:w-auto"
+              >
                 {dict.hero.ctaSecondary}
               </a>
             </div>
-            <p className="mt-5 text-[13px] text-white/65">{dict.hero.note}</p>
-          </Reveal>
 
-          <Reveal delay={120}>
-            <div className="relative mx-auto w-full max-w-[440px]">
-              <div aria-hidden="true" className="absolute -inset-8 rounded-[48px] bg-aqua/15 blur-3xl" />
-              <div className="relative overflow-hidden rounded-[32px] border border-white/15 shadow-[0_40px_90px_-30px_rgba(0,0,0,0.65)]">
-                <Image
-                  src="/media/photos/splash.webp"
-                  alt={dict.products.items["hydroloop-manual"].name}
-                  width={870}
-                  height={1072}
-                  priority
-                  sizes="(max-width: 1024px) 90vw, 440px"
-                  className="w-full"
-                />
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(1,26,37,0.55))]"
-                />
-              </div>
-              {/* Claims publicados por Hydroloop, flotando sobre la foto */}
-              <div className="absolute -left-3 top-6 hidden sm:block md:-left-8">
-                <span className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-[#0b2836]/85 px-4 py-2.5 text-[13px] font-medium shadow-lg backdrop-blur-md">
-                  <Droplet /> {dict.hero.chips[0]}
-                </span>
-              </div>
-              <div className="absolute -right-2 top-[70%] hidden sm:block md:-right-9">
-                <span className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-[#0b2836]/85 px-4 py-2.5 text-[13px] font-medium shadow-lg backdrop-blur-md">
-                  <Bolt /> {dict.hero.chips[1]}
-                </span>
-              </div>
-              <div className="absolute -bottom-4 left-1/2 w-max -translate-x-1/2">
-                <span className="inline-flex items-center gap-2 rounded-2xl bg-aqua px-4 py-2.5 text-[13px] font-semibold text-[#04141b] shadow-lg">
-                  <Coin /> {dict.hero.chips[2]}
-                </span>
-              </div>
+            <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <Stars rating={proof.average} size={15} />
+              <span className="text-[13.5px] font-medium text-white/85">
+                {fill(dict.hero.proof, {
+                  rating: proof.average.toLocaleString(locale === "en" ? "en-US" : "es-MX", {
+                    minimumFractionDigits: 1,
+                  }),
+                  n: proof.count,
+                })}
+              </span>
             </div>
+            <p className="mt-4 text-[12.5px] text-white/55">{dict.hero.note}</p>
           </Reveal>
         </div>
 
-        <WaveBand from="var(--bg)" to="transparent" height={100} className="relative" />
+        {/* En movil la foto entra completa abajo, sin recortes raros */}
+        <div className="relative -mt-2 md:hidden">
+          <Image
+            src="/media/photos/splash.webp"
+            alt=""
+            width={870}
+            height={1072}
+            sizes="100vw"
+            className="h-64 w-full object-cover object-[center_38%]"
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgba(1,32,45,0.85),transparent_45%)]" />
+        </div>
+
+        <WaveBand from="var(--bg)" to="transparent" height={90} className="relative" />
       </section>
 
       <Marquee items={dict.ticker} />
@@ -235,8 +234,33 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
+      {/* Video oficial */}
+      <section className="section bg-mist pt-0">
+        <WaveBand from="var(--bg)" to="var(--bg-2)" height={80} />
+        <div className="shell grid gap-10 pt-14 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+          <Reveal>
+            <p className="eyebrow">Video</p>
+            <h2 className="mt-3 text-[clamp(26px,3.8vw,42px)]">{dict.video.how.title}</h2>
+            <p className="lede mt-4">{dict.video.how.body}</p>
+            <Link href={localePath(locale, "/products")} className="btn btn-primary mt-7">
+              {dict.hero.ctaPrimary}{" "}
+              {manual ? formatMoney(manual.priceCents, locale, manual.currency) : null}
+            </Link>
+          </Reveal>
+          <Reveal delay={100}>
+            <VideoEmbed
+              videoId="V_5UqiCPm4Y"
+              thumbnail="/media/video/como-funciona.webp"
+              title={dict.video.how.title}
+              playLabel={dict.video.how.cta}
+              consent={dict.video.consent}
+            />
+          </Reveal>
+        </div>
+      </section>
+
       {/* Modelos */}
-      <section className="section bg-mist">
+      <section className="section">
         <div className="shell">
           <Reveal>
             <p className="eyebrow">{dict.models.eyebrow}</p>

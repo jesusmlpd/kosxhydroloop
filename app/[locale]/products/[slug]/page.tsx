@@ -12,7 +12,9 @@ import { Reveal } from "@/components/reveal";
 import { ReviewsBlock } from "@/components/reviews-block";
 import { SavingsCalculator } from "@/components/savings-calculator";
 import { Stars } from "@/components/stars";
+import { StickyBuyBar } from "@/components/sticky-buy-bar";
 import { StockBadge } from "@/components/stock-badge";
+import { VideoEmbed } from "@/components/video-embed";
 import { commerce, formatMoney } from "@/lib/commerce";
 import { getDict, type Dict } from "@/lib/dict";
 import { fill, isLocale, locales, localePath } from "@/lib/i18n";
@@ -155,7 +157,7 @@ export default async function ProductPage({ params }: { params: Params }) {
 
                     <p className="mt-5 text-[16px] text-ink-2">{copy.body}</p>
 
-                    <div className="mt-7">
+                    <div className="mt-7" id="buy-anchor">
                       <AddToCart
                         product={product}
                         dict={dict}
@@ -258,6 +260,29 @@ export default async function ProductPage({ params }: { params: Params }) {
         </div>
       </section>
 
+      {/* Tutorial oficial de instalacion */}
+      {!product.accessory && !product.comingSoon ? (
+        <section className="section pt-0">
+          <div className="shell grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+            <Reveal>
+              <VideoEmbed
+                videoId="QsvtjfhKRAs"
+                thumbnail="/media/video/instalacion.webp"
+                title={dict.video.install.title}
+                playLabel={dict.video.install.cta}
+                consent={dict.video.consent}
+              />
+            </Reveal>
+            <Reveal delay={80}>
+              <p className="eyebrow">{dict.coverage.eyebrow}</p>
+              <h2 className="mt-3 text-[clamp(24px,3.4vw,38px)]">{dict.video.install.title}</h2>
+              <p className="lede mt-4">{dict.video.install.body}</p>
+              <p className="mt-5 text-[14px] text-ink-2">{dict.trust.badges[3].body}</p>
+            </Reveal>
+          </div>
+        </section>
+      ) : null}
+
       {/* Calculadora en el PDP: el argumento de compra en numeros */}
       {!product.accessory ? (
         <section className="section bg-mist">
@@ -317,6 +342,9 @@ export default async function ProductPage({ params }: { params: Params }) {
           </div>
         </section>
       ) : null}
+      <StickyBuyBar product={product} name={copy.name} locale={locale} dict={dict} />
+      {/* Colchon para que la barra fija no tape el final de la pagina en movil */}
+      <div aria-hidden="true" className="h-20 md:hidden" />
     </article>
   );
 }

@@ -172,17 +172,23 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    min-height: 48px;
     border-radius: 999px;
-    padding: 13px 24px;
+    padding: 12px 26px;
     font-family: var(--font-display);
     font-size: 15px;
     font-weight: 600;
-    line-height: 1;
+    line-height: 1.15;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
     transition: transform 0.25s var(--ease-out-quint), box-shadow 0.25s var(--ease-out-quint),
-      background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
   }
   .btn:hover {
     transform: translateY(-1px);
+  }
+  .btn:active {
+    transform: translateY(0) scale(0.98);
   }
 
   .btn-primary {
@@ -356,6 +362,13 @@
   100% { transform: translateY(52px) scale(0.4); opacity: 0; }
 }
 
+@keyframes travel {
+  0% { offset-distance: 0%; opacity: 0; }
+  6% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
 @keyframes marquee-left {
   from { transform: translate3d(0, 0, 0); }
   to { transform: translate3d(-50%, 0, 0); }
@@ -414,6 +427,12 @@
     animation: drop-fall 2.8s ease-in infinite;
   }
 
+  /* Gota que recorre una tuberia del diagrama siguiendo su path. */
+  .travel {
+    offset-rotate: 0deg;
+    animation: travel var(--t, 2.8s) linear infinite;
+  }
+
   .ripple {
     animation: ripple-out 2.8s ease-out infinite;
   }
@@ -426,8 +445,10 @@
   .flow-line,
   .marquee,
   .drop,
-  .ripple {
+  .ripple,
+  .travel {
     animation: none !important;
   }
+  .travel { opacity: 0; }
   .bubble { opacity: 0.3; }
 }

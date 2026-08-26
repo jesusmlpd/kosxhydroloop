@@ -74,25 +74,11 @@ export function HowDiagram({ dict }: { dict: Dict["how"] }) {
             <Pipe d="M210 462 V 200 H 162" color={HOT} />
 
             {/* ---------- Flujos animados ---------- */}
-            {step === 1 ? (
-              <>
-                <Flow d="M835 300 V 462" color="#ffffff" />
-                <Flow d="M835 462 H 438" color="#ffffff" />
-                <Flow d="M438 462 V 430" color="#ffffff" />
-              </>
-            ) : null}
-            {step === 2 ? (
-              <>
-                <Flow d="M402 368 V 96" color={CYAN} />
-                <Flow d="M402 96 H 805" color={CYAN} />
-                <Flow d="M805 96 V 132" color={CYAN} />
-              </>
-            ) : null}
+            {step === 1 ? <FlowPath d="M835 300 V 462 H 438 V 430" color="#ffffff" /> : null}
+            {step === 2 ? <FlowPath d="M402 368 V 96 H 805 V 132" color={CYAN} /> : null}
             {step === 4 ? (
               <>
-                <Flow d="M835 300 V 462" color={HOT_GLOW} />
-                <Flow d="M835 462 H 210" color={HOT_GLOW} />
-                <Flow d="M210 462 V 200 H 162" color={HOT_GLOW} />
+                <FlowPath d="M835 300 V 462 H 210 V 200 H 162" color={HOT_GLOW} slow />
                 <circle cx="150" cy="205" r="38" fill="url(#hotGlow)" />
               </>
             ) : null}
@@ -216,19 +202,39 @@ function Pipe({ d, color }: { d: string; color: string }) {
   );
 }
 
-/** Puntos que corren por la tuberia; el sentido lo da la direccion del path. */
-function Flow({ d, color }: { d: string; color: string }) {
+/**
+ * Flujo por la tuberia: un rastro punteado suave mas tres gotas que recorren
+ * el path completo con offset-path. Las gotas son las que cuentan la historia;
+ * el punteado queda como estela para navegadores sin offset-path.
+ */
+function FlowPath({ d, color, slow = false }: { d: string; color: string; slow?: boolean }) {
   return (
-    <path
-      d={d}
-      fill="none"
-      stroke={color}
-      strokeWidth="5"
-      strokeLinecap="round"
-      strokeDasharray="2 16"
-      className="flow-line"
-      opacity="0.95"
-    />
+    <>
+      <path
+        d={d}
+        fill="none"
+        stroke={color}
+        strokeWidth="6"
+        strokeLinecap="round"
+        strokeDasharray="1 18"
+        className="flow-line"
+        opacity="0.55"
+      />
+      {[0, 1, 2].map((index) => (
+        <circle
+          key={index}
+          r={6 - index * 1.4}
+          fill={color}
+          className="travel"
+          style={{
+            offsetPath: `path('${d}')`,
+            animationDelay: `${index * 0.45}s`,
+            ["--t" as string]: slow ? "3.4s" : "2.6s",
+            filter: `drop-shadow(0 0 6px ${color})`,
+          }}
+        />
+      ))}
+    </>
   );
 }
 

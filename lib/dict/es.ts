@@ -55,18 +55,19 @@ export const es = {
 
   hero: {
     eyebrow: "Hidro-retorno · Creación mexicana",
-    title: "Dile adiós a la cubeta.",
-    titleAccent: "Agua caliente en el momento justo, sin desperdicio.",
-    body: "El agua fría que hoy tiras esperando la caliente regresa al calentador con solo apretar un botón. Sin obra, sin cambiar tu calentador y sin cambiar la rutina de nadie.",
-    ctaPrimary: "Comprar Hydroloop®",
+    title: "Agua caliente al instante.",
+    titleAccent: "Sin tirar una gota.",
+    body: "Aprietas un botón y el agua fría que hoy se va al drenaje regresa al calentador. Sin obra, sin cambiar tu calentador, sin cambiar tu rutina.",
+    ctaPrimary: "Comprar desde",
     ctaSecondary: "Ver cómo funciona",
-    note: "Garantía de 1 año y hasta 2 con instalación certificada.",
+    note: "Envío a todo México · Garantía de hasta 2 años · Pago con tarjeta, MSI, OXXO y SPEI",
     scroll: "Baja para ver el ahorro",
     chips: [
       "Ahorra hasta 50% del agua de tu regadera",
       "Consume menos energía que un foco LED",
       "Se paga solo con el ahorro del recibo",
     ],
+    proof: "{rating} de 5 · {n} opiniones",
   },
 
   ticker: [
@@ -129,6 +130,24 @@ export const es = {
       "Cuando el agua ya está caliente, el dispositivo se apaga y permite el paso.",
       "Abres la llave y obtienes agua caliente en el momento justo, sin desperdiciar.",
     ],
+  },
+
+  video: {
+    how: {
+      title: "Míralo funcionar en 90 segundos",
+      body: "El video oficial de Hydroloop: qué pasa dentro de la tubería y por qué no se tira ni una gota.",
+      cta: "Reproducir video",
+    },
+    install: {
+      title: "Instálalo en 10 minutos",
+      body: "Tutorial oficial paso a paso. Si tu plomero tiene una tarde, tiene de sobra.",
+      cta: "Ver tutorial",
+    },
+    consent: "El video se carga desde YouTube al reproducirlo.",
+  },
+
+  buyBar: {
+    from: "Desde",
   },
 
   models: {
