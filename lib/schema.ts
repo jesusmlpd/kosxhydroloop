@@ -13,8 +13,8 @@ export function organizationSchema() {
     legalName: site.legalName,
     url: site.url,
     email: site.email,
-    foundingDate: String(site.founded),
     areaServed: site.country,
+    slogan: "Agua caliente en el momento justo, sin desperdicio",
     sameAs: socials.map((social) => social.href),
   };
 }
@@ -38,13 +38,26 @@ export function productSchema(input: {
   currency: string;
   available: boolean;
   url: string;
+  image?: string;
+  /** null mientras las resenas no sean reales: nada de estrellas inventadas. */
+  rating?: { value: number; count: number } | null;
 }) {
   return {
     "@type": "Product",
     name: input.name,
     description: input.description,
     sku: input.sku,
+    image: input.image,
     brand: { "@id": `${site.url}/#organization` },
+    ...(input.rating
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: input.rating.value,
+            reviewCount: input.rating.count,
+          },
+        }
+      : {}),
     offers: {
       "@type": "Offer",
       url: input.url,

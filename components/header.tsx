@@ -22,6 +22,8 @@ export function Header({ locale, dict }: { locale: Locale; dict: Dict }) {
 
   const links = [
     { href: localePath(locale, "/products"), label: dict.nav.products },
+    { href: `${localePath(locale)}#como-funciona`, label: dict.nav.how },
+    { href: localePath(locale, "/blog"), label: dict.nav.blog },
     { href: localePath(locale, "/about"), label: dict.nav.about },
     { href: localePath(locale, "/contact"), label: dict.nav.contact },
   ];
@@ -39,7 +41,7 @@ export function Header({ locale, dict }: { locale: Locale; dict: Dict }) {
           <Logo />
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex" aria-label={dict.nav.menu}>
+        <nav className="hidden items-center gap-6 lg:flex" aria-label={dict.nav.menu}>
           {links.map((link) => (
             <Link
               key={link.href}
@@ -59,7 +61,7 @@ export function Header({ locale, dict }: { locale: Locale; dict: Dict }) {
           <CartButton dict={dict.cart} />
           <Link
             href={localePath(locale, "/contact")}
-            className="btn btn-primary hidden md:inline-flex"
+            className="btn btn-primary hidden lg:inline-flex"
           >
             {dict.nav.cta}
           </Link>
@@ -68,7 +70,7 @@ export function Header({ locale, dict }: { locale: Locale; dict: Dict }) {
             onClick={() => setOpen((value) => !value)}
             aria-expanded={open}
             aria-label={open ? dict.nav.close : dict.nav.menu}
-            className="grid h-9 w-9 place-items-center rounded-full border border-line text-ink md:hidden"
+            className="grid h-9 w-9 place-items-center rounded-full border border-line text-ink lg:hidden"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               {open ? (
@@ -82,7 +84,7 @@ export function Header({ locale, dict }: { locale: Locale; dict: Dict }) {
       </div>
 
       {open ? (
-        <div className="border-t border-line bg-paper md:hidden">
+        <div className="border-t border-line bg-paper lg:hidden">
           <div className="shell flex flex-col gap-1 py-4">
             {links.map((link) => (
               <Link

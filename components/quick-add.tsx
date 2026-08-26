@@ -6,7 +6,7 @@ import type { Product } from "@/lib/site";
 
 /** Boton chico para sumar una pieza desde la tarjeta, sin salir del listado. */
 export function QuickAdd({ product, dict }: { product: Product; dict: Dict }) {
-  if (product.stock <= 0) return null;
+  if (!product.buyable || product.stock <= 0) return null;
 
   return (
     <button

@@ -1,40 +1,51 @@
 /**
- * PLACEHOLDER: copy de arranque, no son datos verificados de Hydroloop.
- * Todo lo que diga TODO se reemplaza cuando llegue el brief del cliente.
+ * Todo el copy del sitio en espanol.
+ *
+ * El contenido de producto, las cifras de ahorro, el paquete, las medidas, la
+ * garantia y las zonas de cobertura vienen de hydroloop.com.mx. Lo que sea
+ * suposicion nuestra va marcado con TODO.
  */
 export const es = {
   meta: {
     home: {
-      title: "Hydroloop | Sistemas de agua para casa y negocio",
+      title: "Hydroloop® | Agua caliente al instante, sin desperdiciar agua fría",
       description:
-        "Hydroloop diseña, instala y da mantenimiento a sistemas de tratamiento y reúso de agua. Menos consumo, menos gasto, agua confiable todo el año.",
-    },
-    about: {
-      title: "Nosotros | Hydroloop",
-      description:
-        "Quiénes somos, cómo trabajamos y por qué el agua es el mejor lugar para invertir en tu casa o tu operación.",
+        "Hydroloop es un hidro-retorno mexicano que devuelve al calentador el agua fría que hoy se va al drenaje mientras esperas la caliente. Ahorra 7,300 litros y 18 horas al año por persona.",
     },
     products: {
-      title: "Productos | Hydroloop",
+      title: "Comprar Hydroloop® | Modelos Manual, WiFi y accesorios",
       description:
-        "Equipos y sistemas Hydroloop: tratamiento, filtrado y reúso de agua para residencia, comercio e industria.",
+        "Hydroloop Manual desde $3,799 y Hydroloop WiFi desde $3,999, IVA incluido. Envío a todo México, garantía de 1 año y hasta 2 con instalación certificada.",
+    },
+    about: {
+      title: "Nosotros | Hydroloop®",
+      description:
+        "Somos un equipo mexicano con un propósito: dejar nuestra gota de agua en el mundo. Tecnología para ahorrar agua sin renunciar al confort.",
     },
     contact: {
-      title: "Contacto | Hydroloop",
-      description: "Cuéntanos qué necesitas y te respondemos en menos de 24 horas hábiles.",
+      title: "Contacto y distribuidores | Hydroloop®",
+      description:
+        "Escríbenos o encuentra tu distribuidor Hydroloop más cercano. Puntos de venta en Guanajuato, Coahuila, San Luis Potosí, Estado de México y Baja California Sur.",
+    },
+    blog: {
+      title: "Blog del agua | Hydroloop®",
+      description:
+        "Cómo funciona un hidro-retorno, cuánta agua se tira esperando la caliente, instalación, compatibilidad con calentadores y ahorro real en el recibo.",
     },
     thankYou: {
-      title: "Gracias | Hydroloop",
+      title: "Gracias | Hydroloop®",
       description: "Recibimos tu mensaje. Te contactamos en menos de 24 horas hábiles.",
     },
   },
 
   nav: {
     home: "Inicio",
+    products: "Comprar",
+    how: "Cómo funciona",
     about: "Nosotros",
-    products: "Productos",
+    blog: "Blog",
     contact: "Contacto",
-    cta: "Cotizar",
+    cta: "Comprar ahora",
     menu: "Menú",
     close: "Cerrar",
     theme: "Cambiar tema",
@@ -43,182 +54,324 @@ export const es = {
   },
 
   hero: {
-    eyebrow: "Agua tratada, filtrada y reusada",
-    title: "El agua que ya usaste",
-    titleAccent: "puede volver a servir",
-    body: "Hydroloop instala sistemas que tratan, filtran y devuelven el agua a tu casa o a tu operación. Menos consumo, menos recibo, menos dependencia de la pipa.",
-    ctaPrimary: "Cotiza tu sistema",
-    ctaSecondary: "Ver productos",
-    note: "Instalación, garantía y mantenimiento incluidos.",
+    eyebrow: "Hidro-retorno mexicano",
+    title: "El agua fría que tiras esperando la caliente",
+    titleAccent: "puede regresar al calentador",
+    body: "Cada vez que abres la regadera y esperas, el agua fría atrapada en la tubería se va al drenaje. Hydroloop la regresa al calentador en segundos. Sin obra, sin cambiar tu calentador, sin cambiar tu rutina.",
+    ctaPrimary: "Comprar Hydroloop",
+    ctaSecondary: "Ver cómo funciona",
+    note: "Hecho en México. Garantía de 1 año y hasta 2 con instalación certificada.",
+    scroll: "Baja para ver el ahorro",
   },
 
-  stats: [
-    { value: "45%", label: "menos consumo de agua potable" },
-    { value: "24 h", label: "de respuesta a cada solicitud" },
-    { value: "10 años", label: "de vida útil por equipo" },
-    { value: "100%", label: "instalación certificada" },
+  ticker: [
+    "7,300 litros al año por persona",
+    "18 horas al año que no vuelves a esperar",
+    "Compatible con cualquier calentador",
+    "Instalación en una tarde",
+    "Creación mexicana",
   ],
 
-  value: {
-    eyebrow: "Por qué Hydroloop",
-    title: "Un sistema, tres problemas resueltos",
+  stats: [
+    { value: "7,300 L", label: "de agua al año por habitante de la casa" },
+    { value: "18 h", label: "al año que dejas de esperar la caliente" },
+    { value: "1.4 kg", label: "de equipo, sin obra ni tinaco extra" },
+    { value: "2 años", label: "de garantía con instalación certificada" },
+  ],
+
+  problem: {
+    eyebrow: "El problema",
+    title: "Nadie tira el agua a propósito, se tira esperando",
+    body: "En una instalación normal, el agua caliente vive en el calentador y la tubería está llena de agua fría. Al abrir la llave, esa agua fría se va entera al drenaje antes de que llegue la caliente. Pasa en cada ducha, cada día, en cada baño de la casa.",
     items: [
       {
-        title: "Gastas menos",
-        body: "El agua tratada regresa al ciclo de la casa o del negocio, así que compras menos y pagas menos cada mes.",
+        title: "Se va limpia al drenaje",
+        body: "No es agua sucia ni usada. Es agua potable que ya pagaste y que nunca alcanzó a servir para nada.",
       },
       {
-        title: "No te quedas sin agua",
-        body: "Cuando la red falla o la pipa no llega, tu reserva tratada sigue disponible para lo que sí es urgente.",
+        title: "Y te cobra dos veces",
+        body: "La pagas en el recibo del agua y la vuelves a pagar en el tiempo que pasas parado esperando.",
       },
       {
-        title: "Cumples sin dolor",
-        body: "Documentamos calidad, descargas y mantenimiento, así que las revisiones dejan de ser un problema.",
+        title: "En temporada seca duele más",
+        body: "Donde el agua llega por tandeo o por pipa, cada litro que se va al drenaje es un litro que te falta después.",
       },
     ],
+  },
+
+  how: {
+    eyebrow: "Cómo funciona",
+    title: "Hydroloop es un hidro-retorno",
+    body: "Oprimes el botón, o lo activas desde tu celular. Una bomba interna de 12 V empuja el agua fría atrapada en el tubo de agua caliente de regreso al calentador, usando el tubo de agua fría. Cuando el agua caliente llega al termostato del equipo, la bomba se apaga sola. Abres la llave y sale caliente.",
+    steps: [
+      {
+        title: "Actívalo",
+        body: "Un botón en la pared, o la app si tienes el modelo WiFi, con horarios programados si así lo quieres.",
+      },
+      {
+        title: "El agua regresa",
+        body: "La bomba de 12 V manda el agua fría de vuelta al calentador por el tubo de agua fría. Ni una gota al drenaje.",
+      },
+      {
+        title: "El termostato corta",
+        body: "Al llegar el agua caliente al termostato de 40 grados, el equipo se apaga solo. No hay que estar pendiente.",
+      },
+      {
+        title: "Abres y sale caliente",
+        body: "Sin espera. Y si no hay agua caliente o hay aire en la línea, un temporizador de seguridad corta a los 15 minutos.",
+      },
+    ],
+    note: "Hydroloop no ahorra gas: el consumo de gas es el mismo. Ahorra agua, tiempo y dinero.",
+    diagramAlt: "Diagrama del funcionamiento de un hidro-retorno Hydroloop",
+    diagram: {
+      before: "Sin Hydroloop",
+      after: "Con Hydroloop",
+      heater: "Calentador",
+      shower: "Regadera",
+      drain: "Drenaje",
+      device: "Hydroloop",
+      hotLine: "Tubo de agua caliente",
+      coldLine: "Tubo de agua fría",
+      beforeCaption: "El agua fría atrapada en la tubería se va al drenaje hasta que llega la caliente.",
+      afterCaption: "La bomba regresa esa agua al calentador por el tubo de agua fría. Nada se tira.",
+    },
+  },
+
+  models: {
+    eyebrow: "Modelos",
+    title: "¿Cuál Hydroloop te toca?",
+    body: "Los tres dan la misma experiencia principal. La diferencia está en cómo lo activas y en cuánta tecnología quieres en tu baño.",
+    compare: "Comparar modelos",
+    soonBadge: "Próximamente",
+    from: "Desde",
+  },
+
+  savings: {
+    eyebrow: "Calculadora",
+    title: "Cuánta agua estás tirando en tu casa",
+    body: "Mueve los valores a tu realidad. Los números que traemos por default son los que Hydroloop publica: 7,300 litros y 18 horas al año por persona.",
+    fields: {
+      people: "Personas en casa",
+      uses: "Usos de agua caliente al día por persona",
+      liters: "Litros que se van esperando, por uso",
+      seconds: "Segundos que esperas, por uso",
+      price: "Precio del agua por metro cúbico",
+    },
+    results: {
+      liters: "Litros al año que se van al drenaje",
+      hours: "Horas al año esperando",
+      money: "Pesos al año en agua desperdiciada",
+      payback: "Meses para recuperar el equipo",
+      paybackNote: "Contra el precio del Hydroloop Manual, con estos valores.",
+      showers: "Equivale a",
+      showersUnit: "duchas completas de 8 minutos",
+    },
+    disclaimer:
+      "Es una estimación, no una promesa. El ahorro real depende de la distancia al calentador, del diámetro de la tubería y de tu tarifa de agua. El precio del agua por metro cúbico cambia en cada ciudad, cámbialo por el de tu recibo.",
+    cta: "Comprar Hydroloop",
+    perYear: "al año",
+  },
+
+  trust: {
+    eyebrow: "Por qué confiar",
+    title: "Lo que viene con tu equipo",
+    badges: [
+      { title: "Hecho en México", body: "Creación mexicana, ingeniería propia y soporte técnico en español." },
+      { title: "Garantía de 1 año", body: "Por defectos de fabricación en el equipo y el módulo de control. Hasta 2 años si lo instala nuestro personal certificado." },
+      { title: "Compra protegida", body: "Pago procesado por Stripe y Mercado Pago. Hydroloop nunca ve ni guarda los datos de tu tarjeta." },
+      { title: "Soporte técnico remoto", body: "Te acompañamos en la instalación y resolvemos dudas a distancia si tu plomero necesita ayuda." },
+      { title: "Envío a todo México", body: "En varias zonas el envío es gratis según nuestra red de distribución. Si no, lo cotizamos con tu código postal." },
+      { title: "Instalación certificada", body: "En zona norte y centro tenemos personal propio que lo instala y extiende la garantía." },
+    ],
+    paymentsTitle: "Formas de pago aceptadas",
+    paymentsNote: "Tarjeta de crédito y débito, Apple Pay, Google Pay, meses sin intereses, OXXO, SPEI y transferencia. En puntos de venta autorizados también en efectivo.",
+  },
+
+  reviews: {
+    eyebrow: "Opiniones",
+    title: "Lo que dicen quienes ya lo tienen",
+    of5: "de 5",
+    basedOn: "{n} opiniones",
+    recommend: "{percent}% lo recomienda",
+    verified: "Compra verificada",
+    installedBy: "Instalación certificada",
+    filterAll: "Todas",
+    filterStars: "{n} estrellas",
+    sortRecent: "Más recientes",
+    sortHelpful: "Más útiles",
+    sortHigh: "Mejor calificadas",
+    sortLow: "Peor calificadas",
+    empty: "Todavía no hay opiniones con ese filtro.",
+    helpful: "¿Te sirvió?",
+    helpfulCount: "{n} personas dicen que sí",
+    showMore: "Ver más opiniones",
+    showLess: "Ver menos",
+    write: "Escribir una opinión",
+    distribution: "Distribución",
+    placeholderNotice:
+      "Muestra de la sección de opiniones. Estas reseñas son de ejemplo y deben reemplazarse por opiniones reales de clientes antes de publicar el sitio.",
   },
 
   products: {
-    eyebrow: "Catálogo",
-    title: "Equipos que resuelven distinto tamaño de problema",
-    body: "Desde una casa hasta una planta. Si no sabes cuál te toca, lo definimos con una visita técnica.",
+    eyebrow: "Tienda",
+    title: "Compra tu Hydroloop",
+    body: "Precios en pesos mexicanos con IVA incluido. Envío a todo México y garantía de fábrica.",
     cta: "Ver detalle",
-    all: "Ver todo el catálogo",
+    all: "Ver todo",
     price: "Desde",
-    soldOut: "Bajo pedido",
+    soldOut: "Agotado",
     available: "Disponible",
-    quote: "Pedir cotización",
+    comingSoon: "Próximamente",
+    accessory: "Accesorio",
+    quote: "Pedir informes",
     addToCart: "Agregar al carrito",
     buyNow: "Comprar ahora",
     specsTitle: "Ficha técnica",
-    includesTitle: "Qué incluye",
-    backToProducts: "Volver al catálogo",
+    includesTitle: "Tu paquete incluye",
+    idealTitle: "Ideal para",
+    notifyTitle: "Avísame cuando salga",
+    galleryPrev: "Anterior",
+    galleryNext: "Siguiente",
+    galleryThumb: "Ver imagen {n}",
+    backToProducts: "Volver a la tienda",
+    sku: "SKU",
+    ivaIncluded: "IVA incluido",
     items: {
-      "producto-uno": {
-        name: "Hydroloop Casa",
-        tagline: "Reúso de agua gris para vivienda",
-        body: "Trata el agua de regadera y lavadora y la devuelve limpia para inodoros, riego y limpieza. Se instala en un fin de semana y no cambia la rutina de nadie.",
+      "hydroloop-manual": {
+        name: "Hydroloop® Manual",
+        tagline: "Activación simple y control directo",
+        body: "La opción más práctica: un botón en la pared y listo. Se activa cuando tú quieres, se apaga solo al llegar la temperatura. Viene en versión sin tapa con botón sencillo, para que le pongas la tapa que combine con los apagadores de tu casa.",
+        ideal: "Quien quiere ahorrar agua sin configurar nada.",
         specs: [
-          { label: "Capacidad", value: "600 litros por día" },
-          { label: "Instalación", value: "1 a 2 días" },
-          { label: "Consumo", value: "0.8 kWh por día" },
-          { label: "Garantía", value: "3 años" },
+          { label: "Activación", value: "Botón en pared" },
+          { label: "Bomba", value: "12 V, interna" },
+          { label: "Termostato", value: "40 grados, corte automático" },
+          { label: "Temporizador de seguridad", value: "15 minutos" },
+          { label: "Peso", value: "1.4 kg" },
+          { label: "Medidas del equipo", value: "11 x 7.5 x 13 cm" },
+          { label: "Medidas del empaque", value: "34 x 23 x 20 cm" },
+          { label: "Garantía", value: "1 año, 2 con instalación certificada" },
         ],
         includes: [
-          "Equipo y arranque en sitio",
-          "Filtros del primer año",
-          "Dos visitas de mantenimiento",
-          "Manual y capacitación de uso",
+          "Equipo Hydroloop® de hidro-retorno®",
+          "2 mangueras flexibles",
+          "Transformador",
+          "Cable de señal",
+          "Módulo de control con botón",
+          "Módulo de termostato de 40 grados",
+          "Laminador de flujo",
+          "Guía rápida y manual",
         ],
       },
-      "producto-dos": {
-        name: "Hydroloop Comercio",
-        tagline: "Tratamiento para restaurantes, hoteles y lavanderías",
-        body: "Volumen alto y operación continua. Diseñado para negocios donde parar el agua es parar la venta.",
+      "hydroloop-wifi": {
+        name: "Hydroloop® WiFi",
+        tagline: "Comodidad inteligente a tu medida",
+        body: "Todo lo del modelo Manual, más control desde el celular. Programa encendido por día y hora, o actívalo a distancia antes de llegar a casa. Funciona con Alexa, Google Assistant y SmartThings. Necesita señal de WiFi en el punto donde se instala.",
+        ideal: "Quien quiere que el agua caliente ya esté lista cuando llega al baño.",
         specs: [
-          { label: "Capacidad", value: "3,000 litros por día" },
-          { label: "Instalación", value: "3 a 5 días" },
-          { label: "Consumo", value: "2.4 kWh por día" },
-          { label: "Garantía", value: "5 años" },
+          { label: "Activación", value: "Botón, app o voz" },
+          { label: "Programación", value: "Por día y hora" },
+          { label: "Asistentes", value: "Alexa, Google Assistant, SmartThings" },
+          { label: "Requisito", value: "Señal WiFi en el punto de instalación" },
+          { label: "Bomba", value: "12 V, interna" },
+          { label: "Termostato", value: "40 grados, corte automático" },
+          { label: "Peso", value: "1.4 kg" },
+          { label: "Medidas del equipo", value: "11 x 7.5 x 13 cm" },
+          { label: "Garantía", value: "1 año, 2 con instalación certificada" },
         ],
         includes: [
-          "Diseño hidráulico a medida",
-          "Monitoreo de calidad mensual",
-          "Refacciones críticas en stock",
-          "Reporte para trámites y auditoría",
+          "Equipo Hydroloop® de hidro-retorno®",
+          "2 mangueras flexibles",
+          "Transformador",
+          "Cable de señal",
+          "Módulo de control con botón",
+          "Módulo de termostato de 40 grados",
+          "Laminador de flujo",
+          "Guía rápida y manual WiFi",
         ],
       },
-      "producto-tres": {
-        name: "Hydroloop Filtro",
-        tagline: "Punto de entrada para agua confiable",
-        body: "El primer paso si el problema es el sabor, el sedimento o la dureza. Se puede crecer después a un sistema de reúso completo.",
+      "kit-caja-de-instalacion": {
+        name: "Kit caja de instalación",
+        tagline: "Para cuando no hay espacio en la caja eléctrica",
+        body: "Solo lo necesitas si las instalaciones eléctricas de tu baño no tienen espacio para alojar el módulo de control adentro. Trae la chalupa de sobreponer con las medidas exactas y la tapa ciega perforada para el botón.",
+        ideal: "Baños donde la caja eléctrica ya viene llena.",
         specs: [
-          { label: "Capacidad", value: "1,200 litros por día" },
-          { label: "Instalación", value: "Mismo día" },
-          { label: "Consumo", value: "Sin energía eléctrica" },
-          { label: "Garantía", value: "2 años" },
+          { label: "Compatible con", value: "Hydroloop Manual y WiFi" },
+          { label: "Color", value: "Blanco" },
+          { label: "Contenido", value: "Chalupa de sobreponer y tapa ciega" },
         ],
         includes: [
-          "Cartuchos de arranque",
-          "Prueba de agua antes y después",
-          "Instalación básica incluida",
+          "Chalupa de sobreponer de plástico blanco, a la medida del módulo de control",
+          "Tapa ciega blanca con perforación para el botón",
         ],
+      },
+      "hydroloop-bateria": {
+        name: "Hydroloop® Batería",
+        tagline: "Próximamente, mayor libertad de instalación",
+        body: "Una versión pensada para espacios donde no hay conexión directa a la corriente. Batería recargable y encendido manual con botón, para instalarlo prácticamente en cualquier baño sin trabajo eléctrico.",
+        ideal: "Baños sin toma de corriente cerca.",
+        specs: [
+          { label: "Activación", value: "Botón" },
+          { label: "Energía", value: "Batería recargable" },
+          { label: "Disponibilidad", value: "Próximamente" },
+        ],
+        includes: ["Por confirmar cuando salga a la venta"],
       },
     },
   },
 
-  process: {
-    eyebrow: "Cómo trabajamos",
-    title: "De la visita al agua corriendo",
-    steps: [
+  faq: {
+    eyebrow: "Preguntas frecuentes",
+    title: "Lo que todos preguntan antes de comprar",
+    items: [
       {
-        title: "Diagnóstico",
-        body: "Vamos al sitio, medimos consumo, presión y calidad, y te decimos qué se puede recuperar de verdad.",
+        q: "¿Necesito un equipo por cada baño?",
+        a: "Depende de tu instalación. Si los servicios están en línea, puede bastar un equipo en el último punto, siempre que los ramales secundarios sean cortos. Si la instalación es en rama, donde cada servicio recibe agua por su propio ramal, cada punto que quiera agua caliente instantánea necesita su equipo. Un plomero puede determinarlo, o nuestro soporte técnico te asesora a distancia.",
       },
       {
-        title: "Propuesta",
-        body: "Un equipo, un precio y un tiempo de instalación. Sin letras chiquitas ni extras que aparecen después.",
+        q: "¿Con qué calentadores es compatible?",
+        a: "Con cualquiera. En calentadores instantáneos de alto flujo puede que necesites apoyo de una bomba presurizadora de 1/6 de caballo para garantizar el encendido. No aplica en todos los casos: lo recomendable es instalar primero y evaluar.",
       },
       {
-        title: "Instalación",
-        body: "Nuestro equipo lo monta, lo arranca y le enseña a usarlo a quien lo va a operar.",
+        q: "¿Ahorra gas?",
+        a: "No. El consumo de gas es el mismo. Lo que ahorra es agua, tiempo y dinero.",
       },
       {
-        title: "Mantenimiento",
-        body: "Visitas programadas, filtros a tiempo y soporte cuando algo se sale de rango.",
+        q: "¿Manual o WiFi?",
+        a: "El Manual es para quien quiere simplicidad: un clic y el sistema se apaga solo al llegar la temperatura. El WiFi es para quien quiere programar encendidos por día y hora y operarlo desde el celular, incluso a distancia. Para el WiFi necesitas buena señal de internet donde se instala el equipo.",
+      },
+      {
+        q: "¿Existen equipos similares?",
+        a: "Similares sí, iguales no. El propósito es el mismo pero lo resuelven de otra manera, casi siempre más caro por ser importado y más complejo de instalar.",
+      },
+      {
+        q: "¿Hacen envíos a cualquier lugar?",
+        a: "Sí. En algunos casos el envío es gratis según nuestra red de distribución y tu ubicación. Si no aplica, lo cotizamos con tu código postal.",
+      },
+      {
+        q: "¿Cuáles son las formas de pago?",
+        a: "Tarjeta de crédito o débito, Apple Pay, Google Pay, meses sin intereses, OXXO, SPEI y transferencia bancaria. En puntos de venta autorizados también en efectivo.",
+      },
+      {
+        q: "¿Qué cubre la garantía?",
+        a: "Un año por defectos de fabricación en el equipo de recirculación y el módulo de control, con comprobante de compra. Sube a dos años cuando lo instala nuestro personal técnico certificado, y en ese caso también cubre la instalación. No cubre instalación incorrecta, fallas eléctricas o hidráulicas del inmueble, variaciones bruscas de presión, golpes, intervención no autorizada ni accesorios que no fabricamos.",
       },
     ],
+    more: "Ver todas las preguntas",
   },
 
-  cta: {
-    title: "¿Cuánta agua estás tirando hoy?",
-    body: "Cuéntanos de tu casa o de tu operación y te decimos qué se puede recuperar y en cuánto tiempo se paga.",
-    button: "Cotiza tu sistema",
-    secondary: "Escríbenos por WhatsApp",
+  coverage: {
+    eyebrow: "Instalación",
+    title: "Dónde instalamos con personal propio",
+    body: "En estas zonas nuestro equipo certificado hace la instalación y tu garantía sube a dos años. Si no ves tu ciudad, escríbenos: revisamos tu ubicación y buscamos cómo atenderte.",
+    zones: { norte: "Zona norte", centro: "Zona centro" },
+    cta: "Preguntar por mi zona",
   },
 
-  about: {
-    eyebrow: "Nosotros",
-    title: "Hydroloop existe porque el agua se acabó siendo un lujo",
-    lead: "Somos un equipo de ingeniería y servicio dedicado a que el agua que ya entró a un edificio no se vaya al drenaje a la primera.",
-    body: [
-      "TODO: historia real de la empresa, año de arranque, fundadores y por qué empezaron.",
-      "TODO: capacidades técnicas, certificaciones y tipo de proyectos entregados.",
-      "TODO: a quién le venden hoy y en qué ciudades operan.",
-    ],
-    valuesTitle: "En qué no cedemos",
-    values: [
-      { title: "Medimos antes de vender", body: "Si el ahorro no da, lo decimos. Un sistema mal dimensionado es un gasto, no una inversión." },
-      { title: "Servicio de verdad", body: "El equipo instalado sin mantenimiento se convierte en chatarra cara. Nosotros regresamos." },
-      { title: "Números claros", body: "Consumo, ahorro y retorno en una hoja que cualquiera puede revisar." },
-    ],
-  },
-
-  contact: {
-    eyebrow: "Contacto",
-    title: "Cuéntanos qué necesitas",
-    body: "Respondemos en menos de 24 horas hábiles. Si es urgente, escríbenos por WhatsApp.",
-    form: {
-      name: "Nombre",
-      email: "Correo",
-      phone: "Teléfono",
-      type: "Tipo de proyecto",
-      typeOptions: ["Casa", "Comercio", "Industria", "Otro"],
-      message: "Cuéntanos del proyecto",
-      submit: "Enviar",
-      sending: "Enviando",
-      error: "No se pudo enviar. Inténtalo otra vez o escríbenos directo al correo.",
-      required: "Obligatorio",
-    },
-    directTitle: "Directo",
-    hoursTitle: "Horario",
-    hours: "Lunes a viernes, 9:00 a 18:00",
-  },
-
-  thankYou: {
-    title: "Gracias, ya lo tenemos",
-    body: "Te contactamos en menos de 24 horas hábiles. Mientras tanto, puedes ver el catálogo.",
-    cta: "Ver productos",
+  distributors: {
+    eyebrow: "Distribuidores",
+    title: "Puntos de venta",
+    body: "Hydroloop también se vende en ferreterías y casas de materiales del país. Si prefieres verlo en persona o pagar en efectivo, busca el punto más cercano.",
   },
 
   cart: {
@@ -310,8 +463,73 @@ export const es = {
     retry: "Intentar otra vez",
   },
 
+  blog: {
+    eyebrow: "Blog",
+    title: "Todo sobre el agua que se va sin usarse",
+    body: "Cómo funciona un hidro-retorno, cuánta agua se tira de verdad, qué revisar antes de instalar y cómo se traduce todo eso en tu recibo.",
+    readMore: "Leer",
+    readingTime: "{n} min de lectura",
+    published: "Publicado el",
+    updated: "Actualizado el",
+    related: "Sigue leyendo",
+    backToBlog: "Volver al blog",
+    empty: "Todavía no hay artículos publicados.",
+    cta: "Comprar Hydroloop",
+    ctaBody: "Deja de pagar el agua que se va al drenaje esperando la caliente.",
+  },
+
+  about: {
+    eyebrow: "Nosotros",
+    title: "Deja tu gota de agua en el mundo",
+    lead: "Hydroloop es un equipo de profesionales multidisciplinarios que unió fuerzas por una causa que nos trasciende: proteger el agua y garantizar que siga disponible para las próximas generaciones.",
+    body: [
+      "Trabajamos con pasión, compromiso e innovación constante para desarrollar tecnología que ahorre miles de litros de agua en el hogar, sin renunciar al confort ni a la eficiencia.",
+      "Cada proyecto nace con una visión sostenible, diseñada para transformar el consumo diario en una acción consciente y responsable.",
+      "En Hydroloop no solo creamos tecnología: impulsamos un cambio real en la forma en que cuidamos uno de los recursos más valiosos del planeta.",
+    ],
+    missionTitle: "Nuestra misión",
+    mission:
+      "Desarrollar soluciones tecnológicas que permitan a las personas optimizar el uso del agua desde la comodidad de su casa, promoviendo un consumo más consciente, eficiente y responsable.",
+    visionTitle: "Nuestra visión",
+    vision:
+      "Ser un referente en tecnología inteligente para el cuidado del agua, con presencia global y un impacto medible en cada hogar donde estamos.",
+    valuesTitle: "En qué no cedemos",
+    values: [
+      { title: "Ingeniería propia", body: "Creación mexicana, con departamento de ingeniería que atiende cada adaptación." },
+      { title: "Instalación acompañada", body: "Soporte técnico remoto y personal certificado en las zonas donde operamos." },
+      { title: "Números honestos", body: "Publicamos el ahorro estimado y las condiciones en las que aplica, sin promesas infladas." },
+    ],
+  },
+
+  contact: {
+    eyebrow: "Contacto",
+    title: "Cuéntanos de tu instalación",
+    body: "Si no sabes cuántos equipos necesitas o qué tipo de instalación tienes, escríbenos. Respondemos en menos de 24 horas hábiles.",
+    form: {
+      name: "Nombre",
+      email: "Correo",
+      phone: "Teléfono",
+      type: "Tipo de proyecto",
+      typeOptions: ["Casa", "Departamento", "Hotel o restaurante", "Obra nueva", "Distribuidor", "Otro"],
+      message: "Cuéntanos del proyecto",
+      submit: "Enviar",
+      sending: "Enviando",
+      error: "No se pudo enviar. Inténtalo otra vez o escríbenos directo al correo.",
+      required: "Obligatorio",
+    },
+    directTitle: "Directo",
+    hoursTitle: "Horario",
+    hours: "Lunes a viernes, 9:00 a 18:00",
+  },
+
+  thankYou: {
+    title: "Gracias, ya lo tenemos",
+    body: "Te contactamos en menos de 24 horas hábiles. Mientras tanto, puedes ver los modelos.",
+    cta: "Ver productos",
+  },
+
   footer: {
-    tagline: "Sistemas de tratamiento y reúso de agua.",
+    tagline: "Hidro-retorno mexicano. Agua caliente en el momento justo, sin desperdicio.",
     nav: "Navegación",
     contact: "Contacto",
     social: "Redes",

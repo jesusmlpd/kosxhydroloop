@@ -38,6 +38,13 @@ cobra nada y lo avisa en pantalla. En produccion responde un error claro.
 - `app/api/webhooks`: confirmacion de Stripe y Mercado Pago
 - `app/api/contact`: formulario, sale por FormSubmit
 
+## Contenido
+El contenido de producto es real y viene de hydroloop.com.mx (WooCommerce Store
+API + paginas de WordPress), scrapeado el 2026-08-26. Las imagenes estan en
+`public/media`, procesadas a webp desde su libreria de medios. Las resenas de
+`lib/reviews.ts` son de muestra y estan marcadas como tal.
+
 ## Estado
-Build generico con contenido de arranque. Lo que falta esta listado en
-[PLACEHOLDERS.md](PLACEHOLDERS.md).
+Tienda funcional, PDP completo (galeria, calculadora de ahorro, opiniones, sellos
+de confianza y formas de pago), home animado y blog con cinco articulos. Lo que
+falta esta listado en [PLACEHOLDERS.md](PLACEHOLDERS.md).

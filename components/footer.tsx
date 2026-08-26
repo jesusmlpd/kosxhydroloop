@@ -22,6 +22,7 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dict }) {
           <ul className="mt-3 space-y-2 text-[15px]">
             {[
               { href: localePath(locale, "/products"), label: dict.nav.products },
+              { href: localePath(locale, "/blog"), label: dict.nav.blog },
               { href: localePath(locale, "/about"), label: dict.nav.about },
               { href: localePath(locale, "/contact"), label: dict.nav.contact },
             ].map((link) => (

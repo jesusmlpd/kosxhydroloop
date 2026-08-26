@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/lib/i18n";
+import { posts } from "@/lib/blog";
 import { products, site } from "@/lib/site";
 
-const routes = ["", "/products", "/about", "/contact"];
+const routes = ["", "/products", "/blog", "/about", "/contact"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date("2026-08-26");
@@ -30,5 +31,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   );
 
-  return [...pages, ...productPages];
+  const postPages = locales.flatMap((locale) =>
+    posts.map((post) => ({
+      url: `${site.url}/${locale}/blog/${post.slug}`,
+      lastModified: new Date(post.date),
+      changeFrequency: "yearly" as const,
+      priority: 0.6,
+    })),
+  );
+
+  return [...pages, ...productPages, ...postPages];
 }

@@ -6,6 +6,7 @@ import { getDict } from "@/lib/dict";
 import { isLocale } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
 import { products } from "@/lib/site";
+import { PaymentBadges } from "@/components/payment-badges";
 
 export async function generateMetadata({
   params,
@@ -35,7 +36,10 @@ export default async function ProductsPage({
           <h1 className="mt-3 max-w-3xl text-[clamp(32px,5vw,56px)]">{dict.products.title}</h1>
           <p className="lede mt-5 max-w-2xl">{dict.products.body}</p>
         </Reveal>
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <div className="mt-6">
+          <PaymentBadges />
+        </div>
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
           {products.map((product, index) => (
             <Reveal key={product.id} delay={index * 70}>
               <ProductCard product={product} locale={locale} dict={dict} />
