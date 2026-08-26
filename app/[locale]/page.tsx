@@ -30,7 +30,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="relative overflow-hidden">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-[520px] plate"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[560px] plate-fade"
         />
         <div className="shell relative pb-16 pt-20 md:pb-24 md:pt-28">
           <Reveal>

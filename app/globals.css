@@ -50,6 +50,9 @@
   --btn-bg: #43c6c0;
   --btn-fg: #04141b;
 
+  /* En oscuro el gradiente arranca en aqua: el azul profundo del modo claro
+     se lee casi negro contra el fondo. */
+  --grad: linear-gradient(96deg, #7fdcd6 0%, #43c6c0 45%, #10879b 100%);
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 18px 40px -28px rgb(0 0 0 / 0.7);
   --shadow-lift: 0 2px 6px rgb(0 0 0 / 0.45), 0 30px 60px -30px rgb(67 198 192 / 0.3);
   --plate: linear-gradient(180deg, #071d26 0%, #0a2029 100%);
@@ -232,6 +235,11 @@
 
   .plate {
     background: var(--plate);
+  }
+
+  /* Banda del hero: se desvanece hacia el fondo para que no quede costura. */
+  .plate-fade {
+    background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 100%);
   }
 
   .rule {
