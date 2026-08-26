@@ -168,6 +168,7 @@
   }
 
   .btn {
+    user-select: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -189,6 +190,19 @@
   }
   .btn:active {
     transform: translateY(0) scale(0.98);
+  }
+  .btn:disabled {
+    transform: none;
+    box-shadow: none;
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  /* Variante chica para acciones secundarias (quick add, order bumps). */
+  .btn-sm {
+    min-height: 42px;
+    padding: 9px 18px;
+    font-size: 13.5px;
   }
 
   .btn-primary {

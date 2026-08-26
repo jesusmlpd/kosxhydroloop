@@ -71,7 +71,7 @@ export function AddToCart({
           type="button"
           disabled={soldOut}
           onClick={() => addAll({ open: true })}
-          className="btn btn-primary disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn btn-primary flex-1 sm:flex-none"
         >
           {dict.products.addToCart}
         </button>
@@ -85,7 +85,7 @@ export function AddToCart({
               cart.close();
               router.push(checkoutHref);
             }}
-            className="btn btn-ghost"
+            className="btn btn-ghost w-full sm:w-auto"
           >
             {dict.products.buyNow}
           </button>

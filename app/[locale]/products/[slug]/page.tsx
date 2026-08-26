@@ -108,11 +108,14 @@ export default async function ProductPage({ params }: { params: Params }) {
           </nav>
 
           <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-start">
-            <Reveal>
+            {/* min-w-0: sin esto, el min-content de los thumbnails de la
+                galeria (12 x 64px) impide que la columna encoja en movil y
+                toda la pagina desborda a ~856px. */}
+            <Reveal className="min-w-0">
               <ProductGallery images={product.gallery} alt={copy.name} dict={dict.products} />
             </Reveal>
 
-            <Reveal delay={80}>
+            <Reveal delay={80} className="min-w-0">
               <div className="lg:sticky lg:top-[92px]">
                 <div className="flex flex-wrap items-center gap-2">
                   {product.comingSoon ? (

@@ -81,8 +81,10 @@ export function HowDiagram({ dict }: { dict: Dict["how"] }) {
           <span className="cursor-bubble" style={{ width: 5, height: 5, ["--bx" as string]: "-9px", animationDelay: "0.6s" }} />
           <span className="cursor-bubble" style={{ width: 4, height: 4, ["--bx" as string]: "4px", animationDelay: "1.2s" }} />
         </div>
-        <div style={{ background: `linear-gradient(160deg, ${NAVY_1}, ${NAVY_2})` }}>
-          <svg viewBox="0 0 900 560" className="w-full" role="img" aria-label={dict.diagramAlt}>
+        {/* En movil el diagrama conserva su tamano legible y se recorre con
+            scroll horizontal, en vez de encogerse a texto ilegible. */}
+        <div className="overflow-x-auto" style={{ background: `linear-gradient(160deg, ${NAVY_1}, ${NAVY_2})` }}>
+          <svg viewBox="0 0 900 560" className="w-full min-w-[620px]" role="img" aria-label={dict.diagramAlt}>
             <defs>
               <radialGradient id="devGlow" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stopColor="#43c6c0" stopOpacity="0.55" />

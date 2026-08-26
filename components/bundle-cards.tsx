@@ -26,7 +26,7 @@ export function BundleCards({ locale, dict }: { locale: Locale; dict: Dict }) {
         const copy = dict.products.items[product.slug as keyof Dict["products"]["items"]];
         const kitCopy = dict.products.items["kit-caja-de-instalacion"];
         return (
-          <article key={product.id} className="card flex items-center gap-5 p-6">
+          <article key={product.id} className="card flex flex-col items-start gap-5 p-6 sm:flex-row sm:items-center">
             <div className="relative flex h-24 w-28 shrink-0 items-end">
               <span className="relative block h-24 w-20">
                 <Image src={product.image} alt={copy.name} fill sizes="80px" className="object-contain" />
@@ -57,8 +57,7 @@ export function BundleCards({ locale, dict }: { locale: Locale; dict: Dict }) {
                   cart.add(kit.id, 1, { open: false });
                   cart.open();
                 }}
-                className="btn btn-primary mt-3 px-5 py-2.5 text-[14px]"
-                style={{ minHeight: 42 }}
+                className="btn btn-primary btn-sm mt-3"
               >
                 {dict.bundles.add}
               </button>

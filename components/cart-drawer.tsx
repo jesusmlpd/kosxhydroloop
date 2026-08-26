@@ -199,7 +199,7 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
                             <button
                               type="button"
                               onClick={() => cart.add(addon.id, 1, { open: true })}
-                              className="btn btn-ghost shrink-0 px-4 py-2 text-[13px]"
+                              className="btn btn-ghost btn-sm shrink-0"
                             >
                               {dict.cart.addonAdd}
                             </button>

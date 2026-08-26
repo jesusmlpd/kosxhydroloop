@@ -11,6 +11,9 @@ import { whatsappUrl } from "@/lib/site";
 export function WhatsappFab({ label }: { label: string }) {
   const pathname = usePathname() ?? "";
   if (/\/(checkout|order)(\/|$)/.test(pathname)) return null;
+  // En el PDP movil manda la barra fija de compra (que ya trae WhatsApp en el
+  // panel): ahi el FAB se esconde en movil para no encimarse.
+  const onPdp = /\/products\/[^/]+$/.test(pathname);
 
   return (
     <a
@@ -19,7 +22,9 @@ export function WhatsappFab({ label }: { label: string }) {
       rel="noreferrer"
       aria-label={label}
       title={label}
-      className="fixed bottom-4 right-4 z-40 grid h-14 w-14 place-items-center rounded-full bg-[#25d366] text-white shadow-[0_14px_40px_-8px_rgba(37,211,102,0.7)] transition-transform hover:scale-105 active:scale-95 max-md:bottom-24"
+      className={`fixed bottom-4 right-4 z-40 h-14 w-14 place-items-center rounded-full bg-[#25d366] text-white shadow-[0_14px_40px_-8px_rgba(37,211,102,0.7)] transition-transform hover:scale-105 active:scale-95 ${
+        onPdp ? "hidden md:grid" : "grid"
+      }`}
     >
       <SocialIcon id="whatsapp" size={27} />
     </a>

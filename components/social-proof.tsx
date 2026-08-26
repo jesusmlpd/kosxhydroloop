@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { commerce } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
@@ -71,6 +72,11 @@ export function PurchaseToasts({ dict, productNames }: { dict: Dict["socialProof
   const [toast, setToast] = useState<{ name: string; city: string; product: string; ago: number } | null>(null);
   const shown = useRef(0);
   const muted = useRef(false);
+  const pathname = usePathname() ?? "";
+  // En el PDP movil la barra fija ocupa el fondo: el toast sube. En checkout
+  // no hay teatro: cero distracciones junto al pago.
+  const onPdp = /\/products\/[^/]+$/.test(pathname);
+  const onCheckout = /\/(checkout|order)(\/|$)/.test(pathname);
 
   useEffect(() => {
     if (!commerce.urgency.socialProof) return;
@@ -102,12 +108,14 @@ export function PurchaseToasts({ dict, productNames }: { dict: Dict["socialProof
     };
   }, [productNames]);
 
-  if (!toast) return null;
+  if (!toast || onCheckout) return null;
 
   return (
     <div
       role="status"
-      className="fixed bottom-4 left-4 z-40 flex max-w-[320px] items-start gap-3 rounded-2xl border border-line bg-paper p-4 shadow-[var(--shadow-lift)] max-md:bottom-24"
+      className={`fixed bottom-4 left-4 z-40 flex max-w-[320px] items-start gap-3 rounded-2xl border border-line bg-paper p-4 shadow-[var(--shadow-lift)] ${
+        onPdp ? "max-md:bottom-24" : ""
+      }`}
     >
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-foam text-deep dark:bg-[#0d3a45] dark:text-aqua">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">

@@ -14,7 +14,7 @@ export function CartButton({ dict }: { dict: Dict["cart"] }) {
       onClick={() => cart.open()}
       aria-label={dict.open}
       title={dict.open}
-      className="relative grid h-9 w-9 place-items-center rounded-full border border-line text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+      className="relative grid h-10 w-10 place-items-center rounded-full border border-line text-ink-2 transition-colors hover:border-line-strong hover:text-ink md:h-9 md:w-9"
     >
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path

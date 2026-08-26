@@ -121,7 +121,7 @@ export function SavingsCalculator({ locale, dict }: { locale: Locale; dict: Dict
               type="button"
               onClick={() => setValues((prev) => ({ ...prev, people: preset.people, uses: preset.uses }))}
               aria-pressed={index === activePreset}
-              className={`rounded-full border px-4 py-1.5 font-display text-[13px] font-semibold transition-colors ${
+              className={`min-h-[40px] rounded-full border px-4 py-2 font-display text-[13px] font-semibold transition-colors ${
                 index === activePreset
                   ? "border-teal bg-foam text-deep dark:bg-[#0d3a45] dark:text-aqua"
                   : "border-line text-ink-2 hover:border-line-strong hover:text-ink"

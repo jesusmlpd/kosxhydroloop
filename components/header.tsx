@@ -70,7 +70,7 @@ export function Header({ locale, dict }: { locale: Locale; dict: Dict }) {
             onClick={() => setOpen((value) => !value)}
             aria-expanded={open}
             aria-label={open ? dict.nav.close : dict.nav.menu}
-            className="grid h-9 w-9 place-items-center rounded-full border border-line text-ink lg:hidden"
+            className="grid h-10 w-10 place-items-center rounded-full border border-line text-ink md:h-9 md:w-9 lg:hidden"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               {open ? (

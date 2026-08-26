@@ -15,7 +15,7 @@ export function QuickAdd({ product, dict }: { product: Product; dict: Dict }) {
       aria-label={`${dict.products.addToCart}: ${
         dict.products.items[product.slug as keyof Dict["products"]["items"]].name
       }`}
-      className="btn btn-primary shrink-0 px-4 py-2 text-[13px]" style={{ minHeight: 42 }}
+      className="btn btn-primary btn-sm shrink-0"
     >
       {dict.products.addToCart}
     </button>

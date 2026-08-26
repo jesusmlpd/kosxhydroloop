@@ -81,7 +81,7 @@ export function ReviewsBlock({
                     type="button"
                     onClick={() => setStars(active ? null : value)}
                     aria-pressed={active}
-                    className={`flex w-full items-center gap-2 rounded-lg px-1.5 py-1 text-left transition-colors ${
+                    className={`flex w-full items-center gap-2 rounded-lg px-1.5 py-1.5 text-left transition-colors ${
                       active ? "bg-mist" : "hover:bg-mist"
                     }`}
                   >
@@ -120,7 +120,7 @@ export function ReviewsBlock({
                 type="button"
                 onClick={() => setSort(option.id)}
                 aria-pressed={sort === option.id}
-                className={`rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
+                className={`min-h-[40px] rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors ${
                   sort === option.id
                     ? "border-teal bg-foam text-deep dark:bg-[#0d3a45] dark:text-aqua"
                     : "border-line text-ink-2 hover:border-line-strong hover:text-ink"

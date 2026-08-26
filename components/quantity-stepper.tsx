@@ -21,7 +21,7 @@ export function QuantityStepper({
         type="button"
         onClick={() => onChange(value - 1)}
         aria-label="-"
-        className="grid h-9 w-9 place-items-center rounded-l-full text-ink-2 transition-colors hover:text-ink disabled:opacity-40"
+        className="grid h-11 w-11 place-items-center rounded-l-full text-ink-2 transition-colors hover:text-ink disabled:opacity-40 md:h-9 md:w-9"
         disabled={value <= 1}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
@@ -35,7 +35,7 @@ export function QuantityStepper({
         type="button"
         onClick={() => onChange(value + 1)}
         aria-label="+"
-        className="grid h-9 w-9 place-items-center rounded-r-full text-ink-2 transition-colors hover:text-ink disabled:opacity-40"
+        className="grid h-11 w-11 place-items-center rounded-r-full text-ink-2 transition-colors hover:text-ink disabled:opacity-40 md:h-9 md:w-9"
         disabled={value >= max}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
