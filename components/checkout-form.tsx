@@ -7,12 +7,12 @@ import { FreeShippingBar } from "@/components/free-shipping-bar";
 import { PaymentBadges } from "@/components/payment-badges";
 import { OfferCountdown } from "@/components/offer-countdown";
 import { ReservationTimer } from "@/components/reservation-timer";
-import { useCart } from "@/lib/cart";
+import { cart, useCart } from "@/lib/cart";
 import { useNow } from "@/lib/clock";
 import { formatMoney } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
 import { localePath, type Locale } from "@/lib/i18n";
-import { findProductById } from "@/lib/site";
+import { findProduct, findProductById } from "@/lib/site";
 
 type Method = "stripe" | "mercadopago" | "manual";
 
@@ -193,6 +193,38 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
             );
           })}
         </ul>
+
+        {(() => {
+          // Order bump clasico: el kit, una linea, un clic, antes de pagar.
+          const kit = findProduct("kit-caja-de-instalacion");
+          const hasUnit = totals.lines.some((line) => {
+            const item = findProductById(line.id);
+            return item && !item.accessory;
+          });
+          const inCart = kit ? totals.lines.some((line) => line.id === kit.id) : true;
+          if (!kit || !hasUnit || inCart || kit.stock <= 0) return null;
+          return (
+            <div className="mt-4 flex items-center gap-3 rounded-2xl border border-dashed border-line-strong bg-mist p-3.5">
+              <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-line bg-white">
+                <Image src={kit.image} alt="" fill sizes="44px" className="object-contain p-0.5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[13.5px] font-semibold leading-tight">{dict.pdp.bundleAdd}</p>
+                <p className="text-[12.5px] text-ink-3">
+                  +{formatMoney(kit.priceCents, locale, kit.currency)} · {dict.pdp.bundleHint}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => cart.add(kit.id, 1, { open: false })}
+                className="btn btn-ghost shrink-0 px-4 py-2 text-[13px]"
+                style={{ minHeight: 40 }}
+              >
+                {dict.cart.addonAdd}
+              </button>
+            </div>
+          );
+        })()}
 
         <div className="mt-4 border-t border-line pt-4">
           <FreeShippingBar

@@ -9,12 +9,15 @@ import { OfferCountdown } from "@/components/offer-countdown";
 import { PaymentBadges } from "@/components/payment-badges";
 import { ProductCard } from "@/components/product-card";
 import { ProductGallery } from "@/components/product-gallery";
+import { RecentlyViewed } from "@/components/recently-viewed";
 import { Reveal } from "@/components/reveal";
 import { ReviewsBlock } from "@/components/reviews-block";
 import { SavingsCalculator } from "@/components/savings-calculator";
 import { Stars } from "@/components/stars";
 import { StickyBuyBar } from "@/components/sticky-buy-bar";
+import { SoldBadge, StockBar, ViewersNow } from "@/components/social-proof";
 import { StockBadge } from "@/components/stock-badge";
+import { VariantSwitcher } from "@/components/variant-switcher";
 import { VideoEmbed } from "@/components/video-embed";
 import { commerce, formatMoney } from "@/lib/commerce";
 import { getDict, type Dict } from "@/lib/dict";
@@ -149,6 +152,13 @@ export default async function ProductPage({ params }: { params: Params }) {
                   </a>
                 ) : null}
 
+                <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5">
+                  <ViewersNow slug={product.slug} dict={dict.socialProof} />
+                  <SoldBadge sold={product.soldMonthly} dict={dict.socialProof} />
+                </div>
+
+                {!product.comingSoon ? <VariantSwitcher current={slug} locale={locale} dict={dict} /> : null}
+
                 {!product.comingSoon ? (
                   <>
                     <div className="mt-6 flex flex-wrap items-baseline gap-3">
@@ -171,6 +181,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                     <div className="mt-2">
                       <OfferCountdown dict={dict.urgency} variant="inline" />
                     </div>
+                    <StockBar stock={product.stock} dict={dict.socialProof} />
 
                     <p className="mt-5 text-[16px] text-ink-2">{copy.body}</p>
 
@@ -490,6 +501,8 @@ export default async function ProductPage({ params }: { params: Params }) {
           </div>
         </section>
       ) : null}
+      <RecentlyViewed current={slug} locale={locale} dict={dict} />
+
       <StickyBuyBar product={product} name={copy.name} locale={locale} dict={dict} />
       {/* Colchon para que la barra fija no tape el final de la pagina en movil */}
       <div aria-hidden="true" className="h-20 md:hidden" />

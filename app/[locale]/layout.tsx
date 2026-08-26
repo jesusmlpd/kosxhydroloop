@@ -6,7 +6,9 @@ import { CartDrawer } from "@/components/cart-drawer";
 import { CartFromUrl } from "@/components/cart-from-url";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { OfferCountdown } from "@/components/offer-countdown";
+import { AnnouncementBar } from "@/components/announcement-bar";
+import { PurchaseToasts } from "@/components/social-proof";
+import { WhatsappFab } from "@/components/whatsapp-fab";
 import { ThemeScript } from "@/components/theme-script";
 import { getDict } from "@/lib/dict";
 import { isLocale, locales } from "@/lib/i18n";
@@ -119,11 +121,20 @@ export default async function LocaleLayout({
         </a>
         <Header locale={locale} dict={dict} />
         <main id="main" className="flex-1 pt-[68px]">
-          <OfferCountdown dict={dict.urgency} />
+          <AnnouncementBar locale={locale} dict={dict} />
           {children}
         </main>
         <Footer locale={locale} dict={dict} />
         <CartDrawer locale={locale} dict={dict} />
+        <WhatsappFab label={dict.contact.whatsappCta} />
+        <PurchaseToasts
+          dict={dict.socialProof}
+          productNames={[
+            dict.products.items["hydroloop-manual"].name,
+            dict.products.items["hydroloop-wifi"].name,
+            dict.products.items["kit-caja-de-instalacion"].name,
+          ]}
+        />
         {/* useSearchParams necesita Suspense para no volver dinamica cada pagina. */}
         <Suspense fallback={null}>
           <CartFromUrl />

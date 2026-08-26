@@ -33,7 +33,9 @@ export const commerce = {
   },
 
   /** Debajo de este inventario se avisa que queda poco. */
-  lowStockThreshold: 5,
+  lowStockThreshold: 10,
+  /** Debajo de este inventario se muestra la barra de disponibilidad. */
+  stockBarThreshold: 15,
 
   /** Interruptores de cada mecanismo de urgencia. */
   urgency: {
@@ -41,6 +43,24 @@ export const commerce = {
     cartReservation: true,
     lowStock: true,
     freeShippingBar: true,
+    socialProof: true,
+  },
+
+  /**
+   * Prueba social SIMULADA. Los "viendo ahora" y los avisos de compra son
+   * cifras generadas, no telemetria real: el cliente lo pidio asi mientras
+   * no exista analitica conectada. Cuando haya datos reales, este bloque es
+   * el unico lugar que hay que recablear, o poner urgency.socialProof en
+   * false y desaparece todo.
+   */
+  socialProof: {
+    /** Rango de "personas viendo ahora" por producto. */
+    viewersMin: 3,
+    viewersMax: 9,
+    /** Toasts de "alguien agrego al carrito": cadencia y tope por visita. */
+    toastFirstMs: 12000,
+    toastEveryMs: 28000,
+    toastMaxPerSession: 4,
   },
 
   /** Cupones extra al de la promo. El de la promo entra solo. */

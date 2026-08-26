@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { BundleCards } from "@/components/bundle-cards";
 import { ModelQuiz } from "@/components/model-quiz";
 import { ProductCard } from "@/components/product-card";
 import { Reveal } from "@/components/reveal";
@@ -46,6 +47,17 @@ export default async function ProductsPage({
               <ProductCard product={product} locale={locale} dict={dict} />
             </Reveal>
           ))}
+        </div>
+
+        <div className="mt-16">
+          <Reveal>
+            <p className="eyebrow">{dict.bundles.eyebrow}</p>
+            <h2 className="mt-3 max-w-2xl text-[clamp(24px,3.4vw,36px)]">{dict.bundles.title}</h2>
+            <p className="lede mt-3 max-w-xl">{dict.bundles.body}</p>
+          </Reveal>
+          <Reveal delay={70} className="mt-8">
+            <BundleCards locale={locale} dict={dict} />
+          </Reveal>
         </div>
 
         <div className="mt-16">

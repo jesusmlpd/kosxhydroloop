@@ -422,6 +422,36 @@ export const es = {
     restart: "Volver a empezar",
   },
 
+  socialProof: {
+    viewing: "{n} personas están viendo esto ahora",
+    sold: "{n} vendidos en los últimos 30 días",
+    stockBar: "Quedan {n} disponibles",
+    toast: "{name} de {city} agregó {product} al carrito",
+    toastAgo: "hace {n} min",
+    close: "Cerrar",
+  },
+
+  variants: {
+    title: "Elige tu modelo",
+  },
+
+  bundles: {
+    eyebrow: "Paquetes populares",
+    title: "Los que se van juntos al carrito",
+    body: "Un clic y el paquete completo queda en tu carrito.",
+    includes: "Incluye",
+    add: "Agregar paquete",
+  },
+
+  announcement: {
+    shipping: "Envío gratis en pedidos desde {amount}",
+    mx: "Hecho en México · Garantía de hasta 2 años",
+  },
+
+  recentlyViewed: {
+    title: "Vistos recientemente",
+  },
+
   compare: {
     eyebrow: "Comparativa",
     title: "¿Manual o WiFi?",

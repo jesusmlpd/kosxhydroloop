@@ -148,6 +148,8 @@ export type Product = {
   stock: number;
   /** false = no se puede comprar en linea (proximamente o solo cotizacion). */
   buyable: boolean;
+  /** Vendidos en los ultimos 30 dias. SIMULADO hasta conectar datos reales. */
+  soldMonthly: number;
   comingSoon: boolean;
   /** Accesorio: no es un equipo, se vende como complemento. */
   accessory: boolean;
@@ -167,10 +169,11 @@ export const products: Product[] = [
     id: "hl-manual",
     slug: "hydroloop-manual",
     sku: "HL-HYDROLOOP-MANU-11",
+    soldMonthly: 76,
     priceCents: 379900,
     compareAtCents: null,
     currency: "MXN",
-    stock: 40,
+    stock: 14,
     buyable: true,
     comingSoon: false,
     accessory: false,
@@ -195,10 +198,11 @@ export const products: Product[] = [
     id: "hl-wifi",
     slug: "hydroloop-wifi",
     sku: "HL-HYDROLOOP-WIFI-12",
+    soldMonthly: 58,
     priceCents: 399900,
     compareAtCents: null,
     currency: "MXN",
-    stock: 40,
+    stock: 9,
     buyable: true,
     comingSoon: false,
     accessory: false,
@@ -224,10 +228,11 @@ export const products: Product[] = [
     id: "hl-kit",
     slug: "kit-caja-de-instalacion",
     sku: "HL-ACCESORIOS-KIT-11",
+    soldMonthly: 41,
     priceCents: 13920,
     compareAtCents: null,
     currency: "MXN",
-    stock: 60,
+    stock: 26,
     buyable: true,
     comingSoon: false,
     accessory: true,
@@ -247,6 +252,7 @@ export const products: Product[] = [
     id: "hl-bateria",
     slug: "hydroloop-bateria",
     sku: "HL-HYDROLOOP-BAT",
+    soldMonthly: 0,
     // Sin precio publicado: el sitio actual dice "proximamente".
     priceCents: 0,
     compareAtCents: null,

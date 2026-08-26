@@ -421,6 +421,36 @@ export const en: Dict = {
     restart: "Start over",
   },
 
+  socialProof: {
+    viewing: "{n} people are looking at this right now",
+    sold: "{n} sold in the last 30 days",
+    stockBar: "{n} left in stock",
+    toast: "{name} from {city} added {product} to their cart",
+    toastAgo: "{n} min ago",
+    close: "Close",
+  },
+
+  variants: {
+    title: "Pick your model",
+  },
+
+  bundles: {
+    eyebrow: "Popular bundles",
+    title: "The ones that leave together",
+    body: "One click and the full bundle lands in your cart.",
+    includes: "Includes",
+    add: "Add bundle",
+  },
+
+  announcement: {
+    shipping: "Free shipping on orders over {amount}",
+    mx: "Made in Mexico · Warranty up to 2 years",
+  },
+
+  recentlyViewed: {
+    title: "Recently viewed",
+  },
+
   compare: {
     eyebrow: "Comparison",
     title: "Manual or WiFi?",

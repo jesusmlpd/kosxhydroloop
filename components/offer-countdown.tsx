@@ -15,7 +15,7 @@ export function OfferCountdown({
   variant = "banner",
 }: {
   dict: Dict["urgency"];
-  variant?: "banner" | "inline";
+  variant?: "banner" | "inline" | "bare";
 }) {
   const now = useNow();
   if (!commerce.urgency.offerCountdown) return null;
@@ -46,6 +46,20 @@ export function OfferCountdown({
       <p className="text-[14px] text-ink-2">
         {dict.offerEnds} {clock}
       </p>
+    );
+  }
+
+  // "bare": mismo contenido del banner, sin fondo propio (para la barra rotativa)
+  if (variant === "bare") {
+    return (
+      <span className="flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5">
+        <span>
+          {dict.offerEnds} {clock}
+        </span>
+        <span className="opacity-70">
+          {fill(dict.offerCode, { code: commerce.promo.code, percent: commerce.promo.percentOff })}
+        </span>
+      </span>
     );
   }
 
