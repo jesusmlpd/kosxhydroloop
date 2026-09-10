@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ClearCart } from "@/components/clear-cart";
+import { PurchaseEvent } from "@/components/purchase-event";
 import { getDict } from "@/lib/dict";
 import { isLocale, localePath } from "@/lib/i18n";
 
@@ -35,6 +36,7 @@ export default async function OrderSuccessPage({
   return (
     <section className="section">
       <ClearCart />
+      <PurchaseEvent />
       <div className="shell max-w-2xl py-12 text-center">
         <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-aqua text-[#04141b]">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">

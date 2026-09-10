@@ -9,6 +9,7 @@ import { formatMoney } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
 import type { Locale } from "@/lib/i18n";
 import { findProduct, type Product } from "@/lib/site";
+import { trackAddToCart } from "@/lib/track";
 
 export function AddToCart({
   product,
@@ -31,6 +32,14 @@ export function AddToCart({
   function addAll(options: { open: boolean }) {
     cart.add(product.id, qty, options);
     if (withKit && kit) cart.add(kit.id, 1, { open: false });
+
+    const names = dict.products.items as Record<string, { name: string }>;
+    trackAddToCart([
+      { id: product.id, name: names[product.slug]?.name ?? product.slug, qty, priceCents: product.priceCents },
+      ...(withKit && kit
+        ? [{ id: kit.id, name: names[kit.slug]?.name ?? kit.slug, qty: 1, priceCents: kit.priceCents }]
+        : []),
+    ]);
   }
 
   return (

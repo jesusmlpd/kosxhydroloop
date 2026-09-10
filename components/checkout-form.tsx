@@ -13,6 +13,7 @@ import { formatMoney } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
 import { localePath, type Locale } from "@/lib/i18n";
 import { findProduct, findProductById } from "@/lib/site";
+import { storePendingPurchase, trackInitiateCheckout } from "@/lib/track";
 
 type Method = "stripe" | "mercadopago" | "manual";
 
@@ -42,6 +43,16 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
     const form = new FormData(event.currentTarget);
     const customer = Object.fromEntries(form) as Record<string, string>;
 
+    // Eventos de marketing: los articulos con nombre legible y el total real.
+    const names = dict.products.items as Record<string, { name: string }>;
+    const trackItems = totals.lines.map((line) => ({
+      id: line.id,
+      name: names[line.slug]?.name ?? line.slug,
+      qty: line.qty,
+      priceCents: line.unitCents,
+    }));
+    trackInitiateCheckout(trackItems, totals.totalCents);
+
     try {
       const response = await fetch("/api/checkout", {
         method: "POST",
@@ -55,8 +66,18 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
           locale,
         }),
       });
-      const result = (await response.json()) as { ok?: boolean; url?: string; mock?: boolean };
+      const result = (await response.json()) as {
+        ok?: boolean;
+        url?: string;
+        mock?: boolean;
+        ref?: string;
+      };
       if (!result.ok || !result.url) throw new Error("checkout");
+
+      // La pantalla de exito dispara Purchase con esto, ya sin carrito.
+      if (result.ref) {
+        storePendingPurchase({ ref: result.ref, totalCents: totals.totalCents, items: trackItems });
+      }
 
       if (result.mock) {
         setNotice(

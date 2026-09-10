@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Inter, Sora } from "next/font/google";
 import { notFound } from "next/navigation";
+import { Analytics } from "@/components/analytics";
 import { CartDrawer } from "@/components/cart-drawer";
 import { CartFromUrl } from "@/components/cart-from-url";
 import { Footer } from "@/components/footer";
@@ -139,6 +140,7 @@ export default async function LocaleLayout({
         <Suspense fallback={null}>
           <CartFromUrl />
         </Suspense>
+        <Analytics />
       </body>
     </html>
   );

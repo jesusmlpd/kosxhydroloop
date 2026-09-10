@@ -18,6 +18,7 @@ import { StickyBuyBar } from "@/components/sticky-buy-bar";
 import { SoldBadge, StockBar, ViewersNow } from "@/components/social-proof";
 import { StockBadge } from "@/components/stock-badge";
 import { VariantSwitcher } from "@/components/variant-switcher";
+import { ViewContent } from "@/components/view-content";
 import { VideoEmbed } from "@/components/video-embed";
 import { commerce, formatMoney, promoRemaining } from "@/lib/commerce";
 import { getDict, type Dict } from "@/lib/dict";
@@ -65,6 +66,7 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   return (
     <article>
+      <ViewContent id={product.id} name={copy.name} priceCents={product.priceCents} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
