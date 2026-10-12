@@ -13,7 +13,7 @@ import { formatMoney } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
 import { localePath, type Locale } from "@/lib/i18n";
 import { findProduct, findProductById } from "@/lib/site";
-import { storePendingPurchase, trackInitiateCheckout } from "@/lib/track";
+import { metaBrowserIds, storePendingPurchase, trackInitiateCheckout } from "@/lib/track";
 
 type Method = "stripe" | "mercadopago" | "manual";
 
@@ -64,6 +64,7 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
           coupon: state.coupon,
           customer,
           locale,
+          tracking: metaBrowserIds(),
         }),
       });
       const result = (await response.json()) as {

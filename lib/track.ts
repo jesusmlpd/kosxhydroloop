@@ -74,18 +74,38 @@ export function trackInitiateCheckout(list: Item[], totalCents: number) {
 
 export function trackPurchase(payload: { ref: string; totalCents: number; items: Item[] }) {
   const mapped = items(payload.items);
-  window.fbq?.("track", "Purchase", {
-    contents: mapped.contents,
-    content_type: "product",
-    value: payload.totalCents / 100,
-    currency: "MXN",
-  });
+  // eventID = referencia del pedido: es el mismo event_id que manda el webhook
+  // por la API de conversiones, y Meta usa el par para contar una sola compra.
+  window.fbq?.(
+    "track",
+    "Purchase",
+    {
+      contents: mapped.contents,
+      content_ids: mapped.content_ids,
+      content_type: "product",
+      num_items: payload.items.reduce((sum, item) => sum + item.qty, 0),
+      order_id: payload.ref,
+      value: payload.totalCents / 100,
+      currency: "MXN",
+    },
+    { eventID: payload.ref },
+  );
   window.gtag?.("event", "purchase", {
     transaction_id: payload.ref,
     currency: "MXN",
     value: payload.totalCents / 100,
     items: mapped.ga,
   });
+}
+
+/** Cookies de Meta que el servidor necesita para empatar el evento con el anuncio. */
+export function metaBrowserIds() {
+  const read = (name: string) =>
+    document.cookie
+      .split("; ")
+      .find((part) => part.startsWith(`${name}=`))
+      ?.slice(name.length + 1);
+  return { fbp: read("_fbp") ?? null, fbc: read("_fbc") ?? null };
 }
 
 /**

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { resolveInbox } from "@/lib/formsubmit";
+import { sendMetaEvent } from "@/lib/meta-capi";
 import { site } from "@/lib/site";
 
 /**
@@ -28,9 +29,22 @@ export async function POST(request: Request) {
     const event = await stripe.webhooks.constructEventAsync(payload, signature, secret);
 
     if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
-      const session = event.data.object as { client_reference_id?: string | null; amount_total?: number | null };
-      console.log("[stripe] pagado", session.client_reference_id, session.amount_total);
-      await notify(`Pago confirmado en Stripe: ${session.client_reference_id ?? "sin referencia"}`);
+      const session = event.data.object as {
+        client_reference_id?: string | null;
+        amount_total?: number | null;
+        payment_status?: string;
+        customer_email?: string | null;
+        customer_details?: { email?: string | null; phone?: string | null } | null;
+        metadata?: Record<string, string> | null;
+      };
+      // checkout.session.completed tambien llega con OXXO o SPEI sin pagar:
+      // ahi todavia no hay venta. El pago real vendra como async_payment_succeeded.
+      const paid = event.type === "checkout.session.async_payment_succeeded" || session.payment_status === "paid";
+      if (paid) {
+        console.log("[stripe] pagado", session.client_reference_id, session.amount_total);
+        await notify(`Pago confirmado en Stripe: ${session.client_reference_id ?? "sin referencia"}`);
+        await sendPurchase(session);
+      }
     }
 
     if (event.type === "checkout.session.async_payment_failed") {
@@ -53,4 +67,55 @@ async function notify(text: string) {
     headers: { "Content-Type": "application/json", Accept: "application/json", Origin: site.url },
     body: JSON.stringify({ _subject: `${site.name}: pago confirmado`, Mensaje: text }),
   }).catch(() => null);
+}
+
+/**
+ * Purchase por la API de conversiones. El event_id es la referencia del pedido,
+ * la misma que el navegador manda en la pantalla de exito: Meta deduplica.
+ * Stripe reintenta los webhooks, pero el event_id repetido tampoco duplica.
+ */
+async function sendPurchase(session: {
+  client_reference_id?: string | null;
+  amount_total?: number | null;
+  customer_email?: string | null;
+  customer_details?: { email?: string | null; phone?: string | null } | null;
+  metadata?: Record<string, string> | null;
+}) {
+  const ref = session.client_reference_id ?? session.metadata?.ref;
+  if (!ref || !session.amount_total) return;
+  const meta = session.metadata ?? {};
+  const lines = (meta.items ?? "")
+    .split(",")
+    .filter(Boolean)
+    .map((part) => {
+      const [id, qty, price] = part.split(":");
+      return { id, quantity: Number(qty) || 1, item_price: (Number(price) || 0) / 100 };
+    });
+
+  await sendMetaEvent({
+    name: "Purchase",
+    eventId: ref,
+    sourceUrl: meta.src,
+    user: {
+      email: session.customer_details?.email ?? session.customer_email,
+      phone: session.customer_details?.phone ?? meta.phone,
+      name: meta.name,
+      city: meta.city,
+      state: meta.state,
+      zip: meta.zip,
+      fbp: meta.fbp,
+      fbc: meta.fbc,
+      ip: meta.ip,
+      userAgent: meta.ua,
+    },
+    custom: {
+      value: session.amount_total / 100,
+      currency: "MXN",
+      order_id: ref,
+      content_type: "product",
+      content_ids: lines.map((line) => line.id),
+      contents: lines.map((line) => ({ id: line.id, quantity: line.quantity, item_price: line.item_price })),
+      num_items: lines.reduce((sum, line) => sum + line.quantity, 0),
+    },
+  });
 }
