@@ -20,6 +20,7 @@ export async function POST(request: Request) {
         coupon?: string | null;
         customer?: Customer;
         locale?: string;
+        tracking?: { fbp?: string | null; fbc?: string | null };
       }
     | null;
 
@@ -105,6 +106,18 @@ export async function POST(request: Request) {
         ],
         metadata: {
           ref,
+          // Para el Purchase del webhook (API de conversiones). Los limites de
+          // Stripe son 500 caracteres por valor, por eso van compactos.
+          items: totals.lines.map((line) => `${line.id}:${line.qty}:${line.unitCents}`).join(",").slice(0, 500),
+          fbp: (body.tracking?.fbp ?? "").slice(0, 200),
+          fbc: (body.tracking?.fbc ?? "").slice(0, 300),
+          ip: (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim(),
+          ua: (request.headers.get("user-agent") ?? "").slice(0, 300),
+          src: `${base}/checkout`,
+          name: customer.name,
+          city: customer.city,
+          state: customer.state,
+          zip: customer.zip,
           phone: customer.phone,
           address: `${customer.street} ${customer.interior ?? ""}, ${customer.neighborhood}, ${customer.city}, ${customer.state}, CP ${customer.zip}`,
           notes: customer.notes ?? "",
