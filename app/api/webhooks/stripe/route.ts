@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { resolveInbox } from "@/lib/formsubmit";
+import { ccField, resolveInbox } from "@/lib/formsubmit";
 import { sendMetaEvent } from "@/lib/meta-capi";
 import { site } from "@/lib/site";
 
@@ -65,7 +65,7 @@ async function notify(text: string) {
   await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json", Origin: site.url },
-    body: JSON.stringify({ _subject: `${site.name}: pago confirmado`, Mensaje: text }),
+    body: JSON.stringify({ ...ccField(), _subject: `${site.name}: pago confirmado`, Mensaje: text }),
   }).catch(() => null);
 }
 
