@@ -1,5 +1,5 @@
 import { formatMoney, type Totals } from "@/lib/commerce";
-import { resolveInbox } from "@/lib/formsubmit";
+import { ccField, resolveInbox } from "@/lib/formsubmit";
 import { site } from "@/lib/site";
 
 export type Customer = {
@@ -77,6 +77,7 @@ export async function notifyOrder(input: {
       Origin: input.origin,
     },
     body: JSON.stringify({
+      ...ccField(),
       _subject: `${site.name}: pedido ${input.ref} (${input.method}, ${input.status})`,
       _template: "table",
       Pedido: input.ref,

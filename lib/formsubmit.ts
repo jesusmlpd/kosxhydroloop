@@ -23,9 +23,23 @@ const ENDPOINT = "https://formsubmit.co/ajax";
  * interruptor emailConfirmed esta prendido.
  */
 export function resolveInbox() {
+  return inboxes()[0] ?? null;
+}
+
+/**
+ * FORMSUBMIT_TO acepta varios correos separados por coma. El primero es el
+ * destinatario (el que se activa en FormSubmit) y el resto salen en copia con
+ * el campo `_cc`. Agregalo al body de cada envio con `ccField()`.
+ */
+function inboxes() {
   const fromEnv = process.env.FORMSUBMIT_TO?.trim();
-  if (fromEnv) return fromEnv;
-  return site.emailConfirmed ? site.email : null;
+  const list = fromEnv ? fromEnv.split(/[,;\s]+/).filter(Boolean) : site.emailConfirmed ? [site.email] : [];
+  return list;
+}
+
+export function ccField() {
+  const rest = inboxes().slice(1);
+  return rest.length ? { _cc: rest.join(",") } : {};
 }
 
 export type ContactPayload = {
@@ -48,6 +62,7 @@ export async function sendContact(payload: ContactPayload, origin: string) {
       Origin: origin,
     },
     body: JSON.stringify({
+      ...ccField(),
       _subject: `${site.name}: nuevo contacto de ${payload.name}`,
       _template: "table",
       Nombre: payload.name,

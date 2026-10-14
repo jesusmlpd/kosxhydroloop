@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { resolveInbox } from "@/lib/formsubmit";
+import { ccField, resolveInbox } from "@/lib/formsubmit";
 import { site } from "@/lib/site";
 
 /**
@@ -32,6 +32,7 @@ export async function POST(request: Request) {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json", Origin: origin },
       body: JSON.stringify({
+        ...ccField(),
         _subject: "PURA AGUA: nueva suscripción",
         _template: "table",
         Lista: "PURA AGUA",
