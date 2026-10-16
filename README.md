@@ -37,6 +37,8 @@ cobra nada y lo avisa en pantalla. En produccion responde un error claro.
 - `app/api/checkout`: los tres caminos de pago
 - `app/api/webhooks`: confirmacion de Stripe y Mercado Pago
 - `app/api/contact`: formulario, sale por FormSubmit
+- `app/admin/reportes` y `lib/meta-report.ts`: resultados de las campañas Kick Off
+  leidos en vivo desde Meta (solo lectura, token en `META_REPORT_TOKEN`)
 
 ## Contenido
 El contenido de producto es real y viene de hydroloop.com.mx (WooCommerce Store
