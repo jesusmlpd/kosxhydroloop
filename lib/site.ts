@@ -12,7 +12,7 @@ export const site = {
   brandedName: "Hydroloop®",
   builtBy: "KOS",
   builtByUrl: "https://kickoffsocial.com",
-  url: "https://kosxhydroloop.vercel.app", // TODO dominio final
+  url: "https://tienda.hydroloop.com.mx",
   currentSite: "https://hydroloop.com.mx",
   /** Correo publicado en hydroloop.com.mx/contacto. */
   email: "ventas@hydroloop.com.mx",

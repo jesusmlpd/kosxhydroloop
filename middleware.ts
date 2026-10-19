@@ -36,6 +36,18 @@ export function middleware(request: NextRequest) {
   // www servia una copia completa del sitio en vez de redirigir, y eso duplica
   // la superficie de crawl sin ganar nada.
   const host = request.headers.get("host") ?? "";
+
+  // El dominio de Vercel era la PDP de pruebas; el sitio vive en tienda.*. Solo
+  // se redirige este host exacto: los previews (*.vercel.app con otro nombre) no
+  // se tocan, y /api queda fuera del matcher, asi que el webhook de Stripe no
+  // sufre un 308 (Stripe no sigue redirecciones).
+  if (host === "kosxhydroloop.vercel.app") {
+    const url = request.nextUrl.clone();
+    url.protocol = "https:";
+    url.host = "tienda.hydroloop.com.mx";
+    return NextResponse.redirect(url, 308);
+  }
+
   if (host.startsWith("www.")) {
     const url = request.nextUrl.clone();
     url.host = host.slice(4);
