@@ -201,7 +201,7 @@ export function PaymentBadges({ className = "" }: { className?: string }) {
       <Amex />
       <ApplePay />
       <GooglePay />
-      <MercadoPago />
+      {process.env.NEXT_PUBLIC_MERCADOPAGO_ENABLED === "true" ? <MercadoPago /> : null}
       <Oxxo />
       <Spei />
       <Msi />

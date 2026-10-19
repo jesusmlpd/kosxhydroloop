@@ -97,13 +97,20 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
     }
   }
 
+  // Mercado Pago queda oculto hasta tener MERCADOPAGO_ACCESS_TOKEN y validar la
+  // firma de su webhook. Para prenderlo: NEXT_PUBLIC_MERCADOPAGO_ENABLED=true.
+  const mercadoPagoOn = process.env.NEXT_PUBLIC_MERCADOPAGO_ENABLED === "true";
   const methods: Array<{ id: Method; title: string; body: string }> = [
     { id: "stripe", title: dict.checkout.methods.stripe, body: dict.checkout.methods.stripeBody },
-    {
-      id: "mercadopago",
-      title: dict.checkout.methods.mercadopago,
-      body: dict.checkout.methods.mercadopagoBody,
-    },
+    ...(mercadoPagoOn
+      ? [
+          {
+            id: "mercadopago" as const,
+            title: dict.checkout.methods.mercadopago,
+            body: dict.checkout.methods.mercadopagoBody,
+          },
+        ]
+      : []),
     { id: "manual", title: dict.checkout.methods.manual, body: dict.checkout.methods.manualBody },
   ];
 
