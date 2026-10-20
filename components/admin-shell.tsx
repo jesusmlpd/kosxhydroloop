@@ -74,14 +74,14 @@ export function AdminShell({
             <p className="eyebrow">Hydroloop® · Interno</p>
             <h1 className="mt-1 text-[clamp(26px,4vw,36px)]">{title}</h1>
           </div>
-          <form method="POST" action="/api/admin/logout">
+          <form method="POST" action="/api/admin/logout" className="no-print">
             <button type="submit" className="btn btn-ghost btn-sm">
               Salir
             </button>
           </form>
         </div>
 
-        <nav className="mt-6 flex flex-wrap gap-2 border-b border-line pb-3">
+        <nav className="no-print mt-6 flex flex-wrap gap-2 border-b border-line pb-3">
           {tabs.map((tab) => (
             <Link
               key={tab.href}

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { AdminLogin, AdminShell } from "@/components/admin-shell";
+import { DateRange } from "@/components/admin-date-range";
 import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
+import { PANEL_TZ, buildPresets, resolveRange as resolveRangeIn } from "@/lib/date-range";
 import {
   FIRST_DAY,
   MetaReportError,
@@ -24,7 +26,6 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const MAX_DAYS = 120;
-const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 type Search = { error?: string; desde?: string; hasta?: string };
 
@@ -38,16 +39,14 @@ const dayLabel = (day: string) =>
 
 function resolveRange(search: Search) {
   const today = accountToday();
-  const days = (a: string, b: string) => (Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000 + 1;
-  let since = DAY.test(search.desde ?? "") ? (search.desde as string) : FIRST_DAY;
-  let until = DAY.test(search.hasta ?? "") ? (search.hasta as string) : today;
-  if (since < FIRST_DAY) since = FIRST_DAY;
-  if (until > today) until = today;
-  if (since > until || days(since, until) > MAX_DAYS) {
-    since = FIRST_DAY;
-    until = today;
-    if (days(since, until) > MAX_DAYS) since = addDay(until, -(MAX_DAYS - 1));
-  }
+  // Sin rango en la URL: todo el periodo, recortado al tope de dias de Meta.
+  const { since, until } = resolveRangeIn(search, {
+    min: FIRST_DAY,
+    max: today,
+    defaultSince: [FIRST_DAY, addDay(today, -(MAX_DAYS - 1))].sort().pop()!,
+    defaultUntil: today,
+    maxSpan: MAX_DAYS,
+  });
   return { since, until, today };
 }
 
@@ -59,13 +58,13 @@ export default async function AdminReportesPage({ searchParams }: { searchParams
   }
 
   const { since, until, today } = resolveRange(search);
-  const yesterday = addDay(today, -1);
-  const presets = [
-    { label: "Últimos 7 días", since: addDay(yesterday, -6), until: yesterday },
-    { label: "Últimos 14 días", since: addDay(yesterday, -13), until: yesterday },
-    { label: "Últimos 30 días", since: addDay(yesterday, -29), until: yesterday },
-    { label: "Desde el inicio", since: FIRST_DAY, until: today },
-  ];
+  const presets = buildPresets({ today, min: FIRST_DAY, lastDaysEnd: "yesterday", maxSpan: MAX_DAYS });
+  const updatedLabel = new Intl.DateTimeFormat("es-MX", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: PANEL_TZ,
+  }).format(new Date());
 
   let report: Report | null = null;
   let problem: string | null = null;
@@ -88,36 +87,17 @@ export default async function AdminReportesPage({ searchParams }: { searchParams
         se ven en Pedidos y en el área comercial.
       </p>
 
-      <div className="card mt-6 flex flex-wrap items-end gap-4 p-5">
-        <div className="flex flex-wrap gap-2">
-          {presets.map((preset) => {
-            const active = preset.since === since && preset.until === until;
-            return (
-              <a
-                key={preset.label}
-                href={`/admin/reportes?desde=${preset.since}&hasta=${preset.until}`}
-                className={`rounded-full px-4 py-2 text-[13.5px] font-semibold transition-colors ${
-                  active ? "bg-invert text-invert-fg" : "bg-surface text-ink-2 hover:text-ink"
-                }`}
-              >
-                {preset.label}
-              </a>
-            );
-          })}
-        </div>
-        <form method="GET" action="/admin/reportes" className="ml-auto flex flex-wrap items-end gap-2">
-          <label className="text-[12.5px] text-ink-3">
-            Desde
-            <input type="date" name="desde" defaultValue={since} min={FIRST_DAY} max={today} className="field mt-1" />
-          </label>
-          <label className="text-[12.5px] text-ink-3">
-            Hasta
-            <input type="date" name="hasta" defaultValue={until} min={FIRST_DAY} max={today} className="field mt-1" />
-          </label>
-          <button type="submit" className="btn btn-primary btn-sm">
-            Ver
-          </button>
-        </form>
+      <div className="mt-6">
+        <DateRange
+          action="/admin/reportes"
+          since={since}
+          until={until}
+          min={FIRST_DAY}
+          max={today}
+          presets={presets}
+          maxSpan={MAX_DAYS}
+          updatedLabel={updatedLabel}
+        />
       </div>
       <p className="mt-2 text-[12.5px] text-ink-3">
         {dayLabel(since)} al {dayLabel(until)}. Los rangos de &ldquo;últimos días&rdquo; terminan ayer, como en Ads Manager.

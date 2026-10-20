@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { AdminLogin, AdminShell } from "@/components/admin-shell";
+import { DateRange } from "@/components/admin-date-range";
 import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
 import { computeStats, loadOrders } from "@/lib/admin-data";
 import { formatMoney } from "@/lib/commerce";
+import { PANEL_TZ, addDay, buildPresets, resolveRange, todayInPanel } from "@/lib/date-range";
+
+/** Primer dia seleccionable: desde que existe el checkout. */
+const SALES_FIRST_DAY = "2026-08-26";
 
 export const metadata: Metadata = {
   title: "Dashboard | Hydroloop®",
@@ -16,22 +21,50 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; desde?: string; hasta?: string }>;
 }) {
   const jar = await cookies();
-  const { error } = await searchParams;
+  const search = await searchParams;
+  const { error } = search;
   if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
     return <AdminLogin error={Boolean(error)} next="/admin" />;
   }
 
   const orders = await loadOrders();
+  const today = todayInPanel();
+  const { since, until } = resolveRange(search, {
+    min: SALES_FIRST_DAY,
+    max: today,
+    defaultSince: addDay(today, -29),
+    defaultUntil: today,
+  });
+  const presets = buildPresets({ today, min: SALES_FIRST_DAY, lastDaysEnd: "today" });
+  const updatedLabel = new Intl.DateTimeFormat("es-MX", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: PANEL_TZ,
+  }).format(new Date());
 
   return (
     <AdminShell active="/admin" title="Dashboard">
       {orders === null ? (
         <NotConnected />
       ) : (
-        <Dashboard stats={computeStats(orders)} />
+        <>
+          <div className="mt-6">
+            <DateRange
+              action="/admin"
+              since={since}
+              until={until}
+              min={SALES_FIRST_DAY}
+              max={today}
+              presets={presets}
+              updatedLabel={updatedLabel}
+            />
+          </div>
+          <Dashboard stats={computeStats(orders, { since, until })} />
+        </>
       )}
     </AdminShell>
   );
@@ -56,8 +89,8 @@ function Dashboard({ stats }: { stats: ReturnType<typeof computeStats> }) {
   const maxState = Math.max(...stats.byState.map((entry) => entry.count), 1);
 
   const kpis = [
-    { label: "Ingresos (30 días)", value: formatMoney(stats.revenueCents, "es") },
-    { label: "Pedidos (30 días)", value: String(stats.orderCount) },
+    { label: "Ingresos", value: formatMoney(stats.revenueCents, "es") },
+    { label: "Pedidos", value: String(stats.orderCount) },
     { label: "Ticket promedio", value: formatMoney(stats.avgCents, "es") },
     { label: "Por enviar", value: String(stats.unshipped) },
   ];
@@ -76,7 +109,7 @@ function Dashboard({ stats }: { stats: ReturnType<typeof computeStats> }) {
       </div>
 
       <div className="card mt-4 p-6">
-        <h2 className="font-display text-[16px] font-bold">Ventas por día (últimos 30 días)</h2>
+        <h2 className="font-display text-[16px] font-bold">Ventas por día</h2>
         {stats.orderCount === 0 ? (
           <p className="mt-3 text-[14px] text-ink-2">
             Sin ventas todavía. Cuando entre la primera compra pagada, la gráfica se
@@ -102,7 +135,7 @@ function Dashboard({ stats }: { stats: ReturnType<typeof computeStats> }) {
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <div className="card p-6">
-          <h2 className="font-display text-[16px] font-bold">Por producto (30 días)</h2>
+          <h2 className="font-display text-[16px] font-bold">Por producto</h2>
           {stats.byProduct.length === 0 ? (
             <p className="mt-3 text-[14px] text-ink-2">Sin datos todavía.</p>
           ) : (
@@ -120,7 +153,7 @@ function Dashboard({ stats }: { stats: ReturnType<typeof computeStats> }) {
         </div>
 
         <div className="card p-6">
-          <h2 className="font-display text-[16px] font-bold">Pedidos por estado (30 días)</h2>
+          <h2 className="font-display text-[16px] font-bold">Pedidos por estado</h2>
           {stats.byState.length === 0 ? (
             <p className="mt-3 text-[14px] text-ink-2">Sin datos todavía.</p>
           ) : (

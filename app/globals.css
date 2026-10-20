@@ -508,3 +508,10 @@
   .water-cursor { display: none !important; }
   .bubble { opacity: 0.3; }
 }
+
+/* Descargar PDF del panel: se imprime solo el reporte, sin controles ni menu. */
+@media print {
+  .no-print { display: none !important; }
+  html, body, main { background: #fff !important; }
+  .card { break-inside: avoid; box-shadow: none !important; }
+}
