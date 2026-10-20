@@ -18,6 +18,10 @@ export type AdminOrder = {
   notes: string;
   totalCents: number;
   paid: boolean;
+  /** Centavos devueltos al cliente (Stripe: charge.amount_refunded). */
+  refundedCents: number;
+  /** none | pending (Stripe aun lo procesa) | partial | full */
+  refundState: "none" | "pending" | "partial" | "full";
   shipped: boolean;
   tracking: string;
   items: Array<{ qty: number; name: string; cents: number }>;
@@ -47,7 +51,7 @@ export async function loadOrders(limit = 100): Promise<AdminOrder[] | null> {
 
   const sessions = await stripe.checkout.sessions.list({
     limit: Math.min(limit, 100),
-    expand: ["data.payment_intent"],
+    expand: ["data.payment_intent", "data.payment_intent.latest_charge"],
   });
 
   const orders: AdminOrder[] = [];
@@ -55,6 +59,30 @@ export async function loadOrders(limit = 100): Promise<AdminOrder[] | null> {
     if (session.status !== "complete") continue;
     const intent =
       typeof session.payment_intent === "object" ? session.payment_intent : null;
+    const charge =
+      intent && typeof intent.latest_charge === "object" ? intent.latest_charge : null;
+    const total = session.amount_total ?? 0;
+    const refundedCents = charge?.amount_refunded ?? 0;
+    // Solo se pregunta por los reembolsos cuando existe alguno: asi se distingue
+    // "en proceso" (pending) de "ya devuelto" sin una llamada extra por pedido.
+    let refundPending = false;
+    if (intent && refundedCents > 0) {
+      const refunds = await stripe.refunds
+        .list({ payment_intent: intent.id, limit: 10 })
+        .catch(() => null);
+      refundPending = Boolean(
+        refunds?.data.some((r) => r.status === "pending" || r.status === "requires_action"),
+      );
+    }
+    const refundState: AdminOrder["refundState"] =
+      refundedCents <= 0
+        ? "none"
+        : refundPending
+          ? "pending"
+          : refundedCents >= total
+            ? "full"
+            : "partial";
+
     const lineItems = await stripe.checkout.sessions
       .listLineItems(session.id, { limit: 10 })
       .catch(() => null);
@@ -73,6 +101,8 @@ export async function loadOrders(limit = 100): Promise<AdminOrder[] | null> {
       notes: session.metadata?.notes ?? "",
       totalCents: session.amount_total ?? 0,
       paid: session.payment_status === "paid",
+      refundedCents,
+      refundState,
       shipped: intent?.metadata?.shipped === "1",
       tracking: intent?.metadata?.tracking ?? "",
       items:
@@ -99,7 +129,12 @@ export type SalesStats = {
 };
 
 export function computeStats(orders: AdminOrder[], now = Date.now()): SalesStats {
-  const paid = orders.filter((order) => order.paid);
+  // Un pedido totalmente reembolsado (o con el reembolso en proceso) ya no es
+  // venta ni esta por surtir; uno parcial cuenta por lo que quedo cobrado.
+  const paid = orders.filter(
+    (order) => order.paid && order.refundState !== "full" && order.refundState !== "pending",
+  );
+  const net = (order: AdminOrder) => order.totalCents - order.refundedCents;
   const dayMs = 24 * 60 * 60 * 1000;
   const start = now - 29 * dayMs;
   const recent = paid.filter((order) => order.created * 1000 >= start - dayMs);
@@ -117,7 +152,7 @@ export function computeStats(orders: AdminOrder[], now = Date.now()): SalesStats
     });
     byDay.push({
       label: dayFormat.format(dayStart),
-      cents: inDay.reduce((sum, order) => sum + order.totalCents, 0),
+      cents: inDay.reduce((sum, order) => sum + net(order), 0),
       count: inDay.length,
     });
   }
@@ -137,11 +172,11 @@ export function computeStats(orders: AdminOrder[], now = Date.now()): SalesStats
     const state = order.state || "Sin estado";
     const entry = states.get(state) ?? { count: 0, cents: 0 };
     entry.count += 1;
-    entry.cents += order.totalCents;
+    entry.cents += net(order);
     states.set(state, entry);
   }
 
-  const revenueCents = recent.reduce((sum, order) => sum + order.totalCents, 0);
+  const revenueCents = recent.reduce((sum, order) => sum + net(order), 0);
   return {
     revenueCents,
     orderCount: recent.length,

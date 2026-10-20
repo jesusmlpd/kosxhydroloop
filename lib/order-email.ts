@@ -268,3 +268,131 @@ export function orderFromStripeSession(session: {
     coupon: meta.coupon || "",
   };
 }
+
+/* ------------------------------------------------------------------ */
+/* Reembolsos                                                          */
+/* ------------------------------------------------------------------ */
+
+export type RefundEmail = {
+  ref: string;
+  locale: Locale;
+  refundId: string;
+  refundCents: number;
+  orderTotalCents: number;
+  /** El reembolso cubre todo el pedido (suma de reembolsos == total cobrado). */
+  full: boolean;
+  /** card | oxxo | customer_balance (SPEI) | ... */
+  paymentMethod: string;
+  customer: { name: string; email: string };
+};
+
+const REFUND_TEXT = {
+  es: {
+    title: "Tu reembolso está en camino",
+    lead: (amount: string, ref: string, full: boolean) =>
+      `Ya solicitamos el reembolso ${full ? "total" : "parcial"} de ${amount} de tu pedido ${ref}.`,
+    cardTime:
+      "El dinero vuelve a la misma tarjeta con la que pagaste. Tu banco lo refleja normalmente entre 5 y 10 días hábiles, y puede verse como un abono o como una cancelación del cargo; algunos bancos tardan hasta 15 días hábiles.",
+    otherTime:
+      "Como el pago no fue con tarjeta, nuestro equipo te contactará en las próximas 24 a 48 horas hábiles para coordinar la devolución a tu cuenta.",
+    help: "Si pasado ese plazo no lo ves, responde a este correo con tu número de pedido y lo revisamos contigo.",
+    amount: "Monto del reembolso",
+    order: "Pedido",
+    subject: (ref: string) => `Tu reembolso del pedido ${ref} está en camino`,
+  },
+  en: {
+    title: "Your refund is on its way",
+    lead: (amount: string, ref: string, full: boolean) =>
+      `We have issued a ${full ? "full" : "partial"} refund of ${amount} for your order ${ref}.`,
+    cardTime:
+      "The money goes back to the same card you paid with. Your bank usually shows it within 5 to 10 business days, as a credit or as a reversed charge; some banks take up to 15 business days.",
+    otherTime:
+      "Since the payment was not made by card, our team will contact you within 24 to 48 business hours to arrange the refund to your account.",
+    help: "If you do not see it after that time, reply to this email with your order number and we will look into it with you.",
+    amount: "Refund amount",
+    order: "Order",
+    subject: (ref: string) => `Your refund for order ${ref} is on its way`,
+  },
+} as const;
+
+export function refundCustomerEmail(refund: RefundEmail) {
+  const t = REFUND_TEXT[refund.locale];
+  const amount = formatMoney(refund.refundCents, refund.locale);
+  const lead = t.lead(amount, refund.ref, refund.full);
+  const time = refund.paymentMethod === "card" ? t.cardTime : t.otherTime;
+  const first = esc(refund.customer.name.split(" ")[0] || "");
+  const html = shell(
+    t.title,
+    `<p style="margin:0 0 14px;font-size:15px;line-height:1.5">${first ? `${first}, ` : ""}${esc(lead)}</p>
+<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin:0 0 16px">
+<tr><td style="padding:3px 0;color:#4b6270">${t.order}</td><td style="padding:3px 0;text-align:right">${esc(refund.ref)}</td></tr>
+<tr><td style="padding:3px 0;color:#4b6270">${t.amount}</td><td style="padding:3px 0;text-align:right;font-weight:700">${amount}</td></tr>
+</table>
+<p style="margin:0 0 12px;font-size:14px;line-height:1.55">${esc(time)}</p>
+<p style="margin:0 0 18px;font-size:14px;line-height:1.55;color:#4b6270">${esc(t.help)}</p>
+<p style="margin:0"><a href="${whatsappUrl(`${t.order} ${refund.ref}`)}" style="background:#0a7f94;color:#fff;text-decoration:none;padding:11px 18px;border-radius:999px;font-weight:600;font-size:14px">${LABELS[refund.locale].whatsapp}</a></p>`,
+    LABELS[refund.locale].legal,
+  );
+  const text = `${t.title}\n\n${lead}\n\n${t.order}: ${refund.ref}\n${t.amount}: ${amount}\n\n${time}\n\n${t.help}`;
+  return { subject: t.subject(refund.ref), html, text };
+}
+
+export function refundInternalEmail(refund: RefundEmail) {
+  const amount = formatMoney(refund.refundCents, "es");
+  const total = formatMoney(refund.orderTotalCents, "es");
+  const subject = `${site.name}: reembolso ${refund.full ? "total" : "parcial"} del pedido ${refund.ref} · ${amount}`;
+  const lines: Array<[string, string]> = [
+    ["Pedido", refund.ref],
+    ["Cliente", `${refund.customer.name} <${refund.customer.email}>`],
+    ["Reembolso", `${amount} (${refund.full ? "total" : "parcial"}) de ${total}`],
+    ["Método de pago", refund.paymentMethod],
+    ["Stripe", refund.refundId],
+  ];
+  const warn =
+    refund.paymentMethod === "card"
+      ? ""
+      : `<p style="margin:16px 0 0;font-size:14px;color:#9b2c20"><strong>Atención:</strong> el pago no fue con tarjeta; Stripe no devuelve este dinero solo. Hay que coordinar la devolución con el cliente.</p>`;
+  const html = shell(
+    `Reembolso ${refund.full ? "total" : "parcial"} emitido`,
+    `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px">${lines
+      .map(
+        ([k, v]) =>
+          `<tr><td style="padding:3px 12px 3px 0;color:#4b6270;white-space:nowrap;vertical-align:top">${esc(k)}</td><td style="padding:3px 0">${esc(v)}</td></tr>`,
+      )
+      .join("")}</table>${warn}
+<p style="margin:20px 0 0"><a href="${site.url}/admin/pedidos" style="background:#0a7f94;color:#fff;text-decoration:none;padding:11px 18px;border-radius:999px;font-weight:600;font-size:14px">Abrir pedidos en el panel</a></p>`,
+    "Aviso interno de Hydroloop.",
+  );
+  const text = `${subject}\n\n${lines.map(([k, v]) => `${k}: ${v}`).join("\n")}${refund.paymentMethod === "card" ? "" : "\n\nATENCION: el pago no fue con tarjeta, hay que coordinar la devolucion con el cliente."}\n\n${site.url}/admin/pedidos`;
+  return { subject, html, text };
+}
+
+export async function sendRefundEmails(refund: RefundEmail) {
+  if (!emailConfigured()) {
+    console.warn("[reembolso] sin RESEND_API_KEY, no salen correos", refund.ref);
+    return;
+  }
+  const internal = refundInternalEmail(refund);
+  const to = internalRecipients();
+  if (to.length) {
+    await sendEmail({
+      to,
+      subject: internal.subject,
+      html: internal.html,
+      text: internal.text,
+      replyTo: refund.customer.email || undefined,
+      idempotencyKey: `refund-internal-${refund.refundId}`,
+    });
+  }
+  if (refund.customer.email.includes("@")) {
+    const mail = refundCustomerEmail(refund);
+    await sendEmail({
+      to: [refund.customer.email],
+      subject: mail.subject,
+      html: mail.html,
+      text: mail.text,
+      replyTo: site.email,
+      idempotencyKey: `refund-customer-${refund.refundId}`,
+    });
+  }
+}

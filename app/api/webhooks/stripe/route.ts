@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { ccField, resolveInbox } from "@/lib/formsubmit";
 import { emailConfigured } from "@/lib/email";
-import { orderFromStripeSession, sendOrderEmails } from "@/lib/order-email";
+import { orderFromStripeSession, sendOrderEmails, sendRefundEmails } from "@/lib/order-email";
+import { isLocale, type Locale } from "@/lib/i18n";
 import { sendMetaEvent } from "@/lib/meta-capi";
 import { site } from "@/lib/site";
 
@@ -59,6 +60,12 @@ export async function POST(request: Request) {
     if (event.type === "checkout.session.async_payment_failed") {
       const session = event.data.object as { client_reference_id?: string | null };
       console.log("[stripe] fallido", session.client_reference_id);
+    }
+
+    // Reembolso emitido desde el dashboard de Stripe: avisa al cliente (con el
+    // plazo de espera) y al equipo. El panel /admin lo lee directo de Stripe.
+    if (event.type === "charge.refunded") {
+      await handleRefund(stripe, event.data.object as { id: string; payment_intent?: string | null; amount: number });
     }
 
     return NextResponse.json({ received: true });
@@ -125,6 +132,45 @@ async function sendPurchase(session: {
       content_ids: lines.map((line) => line.id),
       contents: lines.map((line) => ({ id: line.id, quantity: line.quantity, item_price: line.item_price })),
       num_items: lines.reduce((sum, line) => sum + line.quantity, 0),
+    },
+  });
+}
+
+async function handleRefund(
+  stripe: import("stripe").default,
+  charge: { id: string; payment_intent?: string | null; amount: number },
+) {
+  const intentId = typeof charge.payment_intent === "string" ? charge.payment_intent : null;
+  if (!intentId) return;
+
+  const [refunds, sessions] = await Promise.all([
+    stripe.refunds.list({ charge: charge.id, limit: 20 }),
+    stripe.checkout.sessions.list({ payment_intent: intentId, limit: 1 }),
+  ]);
+  // El evento llega por cada reembolso; el mas reciente es el que lo disparo.
+  const refund = refunds.data[0];
+  const session = sessions.data[0];
+  if (!refund || !session) return;
+  if (refund.status === "failed" || refund.status === "canceled") return;
+
+  const meta = session.metadata ?? {};
+  const locale: Locale = isLocale(meta.locale ?? "") ? (meta.locale as Locale) : "es";
+  const total = session.amount_total ?? charge.amount;
+  const refundedTotal = refunds.data
+    .filter((r) => r.status !== "failed" && r.status !== "canceled")
+    .reduce((sum, r) => sum + r.amount, 0);
+
+  await sendRefundEmails({
+    ref: session.client_reference_id ?? meta.ref ?? session.id.slice(-8),
+    locale,
+    refundId: refund.id,
+    refundCents: refund.amount,
+    orderTotalCents: total,
+    full: refundedTotal >= total,
+    paymentMethod: session.payment_method_types?.[0] ?? "card",
+    customer: {
+      name: meta.name || session.customer_details?.name || "",
+      email: session.customer_details?.email ?? session.customer_email ?? "",
     },
   });
 }
