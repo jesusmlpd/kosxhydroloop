@@ -1,3 +1,5 @@
+import { addDay, dayFromMs, formatDayShort, spanDays, todayInPanel } from "@/lib/date-range";
+
 /**
  * Lectura de pedidos para el panel interno. Stripe es la base de datos: cada
  * checkout session completa es un pedido, y el estado de envio vive en la
@@ -117,48 +119,59 @@ export async function loadOrders(limit = 100): Promise<AdminOrder[] | null> {
 }
 
 export type SalesStats = {
-  /** Solo pedidos pagados de los ultimos 30 dias. */
+  since: string;
+  until: string;
+  /** Solo pedidos pagados dentro del rango, netos de reembolsos. */
   revenueCents: number;
   orderCount: number;
   avgCents: number;
+  /** Pedidos pagados pendientes de envio: no depende del rango, es trabajo atrasado. */
   unshipped: number;
-  /** 30 entradas, de hace 29 dias a hoy. */
+  /** Un dia por entrada, de `since` a `until`. */
   byDay: Array<{ label: string; cents: number; count: number }>;
   byProduct: Array<{ name: string; units: number; cents: number }>;
   byState: Array<{ state: string; count: number; cents: number }>;
 };
 
-export function computeStats(orders: AdminOrder[], now = Date.now()): SalesStats {
+/** Tope de dias que se dibujan en la grafica (un año). */
+const MAX_CHART_DAYS = 366;
+
+export function computeStats(
+  orders: AdminOrder[],
+  range?: { since: string; until: string },
+): SalesStats {
+  const until = range?.until ?? todayInPanel();
+  let since = range?.since ?? addDay(until, -29);
+  if (spanDays(since, until) > MAX_CHART_DAYS) since = addDay(until, -(MAX_CHART_DAYS - 1));
+
   // Un pedido totalmente reembolsado (o con el reembolso en proceso) ya no es
   // venta ni esta por surtir; uno parcial cuenta por lo que quedo cobrado.
   const paid = orders.filter(
     (order) => order.paid && order.refundState !== "full" && order.refundState !== "pending",
   );
   const net = (order: AdminOrder) => order.totalCents - order.refundedCents;
-  const dayMs = 24 * 60 * 60 * 1000;
-  const start = now - 29 * dayMs;
-  const recent = paid.filter((order) => order.created * 1000 >= start - dayMs);
+  const dayOf = (order: AdminOrder) => dayFromMs(order.created * 1000);
+  const inRange = paid.filter((order) => {
+    const day = dayOf(order);
+    return day >= since && day <= until;
+  });
 
-  const dayFormat = new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "short" });
+  const perDay = new Map<string, { cents: number; count: number }>();
+  for (const order of inRange) {
+    const day = dayOf(order);
+    const entry = perDay.get(day) ?? { cents: 0, count: 0 };
+    entry.cents += net(order);
+    entry.count += 1;
+    perDay.set(day, entry);
+  }
   const byDay: SalesStats["byDay"] = [];
-  for (let i = 29; i >= 0; i--) {
-    const dayStart = new Date(now - i * dayMs);
-    dayStart.setHours(0, 0, 0, 0);
-    const from = dayStart.getTime();
-    const to = from + dayMs;
-    const inDay = paid.filter((order) => {
-      const ms = order.created * 1000;
-      return ms >= from && ms < to;
-    });
-    byDay.push({
-      label: dayFormat.format(dayStart),
-      cents: inDay.reduce((sum, order) => sum + net(order), 0),
-      count: inDay.length,
-    });
+  for (let day = since; day <= until; day = addDay(day)) {
+    const entry = perDay.get(day);
+    byDay.push({ label: formatDayShort(day), cents: entry?.cents ?? 0, count: entry?.count ?? 0 });
   }
 
   const products = new Map<string, { units: number; cents: number }>();
-  for (const order of recent) {
+  for (const order of inRange) {
     for (const item of order.items) {
       const entry = products.get(item.name) ?? { units: 0, cents: 0 };
       entry.units += item.qty;
@@ -168,7 +181,7 @@ export function computeStats(orders: AdminOrder[], now = Date.now()): SalesStats
   }
 
   const states = new Map<string, { count: number; cents: number }>();
-  for (const order of recent) {
+  for (const order of inRange) {
     const state = order.state || "Sin estado";
     const entry = states.get(state) ?? { count: 0, cents: 0 };
     entry.count += 1;
@@ -176,11 +189,13 @@ export function computeStats(orders: AdminOrder[], now = Date.now()): SalesStats
     states.set(state, entry);
   }
 
-  const revenueCents = recent.reduce((sum, order) => sum + net(order), 0);
+  const revenueCents = inRange.reduce((sum, order) => sum + net(order), 0);
   return {
+    since,
+    until,
     revenueCents,
-    orderCount: recent.length,
-    avgCents: recent.length ? Math.round(revenueCents / recent.length) : 0,
+    orderCount: inRange.length,
+    avgCents: inRange.length ? Math.round(revenueCents / inRange.length) : 0,
     unshipped: paid.filter((order) => !order.shipped).length,
     byDay,
     byProduct: [...products.entries()]
