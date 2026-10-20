@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { ccField, resolveInbox } from "@/lib/formsubmit";
+import { emailConfigured } from "@/lib/email";
+import { orderFromStripeSession, sendOrderEmails } from "@/lib/order-email";
 import { sendMetaEvent } from "@/lib/meta-capi";
 import { site } from "@/lib/site";
 
@@ -42,7 +44,14 @@ export async function POST(request: Request) {
       const paid = event.type === "checkout.session.async_payment_succeeded" || session.payment_status === "paid";
       if (paid) {
         console.log("[stripe] pagado", session.client_reference_id, session.amount_total);
-        await notify(`Pago confirmado en Stripe: ${session.client_reference_id ?? "sin referencia"}`);
+        // Correos del pedido (equipo + recibo del cliente) por Resend; el aviso de
+        // una linea por FormSubmit queda solo de respaldo si Resend no esta listo.
+        const order = orderFromStripeSession(session);
+        if (order && emailConfigured()) {
+          await sendOrderEmails(order, { customerReceipt: true });
+        } else {
+          await notify(`Pago confirmado en Stripe: ${session.client_reference_id ?? "sin referencia"}`);
+        }
         await sendPurchase(session);
       }
     }
