@@ -63,20 +63,41 @@ export default async function AdminOrdersPage({
                   </span>
                   <span
                     className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.08em] ${
-                      order.shipped
+                      order.refundState === "pending"
+                        ? "bg-[#ffe3e0] text-[#9b2c20] dark:bg-[#3d1a16] dark:text-[#f0a79f]"
+                        : order.refundState === "full"
+                          ? "bg-mist text-ink-2"
+                          : order.shipped
                         ? "bg-foam text-deep dark:bg-[#0d3a45] dark:text-aqua"
                         : order.paid
                           ? "bg-[#fff3d6] text-[#8a6116] dark:bg-[#3a2f12] dark:text-[#e8c86f]"
                           : "bg-mist text-ink-3"
                     }`}
                   >
-                    {order.shipped ? "Enviado" : order.paid ? "Por enviar" : "Pendiente de pago"}
+                    {order.refundState === "pending"
+                      ? "Reembolso en proceso"
+                      : order.refundState === "full"
+                        ? "Reembolsado"
+                        : order.shipped
+                          ? order.refundState === "partial"
+                            ? "Enviado · reembolso parcial"
+                            : "Enviado"
+                          : order.paid
+                            ? order.refundState === "partial"
+                              ? "Por enviar · reembolso parcial"
+                              : "Por enviar"
+                            : "Pendiente de pago"}
                   </span>
                 </div>
                 <div className="text-right">
                   <p className="font-display text-[17px] font-bold tabular-nums">
                     {formatMoney(order.totalCents, "es")}
                   </p>
+                  {order.refundedCents > 0 ? (
+                    <p className="text-[12.5px] font-semibold text-[#9b2c20] dark:text-[#f0a79f]">
+                      Reembolsado: {formatMoney(order.refundedCents, "es")}
+                    </p>
+                  ) : null}
                   <p className="text-[12px] text-ink-3">
                     {dateFormat.format(new Date(order.created * 1000))}
                   </p>
@@ -111,7 +132,7 @@ export default async function AdminOrdersPage({
                 </div>
               </div>
 
-              {order.paid && !order.shipped && order.paymentIntent ? (
+              {order.paid && !order.shipped && order.paymentIntent && order.refundState !== "full" && order.refundState !== "pending" ? (
                 <ShipForm paymentIntent={order.paymentIntent} />
               ) : null}
             </li>
