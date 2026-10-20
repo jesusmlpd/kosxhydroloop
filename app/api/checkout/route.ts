@@ -114,6 +114,8 @@ export async function POST(request: Request) {
           ip: (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim(),
           ua: (request.headers.get("user-agent") ?? "").slice(0, 300),
           src: `${base}/checkout`,
+          locale,
+          coupon: totals.couponCode ?? "",
           name: customer.name,
           city: customer.city,
           state: customer.state,

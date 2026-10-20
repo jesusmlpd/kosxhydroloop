@@ -37,6 +37,15 @@ function inboxes() {
   return list;
 }
 
+/**
+ * Equipo que recibe los avisos internos de pedido. ORDER_NOTIFY_TO manda; si no
+ * existe se usa la misma lista de FORMSUBMIT_TO.
+ */
+export function internalRecipients() {
+  const own = process.env.ORDER_NOTIFY_TO?.trim();
+  return own ? own.split(/[,;\s]+/).filter(Boolean) : inboxes();
+}
+
 export function ccField() {
   const rest = inboxes().slice(1);
   return rest.length ? { _cc: rest.join(",") } : {};

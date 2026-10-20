@@ -1,5 +1,8 @@
 import { formatMoney, type Totals } from "@/lib/commerce";
+import { emailConfigured } from "@/lib/email";
 import { ccField, resolveInbox } from "@/lib/formsubmit";
+import { sendOrderEmails, type OrderEmail } from "@/lib/order-email";
+import { isLocale, type Locale } from "@/lib/i18n";
 import { site } from "@/lib/site";
 
 export type Customer = {
@@ -60,6 +63,46 @@ export async function notifyOrder(input: {
   locale: string;
   origin: string;
 }) {
+  // Con Resend configurado el aviso sale por ahi (equipo y, en pedidos por
+  // confirmar, tambien el recibo del cliente). FormSubmit queda de respaldo.
+  if (emailConfigured()) {
+    const { customer, totals } = input;
+    const locale: Locale = isLocale(input.locale) ? input.locale : "es";
+    const order: OrderEmail = {
+      ref: input.ref,
+      status: input.method === "manual" ? "pending" : "started",
+      method: input.method,
+      locale,
+      customer: {
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        address: [
+          customer.street,
+          customer.interior,
+          customer.neighborhood,
+          `${customer.city}, ${customer.state}`,
+          `CP ${customer.zip}`,
+        ]
+          .filter(Boolean)
+          .join(", "),
+        notes: customer.notes ?? "",
+      },
+      lines: totals.lines.map((line) => ({
+        name: input.names[line.slug] ?? line.slug,
+        qty: line.qty,
+        unitCents: line.unitCents,
+      })),
+      subtotalCents: totals.subtotalCents,
+      discountCents: totals.discountCents,
+      shippingCents: totals.shippingCents,
+      totalCents: totals.totalCents,
+      coupon: totals.couponCode ?? "",
+    };
+    const sent = await sendOrderEmails(order, { customerReceipt: input.method === "manual" });
+    return sent.internal;
+  }
+
   const to = resolveInbox();
   if (!to) {
     // Sin buzon configurado no se finge un envio. El pedido igual queda en el
