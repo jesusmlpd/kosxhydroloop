@@ -153,3 +153,59 @@ export function firePendingPurchase() {
     // Datos corruptos: mejor perder un evento que romper la pantalla de exito.
   }
 }
+
+/**
+ * Guarda de donde llego la visita (utm_campaign / utm_content) para el resto de
+ * la sesion: el parametro se pierde en cuanto el cliente cambia de pagina, y el
+ * mensaje de WhatsApp necesita saber de que anuncio vino.
+ */
+const ATTR_KEY = "hl-attr";
+
+export function captureAttribution() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const campaign = params.get("utm_campaign");
+    const content = params.get("utm_content");
+    if (!campaign && !content) return;
+    const previous = JSON.parse(sessionStorage.getItem(ATTR_KEY) ?? "{}") as Record<string, string>;
+    sessionStorage.setItem(
+      ATTR_KEY,
+      JSON.stringify({
+        ...previous,
+        ...(campaign ? { campaign: campaign.slice(0, 40) } : {}),
+        ...(content ? { content: content.slice(0, 40) } : {}),
+      }),
+    );
+  } catch {
+    // Sin sessionStorage simplemente no hay etiqueta de campana.
+  }
+}
+
+export function readAttribution(): { campaign?: string; content?: string } {
+  try {
+    return JSON.parse(sessionStorage.getItem(ATTR_KEY) ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Clic a WhatsApp = evento Contact. Va por el Pixel y por el servidor con el
+ * mismo event_id (Meta deduplica); el servidor no recibe correo ni telefono,
+ * solo cookies de Meta, IP y navegador.
+ */
+export function trackContact(origin: string) {
+  const eventId = `ct-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  fbq("track", "Contact", { content_name: origin, content_category: "whatsapp" }, { eventID: eventId });
+  gtag("event", "contact", { method: "whatsapp", origin });
+  try {
+    void fetch("/api/track/contact", {
+      method: "POST",
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ eventId, origin, url: window.location.href, ...metaBrowserIds() }),
+    }).catch(() => undefined);
+  } catch {
+    // El Pixel del navegador ya salio; el respaldo del servidor es opcional.
+  }
+}
