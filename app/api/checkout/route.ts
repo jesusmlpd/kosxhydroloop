@@ -4,6 +4,7 @@ import { getDict } from "@/lib/dict";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { notifyOrder, orderRef, type Customer, type PaymentMethod } from "@/lib/orders";
 import { products, site } from "@/lib/site";
+import { loadStoreSettings } from "@/lib/store-settings-server";
 
 /**
  * Un solo endpoint para los tres caminos de pago.
@@ -13,6 +14,8 @@ import { products, site } from "@/lib/site";
  * montos, se ignoran. Es la diferencia entre una tienda y una alcancia abierta.
  */
 export async function POST(request: Request) {
+  // Precios, inventario y envio del panel: el cobro usa los mismos que ve el cliente.
+  await loadStoreSettings();
   const body = (await request.json().catch(() => null)) as
     | {
         method?: PaymentMethod;

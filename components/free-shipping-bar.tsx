@@ -14,8 +14,8 @@ export function FreeShippingBar({
   if (!commerce.urgency.freeShippingBar) return null;
 
   const goal = commerce.shipping.freeFromCents;
-  const progress = Math.min(100, Math.round(((goal - missingCents) / goal) * 100));
   const done = missingCents === 0;
+  const progress = goal > 0 ? Math.min(100, Math.round(((goal - missingCents) / goal) * 100)) : 100;
 
   return (
     <div>

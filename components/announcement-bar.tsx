@@ -2,27 +2,41 @@
 
 import { useEffect, useState } from "react";
 import { OfferCountdown } from "@/components/offer-countdown";
-import { commerce, formatMoney, freeShippingPromoLive } from "@/lib/commerce";
+import { commerce, formatMoney } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
 import { fill, type Locale } from "@/lib/i18n";
+import { notExpired, type StoreSettings } from "@/lib/store-settings";
 
 /**
  * Barra de anuncios rotativa: promocion con reloj, envio gratis y la garantia
  * hecha en Mexico se turnan cada seis segundos con un fundido. Sin JS queda
  * fija en la promocion, que es el mensaje mas importante.
  */
-export function AnnouncementBar({ locale, dict }: { locale: Locale; dict: Dict }) {
+export function AnnouncementBar({
+  locale,
+  dict,
+  settings,
+}: {
+  locale: Locale;
+  dict: Dict;
+  settings: StoreSettings;
+}) {
   const [slide, setSlide] = useState(0);
 
-  const promoLive = freeShippingPromoLive();
+  const { promo } = settings;
+  const bannerText = locale === "en" ? promo.bannerEn : promo.bannerEs;
+  const bannerLive = promo.bannerEnabled && bannerText !== "" && notExpired(promo.endsAt);
+  const freeForAll = commerce.shipping.flatCents <= 0;
 
   const slides = [
-    ...(promoLive ? [<span key="free" className="font-medium">{dict.announcement.promo}</span>] : []),
+    ...(bannerLive ? [<span key="free" className="font-medium">{bannerText}</span>] : []),
     <OfferCountdown key="promo" dict={dict.urgency} variant="bare" />,
     <span key="ship">
-      {fill(dict.announcement.shipping, {
-        amount: formatMoney(commerce.shipping.freeFromCents, locale),
-      })}
+      {freeForAll
+        ? dict.announcement.freeAll
+        : fill(dict.announcement.shipping, {
+            amount: formatMoney(commerce.shipping.freeFromCents, locale),
+          })}
     </span>,
     <span key="mx">{dict.announcement.mx}</span>,
   ];

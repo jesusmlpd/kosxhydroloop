@@ -13,11 +13,14 @@ export const commerce = {
   pricesIncludeTax: true,
   taxRate: 0.16,
 
+  /**
+   * Envio gratis a todo Mexico: flatCents en 0. El panel (/admin/tienda) puede
+   * ponerle costo, un minimo para envio gratis o una fecha de envio gratis.
+   */
   shipping: {
-    flatCents: 29900,
-    freeFromCents: 500000,
-    /** Promo de fin de mes: envio gratis sin minimo hasta esta fecha. null la apaga. */
-    freeUntil: "2026-10-31T23:59:59-06:00" as string | null,
+    flatCents: 0,
+    freeFromCents: 0,
+    freeUntil: null as string | null,
   },
 
   /** Reserva del carrito. En minutos. Poner 0 la apaga. */
@@ -158,7 +161,10 @@ export function priceCart(
 
   const freeShippingPromo =
     commerce.shipping.freeUntil !== null && new Date(commerce.shipping.freeUntil).getTime() > now;
-  const qualifies = freeShippingPromo || afterDiscount >= commerce.shipping.freeFromCents;
+  const qualifies =
+    commerce.shipping.flatCents <= 0 ||
+    freeShippingPromo ||
+    afterDiscount >= commerce.shipping.freeFromCents;
   const shippingCents = afterDiscount === 0 ? 0 : qualifies ? 0 : commerce.shipping.flatCents;
   const freeShippingMissingCents = qualifies
     ? 0
