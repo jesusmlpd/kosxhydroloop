@@ -17,7 +17,16 @@ import { metaBrowserIds, storePendingPurchase, trackInitiateCheckout } from "@/l
 
 type Method = "stripe" | "mercadopago" | "manual";
 
-export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
+export function CheckoutForm({
+  locale,
+  dict,
+  prefill,
+}: {
+  locale: Locale;
+  dict: Dict;
+  /** Datos de quien regresa desde un correo de recuperacion (?r=). */
+  prefill?: { name?: string; email?: string; phone?: string };
+}) {
   const now = useNow();
   const { state, totals, reservationMsLeft, reservationExpired } = useCart(now);
   const [method, setMethod] = useState<Method>("stripe");
@@ -120,15 +129,16 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
         <fieldset className="card p-6">
           <legend className="eyebrow px-1">{dict.checkout.contactTitle}</legend>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
-            <Field name="name" label={dict.checkout.fields.name} autoComplete="name" required />
+            <Field name="name" label={dict.checkout.fields.name} autoComplete="name" required defaultValue={prefill?.name} />
             <Field
               name="email"
               type="email"
               label={dict.checkout.fields.email}
               autoComplete="email"
               required
+              defaultValue={prefill?.email}
             />
-            <Field name="phone" label={dict.checkout.fields.phone} autoComplete="tel" required />
+            <Field name="phone" label={dict.checkout.fields.phone} autoComplete="tel" required defaultValue={prefill?.phone} />
           </div>
         </fieldset>
 
@@ -294,10 +304,22 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
           ) : null}
         </dl>
 
+        {/* Consentimiento para recordatorios de carrito abandonado y ofertas. Va
+            marcada por omision (se puede desmarcar) y enlaza el aviso de privacidad. */}
+        <label className="mt-5 flex items-start gap-2.5 text-[13px] leading-snug text-ink-2">
+          <input type="checkbox" name="marketing" defaultChecked className="mt-0.5 h-4 w-4 shrink-0 accent-[#0a7f94]" />
+          <span>
+            {dict.checkout.reminders}{" "}
+            <Link href={localePath(locale, "/legal/privacidad")} target="_blank" className="underline">
+              {dict.footer.privacy}
+            </Link>
+          </span>
+        </label>
+
         <button
           type="submit"
           disabled={status === "sending"}
-          className="btn btn-primary mt-5 w-full disabled:opacity-60"
+          className="btn btn-primary mt-4 w-full disabled:opacity-60"
         >
           {status === "sending"
             ? dict.checkout.processing
@@ -341,7 +363,9 @@ function Field({
   autoComplete,
   inputMode,
   className = "",
+  defaultValue,
 }: {
+  defaultValue?: string;
   name: string;
   label: string;
   type?: string;
@@ -359,6 +383,7 @@ function Field({
         required={required}
         autoComplete={autoComplete}
         inputMode={inputMode}
+        defaultValue={defaultValue}
         className="field mt-1.5"
       />
     </label>

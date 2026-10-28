@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { commerce, priceCart, type CartLine } from "@/lib/commerce";
 import { getDict } from "@/lib/dict";
 import { isLocale, type Locale } from "@/lib/i18n";
+import { trackCheckout } from "@/lib/recovery";
 import { notifyOrder, orderRef, type Customer, type PaymentMethod } from "@/lib/orders";
 import { products, site } from "@/lib/site";
 
@@ -127,6 +128,19 @@ export async function POST(request: Request) {
         success_url: `${base}/order/success?ref=${ref}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/order/failure?ref=${ref}`,
       });
+
+      // Guarda el checkout para los recordatorios de carrito abandonado. Es un
+      // extra: si la base de datos falla, el cobro sigue su curso.
+      await trackCheckout({
+        ref,
+        email: customer.email,
+        name: customer.name,
+        phone: customer.phone,
+        locale,
+        items: totals.lines.map((line) => ({ id: line.id, qty: line.qty })),
+        coupon: totals.couponCode ?? "",
+        consent: customer.marketing === "on",
+      }).catch((error) => console.error("[recuperacion] no se guardo el checkout", error));
 
       await notifyOrder({
         ref,

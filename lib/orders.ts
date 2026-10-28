@@ -16,6 +16,8 @@ export type Customer = {
   state: string;
   zip: string;
   notes?: string;
+  /** "on" si dejo marcada la casilla de recordatorios del checkout. */
+  marketing?: string;
 };
 
 export type PaymentMethod = "stripe" | "mercadopago" | "manual";

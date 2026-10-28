@@ -109,7 +109,7 @@ ${totals}
 </table>`;
 }
 
-function shell(title: string, body: string, legal: string) {
+export function shell(title: string, body: string, legal: string) {
   return `<!doctype html><html><body style="margin:0;background:#f2f7f9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#0b1f2a">
 <div style="max-width:560px;margin:0 auto;padding:24px 16px">
 <div style="background:#ffffff;border-radius:16px;padding:28px">
