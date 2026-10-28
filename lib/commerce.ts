@@ -16,6 +16,8 @@ export const commerce = {
   shipping: {
     flatCents: 29900,
     freeFromCents: 500000,
+    /** Promo de fin de mes: envio gratis sin minimo hasta esta fecha. null la apaga. */
+    freeUntil: "2026-10-31T23:59:59-06:00" as string | null,
   },
 
   /** Reserva del carrito. En minutos. Poner 0 la apaga. */
@@ -154,7 +156,9 @@ export function priceCart(
   const discountCents = coupon ? Math.round((subtotalCents * coupon.percentOff) / 100) : 0;
   const afterDiscount = subtotalCents - discountCents;
 
-  const qualifies = afterDiscount >= commerce.shipping.freeFromCents;
+  const freeShippingPromo =
+    commerce.shipping.freeUntil !== null && new Date(commerce.shipping.freeUntil).getTime() > now;
+  const qualifies = freeShippingPromo || afterDiscount >= commerce.shipping.freeFromCents;
   const shippingCents = afterDiscount === 0 ? 0 : qualifies ? 0 : commerce.shipping.flatCents;
   const freeShippingMissingCents = qualifies
     ? 0
@@ -177,6 +181,11 @@ export function priceCart(
     totalCents,
     couponCode: coupon?.code ?? null,
   };
+}
+
+/** true mientras dure la promo de envio gratis sin minimo. */
+export function freeShippingPromoLive(now = Date.now()) {
+  return commerce.shipping.freeUntil !== null && new Date(commerce.shipping.freeUntil).getTime() > now;
 }
 
 /** Milisegundos que faltan para el fin de la promo, o null si no hay. */
