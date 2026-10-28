@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { OfferCountdown } from "@/components/offer-countdown";
-import { commerce, formatMoney } from "@/lib/commerce";
+import { commerce, formatMoney, freeShippingPromoLive } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
 import { fill, type Locale } from "@/lib/i18n";
 
@@ -14,7 +14,10 @@ import { fill, type Locale } from "@/lib/i18n";
 export function AnnouncementBar({ locale, dict }: { locale: Locale; dict: Dict }) {
   const [slide, setSlide] = useState(0);
 
+  const promoLive = freeShippingPromoLive();
+
   const slides = [
+    ...(promoLive ? [<span key="free" className="font-medium">{dict.announcement.promo}</span>] : []),
     <OfferCountdown key="promo" dict={dict.urgency} variant="bare" />,
     <span key="ship">
       {fill(dict.announcement.shipping, {

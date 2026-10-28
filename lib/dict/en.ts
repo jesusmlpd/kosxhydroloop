@@ -460,6 +460,7 @@ export const en: Dict = {
 
   announcement: {
     shipping: "Free shipping on orders over {amount}",
+    promo: "Until October 31: free shipping on every model + 3 interest-free installments",
     mx: "Made in Mexico · Warranty up to 2 years",
   },
 

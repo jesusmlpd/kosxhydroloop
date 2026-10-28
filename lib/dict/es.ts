@@ -461,6 +461,7 @@ export const es = {
 
   announcement: {
     shipping: "Envío gratis en pedidos desde {amount}",
+    promo: "Hasta el 31 de octubre: envío gratis en todos los modelos + 3 meses sin intereses",
     mx: "Hecho en México · Garantía de hasta 2 años",
   },
 
