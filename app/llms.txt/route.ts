@@ -2,13 +2,15 @@ import { getDict } from "@/lib/dict";
 import { posts } from "@/lib/blog";
 import { formatMoney } from "@/lib/commerce";
 import { buyableProducts, coverage, site } from "@/lib/site";
+import { loadStoreSettings } from "@/lib/store-settings-server";
 
 /**
  * llms.txt: resumen del sitio para modelos de lenguaje y motores de respuesta.
  * Se genera desde lib/site, lib/dict y lib/blog para que nunca se desincronice
  * del catalogo ni del contenido real.
  */
-export function GET() {
+export async function GET() {
+  await loadStoreSettings();
   const dict = getDict("es");
 
   const productLines = buyableProducts
@@ -70,8 +72,7 @@ ${faqLines}
 ## Compra y pagos
 Pagos con tarjeta de crédito y débito, Apple Pay, Google Pay, meses sin
 intereses, OXXO, SPEI y transferencia. En puntos de venta autorizados también
-en efectivo. Envío a todo México; en varias zonas es gratis según la red de
-distribución.
+en efectivo. Envío gratis a todo México.
 `;
 
   return new Response(body, {

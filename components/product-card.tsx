@@ -72,7 +72,7 @@ export function ProductCard({
               {dict.products.cta}
             </Link>
           ) : (
-            <div className="flex items-end justify-between gap-3">
+            <div className="space-y-4">
               <p className="font-display text-[19px] font-bold leading-tight text-ink">
                 {formatMoney(product.priceCents, locale, product.currency)}
                 {product.compareAtCents ? (
@@ -84,7 +84,7 @@ export function ProductCard({
                   {dict.products.ivaIncluded}
                 </span>
               </p>
-              <QuickAdd product={product} dict={dict} />
+              <QuickAdd product={product} dict={dict} locale={locale} />
             </div>
           )}
         </div>

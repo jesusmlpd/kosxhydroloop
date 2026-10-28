@@ -8,6 +8,8 @@ import { CartFromUrl } from "@/components/cart-from-url";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { AnnouncementBar } from "@/components/announcement-bar";
+import { PromoPopup } from "@/components/promo-popup";
+import { StoreHydrator } from "@/components/store-hydrator";
 import { PurchaseToasts } from "@/components/social-proof";
 import { WhatsappFab } from "@/components/whatsapp-fab";
 import { ThemeScript } from "@/components/theme-script";
@@ -15,6 +17,7 @@ import { getDict } from "@/lib/dict";
 import { isLocale, locales } from "@/lib/i18n";
 import { organizationSchema, graph, websiteSchema } from "@/lib/schema";
 import { site } from "@/lib/site";
+import { loadStoreSettings } from "@/lib/store-settings-server";
 import "../globals.css";
 
 const sora = Sora({ variable: "--font-sora", subsets: ["latin"], display: "swap" });
@@ -91,6 +94,7 @@ export default async function LocaleLayout({
   if (!isLocale(locale)) notFound();
 
   const dict = getDict(locale);
+  const settings = await loadStoreSettings();
 
   return (
     <html
@@ -108,6 +112,7 @@ export default async function LocaleLayout({
         </noscript>
       </head>
       <body className="flex min-h-dvh flex-col bg-paper text-ink">
+        <StoreHydrator settings={settings} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -122,11 +127,12 @@ export default async function LocaleLayout({
         </a>
         <Header locale={locale} dict={dict} />
         <main id="main" className="flex-1 pt-[68px]">
-          <AnnouncementBar locale={locale} dict={dict} />
+          <AnnouncementBar locale={locale} dict={dict} settings={settings} />
           {children}
         </main>
         <Footer locale={locale} dict={dict} />
         <CartDrawer locale={locale} dict={dict} />
+        <PromoPopup locale={locale} settings={settings} />
         <WhatsappFab label={dict.contact.whatsappCta} />
         <PurchaseToasts
           dict={dict.socialProof}

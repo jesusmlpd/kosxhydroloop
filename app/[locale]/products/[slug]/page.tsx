@@ -28,6 +28,7 @@ import { breadcrumbSchema, graph, productSchema } from "@/lib/schema";
 import { reviewsAreReal, reviewsFor, summarize } from "@/lib/reviews";
 import { WhatsappLink } from "@/components/whatsapp-link";
 import { findProduct, products, site } from "@/lib/site";
+import { loadStoreSettings } from "@/lib/store-settings-server";
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -54,6 +55,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 export default async function ProductPage({ params }: { params: Params }) {
   const { locale, slug } = await params;
+  await loadStoreSettings();
   if (!isLocale(locale)) notFound();
   const product = findProduct(slug);
   if (!product) notFound();
@@ -268,9 +270,11 @@ export default async function ProductPage({ params }: { params: Params }) {
                   </li>
                   <li className="flex gap-2.5">
                     <Check />
-                    {locale === "en"
-                      ? `Free shipping on orders over ${freeShipping}.`
-                      : `Envío gratis en pedidos desde ${freeShipping}.`}
+                    {commerce.shipping.flatCents <= 0
+                      ? dict.announcement.freeAll
+                      : locale === "en"
+                        ? `Free shipping on orders over ${freeShipping}.`
+                        : `Envío gratis en pedidos desde ${freeShipping}.`}
                   </li>
                   <li className="flex gap-2.5">
                     <Check />

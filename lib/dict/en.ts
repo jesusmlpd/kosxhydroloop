@@ -199,7 +199,7 @@ export const en: Dict = {
       { title: "One year warranty", body: "Manufacturing defects on the unit and the control module. Up to two years when our certified crew installs it." },
       { title: "Protected checkout", body: "Payments processed by Stripe and Mercado Pago. Hydroloop never sees or stores your card details." },
       { title: "Remote support", body: "We walk you through the install and answer questions remotely if your plumber needs a hand." },
-      { title: "Shipping across Mexico", body: "In several zones shipping is free depending on our distribution network. Otherwise we quote it with your postal code." },
+      { title: "Shipping across Mexico", body: "Free shipping across Mexico, no extra cost at checkout." },
       { title: "Certified installation", body: "In the north and central zones our own crew installs it and extends the warranty." },
     ],
     paymentsTitle: "Payment methods accepted",
@@ -459,6 +459,7 @@ export const en: Dict = {
   },
 
   announcement: {
+    freeAll: "Free shipping across Mexico",
     shipping: "Free shipping on orders over {amount}",
     promo: "Until October 31: free shipping on every model + 3 interest-free installments",
     mx: "Made in Mexico · Warranty up to 2 years",
@@ -510,7 +511,7 @@ export const en: Dict = {
       },
       {
         q: "Do you ship anywhere?",
-        a: "Yes. In some cases shipping is free depending on our distribution network and your location. If it does not apply, we quote it with your postal code.",
+        a: "Yes. We ship across Mexico and shipping is free for you.",
       },
       {
         q: "What payment methods do you take?",

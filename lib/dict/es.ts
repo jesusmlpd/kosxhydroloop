@@ -200,7 +200,7 @@ export const es = {
       { title: "Garantía de 1 año", body: "Por defectos de fabricación en el equipo y el módulo de control. Hasta 2 años si lo instala nuestro personal certificado." },
       { title: "Compra protegida", body: "Pago procesado por Stripe y Mercado Pago. Hydroloop nunca ve ni guarda los datos de tu tarjeta." },
       { title: "Soporte técnico remoto", body: "Te acompañamos en la instalación y resolvemos dudas a distancia si tu plomero necesita ayuda." },
-      { title: "Envío a todo México", body: "En varias zonas el envío es gratis según nuestra red de distribución. Si no, lo cotizamos con tu código postal." },
+      { title: "Envío a todo México", body: "Envío gratis a todo México, sin costo extra al pagar." },
       { title: "Instalación certificada", body: "En zona norte y centro tenemos personal propio que lo instala y extiende la garantía." },
     ],
     paymentsTitle: "Formas de pago aceptadas",
@@ -460,6 +460,7 @@ export const es = {
   },
 
   announcement: {
+    freeAll: "Envío gratis a todo México",
     shipping: "Envío gratis en pedidos desde {amount}",
     promo: "Hasta el 31 de octubre: envío gratis en todos los modelos + 3 meses sin intereses",
     mx: "Hecho en México · Garantía de hasta 2 años",
@@ -511,7 +512,7 @@ export const es = {
       },
       {
         q: "¿Hacen envíos a cualquier lugar?",
-        a: "Sí. En algunos casos el envío es gratis según nuestra red de distribución y tu ubicación. Si no aplica, lo cotizamos con tu código postal.",
+        a: "Sí. Enviamos a todo México y el envío no tiene costo para ti.",
       },
       {
         q: "¿Cuáles son las formas de pago?",

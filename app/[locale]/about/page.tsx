@@ -10,6 +10,7 @@ import { isLocale, localePath } from "@/lib/i18n";
 import { formatMoney } from "@/lib/commerce";
 import { pageMeta } from "@/lib/metadata";
 import { findProduct } from "@/lib/site";
+import { loadStoreSettings } from "@/lib/store-settings-server";
 
 export async function generateMetadata({
   params,
@@ -24,6 +25,7 @@ export async function generateMetadata({
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  await loadStoreSettings();
   if (!isLocale(locale)) notFound();
   const dict = getDict(locale);
   const manual = findProduct("hydroloop-manual");

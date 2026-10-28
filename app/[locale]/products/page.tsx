@@ -9,6 +9,7 @@ import { isLocale } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
 import { products } from "@/lib/site";
 import { PaymentBadges } from "@/components/payment-badges";
+import { loadStoreSettings } from "@/lib/store-settings-server";
 
 export async function generateMetadata({
   params,
@@ -27,6 +28,7 @@ export default async function ProductsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  await loadStoreSettings();
   if (!isLocale(locale)) notFound();
   const dict = getDict(locale);
 

@@ -145,7 +145,7 @@ export const legalPages: LegalPage[] = [
     body: {
       es: [
         { type: "h2", text: "Cobertura" },
-        { type: "p", text: "Enviamos a todo México. En varias zonas el envío es gratis según nuestra red de distribución; cuando no aplica, se cotiza con tu código postal. También hay entrega en puntos de venta autorizados en Guanajuato, Querétaro, Coahuila, San Luis Potosí, Baja California Sur, Estado de México y Ciudad de Guatemala." },
+        { type: "p", text: "Enviamos a todo México y el envío es gratis. También hay entrega en puntos de venta autorizados en Guanajuato, Querétaro, Coahuila, San Luis Potosí, Baja California Sur, Estado de México y Ciudad de Guatemala." },
         { type: "h2", text: "Tiempos" },
         { type: "ul", items: [
           "El pedido se prepara en 1 a 2 días hábiles después de acreditarse el pago.",
@@ -162,7 +162,7 @@ export const legalPages: LegalPage[] = [
       ],
       en: [
         { type: "h2", text: "Coverage" },
-        { type: "p", text: "We ship across Mexico. In several zones shipping is free depending on our distribution network; when it does not apply we quote it with your postal code. Pickup is also available at authorized points of sale in Guanajuato, Querétaro, Coahuila, San Luis Potosí, Baja California Sur, Estado de México and Guatemala City." },
+        { type: "p", text: "We ship across Mexico and shipping is free. Pickup is also available at authorized points of sale in Guanajuato, Querétaro, Coahuila, San Luis Potosí, Baja California Sur, Estado de México and Guatemala City." },
         { type: "h2", text: "Times" },
         { type: "ul", items: [
           "Orders are prepared within 1 to 2 business days after payment clears.",
