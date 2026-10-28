@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { SocialIcon } from "@/components/social-icons";
-import { whatsappUrl } from "@/lib/site";
+import { WhatsappLink } from "@/components/whatsapp-link";
 
 /**
  * Boton flotante de WhatsApp, el canal que mas cierra en Mexico. Se esconde
@@ -16,10 +16,8 @@ export function WhatsappFab({ label }: { label: string }) {
   const onPdp = /\/products\/[^/]+$/.test(pathname);
 
   return (
-    <a
-      href={whatsappUrl()}
-      target="_blank"
-      rel="noreferrer"
+    <WhatsappLink
+      origin="fab"
       aria-label={label}
       title={label}
       className={`fixed bottom-4 right-4 z-40 h-14 w-14 place-items-center rounded-full bg-[#25d366] text-white shadow-[0_14px_40px_-8px_rgba(37,211,102,0.7)] transition-transform hover:scale-105 active:scale-95 ${
@@ -27,6 +25,6 @@ export function WhatsappFab({ label }: { label: string }) {
       }`}
     >
       <SocialIcon id="whatsapp" size={27} />
-    </a>
+    </WhatsappLink>
   );
 }

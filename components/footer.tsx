@@ -5,7 +5,8 @@ import { PaymentBadges } from "@/components/payment-badges";
 import { SocialIcon, SocialLinks } from "@/components/social-icons";
 import type { Dict } from "@/lib/dict";
 import { localePath, type Locale } from "@/lib/i18n";
-import { site, whatsappUrl } from "@/lib/site";
+import { WhatsappLink } from "@/components/whatsapp-link";
+import { site } from "@/lib/site";
 
 export function Footer({ locale, dict }: { locale: Locale; dict: Dict }) {
   const year = 2026;
@@ -55,17 +56,15 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dict }) {
           <h2 className="eyebrow">{dict.footer.contact}</h2>
           <ul className="mt-3 space-y-2.5 text-[15px] text-ink-2">
             <li>
-              <a
-                href={whatsappUrl()}
-                target="_blank"
-                rel="noreferrer"
+              <WhatsappLink
+                origin="footer"
                 className="inline-flex items-center gap-2 transition-colors hover:text-ink"
               >
                 <span className="text-[#1da851]">
                   <SocialIcon id="whatsapp" size={16} />
                 </span>
                 {site.whatsappDisplay}
-              </a>
+              </WhatsappLink>
             </li>
             <li>
               <a
