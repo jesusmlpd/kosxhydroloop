@@ -200,20 +200,49 @@ export async function trackCheckout(input: {
   now?: number;
 }) {
   if (!kvAvailable() || !input.email.includes("@")) return null;
-  const record: RecoveryRecord = {
-    id: randomUUID().replace(/-/g, ""),
-    ref: input.ref,
-    createdAt: input.now ?? Date.now(),
-    email: input.email.trim().toLowerCase(),
-    name: input.name,
-    phone: input.phone,
-    locale: input.locale,
-    items: input.items,
-    coupon: input.coupon,
-    consent: input.consent,
-    sent: [],
-  };
+  const now = input.now ?? Date.now();
+  const email = input.email.trim().toLowerCase();
+  const byEmail = `rec:byemail:${emailHash(email)}`;
+
+  // Un mismo correo reutiliza su registro mientras siga abierto: el lead se
+  // guarda al escribir los datos y el checkout lo actualiza, sin duplicados.
+  const existingId = await kv.get(byEmail);
+  let record = existingId ? await loadRecord(existingId) : null;
+  if (record) {
+    const paidAt = Number((await kv.get(paidKey(email))) ?? 0);
+    if (now - record.createdAt > MAX_AGE_MS || paidAt >= record.createdAt) record = null;
+  }
+
+  if (record) {
+    // Mientras siga llenando el formulario no se le escribe: el reloj de los
+    // recordatorios parte de su ultima actividad (salvo que ya recibio alguno).
+    if (record.sent.length === 0) record.createdAt = now;
+    Object.assign(record, {
+      ref: input.ref || record.ref,
+      name: input.name || record.name,
+      phone: input.phone || record.phone,
+      locale: input.locale,
+      items: input.items,
+      coupon: input.coupon,
+      consent: input.consent,
+    });
+  } else {
+    record = {
+      id: randomUUID().replace(/-/g, ""),
+      ref: input.ref,
+      createdAt: now,
+      email,
+      name: input.name,
+      phone: input.phone,
+      locale: input.locale,
+      items: input.items,
+      coupon: input.coupon,
+      consent: input.consent,
+      sent: [],
+    };
+  }
   await kv.set(recordKey(record.id), JSON.stringify(record), RECORD_TTL);
+  await kv.set(byEmail, record.id, RECORD_TTL);
   await kv.zadd(PENDING, record.createdAt, record.id);
   return record;
 }
