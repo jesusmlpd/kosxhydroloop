@@ -1,3 +1,4 @@
+import { WhatsappLink } from "@/components/whatsapp-link";
 import { socials, whatsappUrl } from "@/lib/site";
 
 /**
@@ -55,20 +56,23 @@ export function SocialLinks({
 
   return (
     <ul className={`flex items-center gap-2 ${className}`}>
-      {items.map((item) => (
-        <li key={item.id}>
-          <a
-            href={item.href}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={item.name}
-            title={item.name}
-            className="grid h-10 w-10 place-items-center rounded-full border border-line text-ink-2 transition-colors hover:border-teal hover:text-teal"
-          >
-            <SocialIcon id={item.id} />
-          </a>
-        </li>
-      ))}
+      {items.map((item) => {
+        const style =
+          "grid h-10 w-10 place-items-center rounded-full border border-line text-ink-2 transition-colors hover:border-teal hover:text-teal";
+        return (
+          <li key={item.id}>
+            {item.id === "whatsapp" ? (
+              <WhatsappLink origin="redes" aria-label={item.name} title={item.name} className={style}>
+                <SocialIcon id={item.id} />
+              </WhatsappLink>
+            ) : (
+              <a href={item.href} target="_blank" rel="noreferrer" aria-label={item.name} title={item.name} className={style}>
+                <SocialIcon id={item.id} />
+              </a>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }

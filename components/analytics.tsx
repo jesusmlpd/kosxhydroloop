@@ -3,6 +3,7 @@
 import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { captureAttribution, collectSession } from "@/lib/track";
 
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
@@ -15,6 +16,11 @@ const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
 export function Analytics() {
   const pathname = usePathname();
   const firstLoad = useRef(true);
+
+  useEffect(() => {
+    captureAttribution();
+    collectSession();
+  }, []);
 
   useEffect(() => {
     // El PageView inicial lo disparan los propios snippets al cargar.

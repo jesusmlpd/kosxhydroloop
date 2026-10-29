@@ -6,7 +6,8 @@ import { SocialIcon, SocialLinks } from "@/components/social-icons";
 import { getDict } from "@/lib/dict";
 import { isLocale } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
-import { distributorRegions, site, whatsappUrl } from "@/lib/site";
+import { WhatsappLink } from "@/components/whatsapp-link";
+import { distributorRegions, site } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -44,15 +45,13 @@ export default async function ContactPage({
               <p className="mt-1.5 text-[14px] text-ink-2">{dict.contact.doubtsBody}</p>
 
               <div className="mt-5 flex flex-col gap-3">
-                <a
-                  href={whatsappUrl()}
-                  target="_blank"
-                  rel="noreferrer"
+                <WhatsappLink
+                  origin="contacto"
                   className="btn w-full bg-[#25d366] text-[#08381c] hover:brightness-105 sm:w-auto"
                 >
                   <SocialIcon id="whatsapp" size={19} />
                   {dict.contact.whatsappCta} · {site.whatsappDisplay}
-                </a>
+                </WhatsappLink>
                 <p className="text-[14px] text-ink-2">
                   {dict.contact.emailCta}{" "}
                   <a href={`mailto:${site.email}`} className="font-semibold text-teal hover:underline">

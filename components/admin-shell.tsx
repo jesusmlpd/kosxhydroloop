@@ -56,6 +56,7 @@ const tabs = [
   { href: "/admin/marketing", label: "Marketing" },
   { href: "/admin/reportes", label: "Reportes" },
   { href: "/admin/recuperacion", label: "Recuperación" },
+  { href: "/admin/tienda", label: "Tienda" },
 ] as const;
 
 export function AdminShell({

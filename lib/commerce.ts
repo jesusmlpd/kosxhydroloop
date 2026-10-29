@@ -13,9 +13,14 @@ export const commerce = {
   pricesIncludeTax: true,
   taxRate: 0.16,
 
+  /**
+   * Envio gratis a todo Mexico: flatCents en 0. El panel (/admin/tienda) puede
+   * ponerle costo, un minimo para envio gratis o una fecha de envio gratis.
+   */
   shipping: {
-    flatCents: 29900,
-    freeFromCents: 500000,
+    flatCents: 0,
+    freeFromCents: 0,
+    freeUntil: null as string | null,
   },
 
   /** Reserva del carrito. En minutos. Poner 0 la apaga. */
@@ -64,7 +69,11 @@ export const commerce = {
   },
 
   /** Cupones extra al de la promo. El de la promo entra solo. */
-  coupons: [{ code: "BIENVENIDA5", percentOff: 5 }],
+  coupons: [{ code: "BIENVENIDA5", percentOff: 5, endsAt: null }] as Array<{
+    code: string;
+    percentOff: number;
+    endsAt: string | null;
+  }>,
 };
 
 export function formatMoney(cents: number, locale: string, currency: string = commerce.currency) {
@@ -111,7 +120,9 @@ export function findCoupon(code: string | null | undefined, now: number) {
     return { code: commerce.promo.code, percentOff: commerce.promo.percentOff };
   }
 
-  return commerce.coupons.find((coupon) => coupon.code === wanted) ?? null;
+  const found = commerce.coupons.find((coupon) => coupon.code === wanted);
+  if (!found || (found.endsAt !== null && new Date(found.endsAt).getTime() <= now)) return null;
+  return found;
 }
 
 /**
@@ -154,7 +165,12 @@ export function priceCart(
   const discountCents = coupon ? Math.round((subtotalCents * coupon.percentOff) / 100) : 0;
   const afterDiscount = subtotalCents - discountCents;
 
-  const qualifies = afterDiscount >= commerce.shipping.freeFromCents;
+  const freeShippingPromo =
+    commerce.shipping.freeUntil !== null && new Date(commerce.shipping.freeUntil).getTime() > now;
+  const qualifies =
+    commerce.shipping.flatCents <= 0 ||
+    freeShippingPromo ||
+    afterDiscount >= commerce.shipping.freeFromCents;
   const shippingCents = afterDiscount === 0 ? 0 : qualifies ? 0 : commerce.shipping.flatCents;
   const freeShippingMissingCents = qualifies
     ? 0
@@ -177,6 +193,11 @@ export function priceCart(
     totalCents,
     couponCode: coupon?.code ?? null,
   };
+}
+
+/** true mientras dure la promo de envio gratis sin minimo. */
+export function freeShippingPromoLive(now = Date.now()) {
+  return commerce.shipping.freeUntil !== null && new Date(commerce.shipping.freeUntil).getTime() > now;
 }
 
 /** Milisegundos que faltan para el fin de la promo, o null si no hay. */

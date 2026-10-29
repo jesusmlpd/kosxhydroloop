@@ -118,6 +118,12 @@ export const kv = {
     return ((await run(["ZREVRANGE", key, 0, count - 1])) as string[]) ?? [];
   },
 
+  async mget(keys: string[]): Promise<Array<string | null>> {
+    if (!keys.length) return [];
+    if (inMemory()) return keys.map((key) => alive(key)?.value ?? null);
+    return ((await run(["MGET", ...keys])) as Array<string | null>) ?? keys.map(() => null);
+  },
+
   async incr(key: string): Promise<number> {
     if (inMemory()) {
       const next = Number(alive(key)?.value ?? 0) + 1;

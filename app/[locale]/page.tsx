@@ -24,6 +24,7 @@ import { faqSchema, graph } from "@/lib/schema";
 import { reviews, summarize } from "@/lib/reviews";
 import { formatMoney } from "@/lib/commerce";
 import { buyableProducts, coverage, products } from "@/lib/site";
+import { loadStoreSettings } from "@/lib/store-settings-server";
 
 export async function generateMetadata({
   params,
@@ -38,6 +39,7 @@ export async function generateMetadata({
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  await loadStoreSettings();
   if (!isLocale(locale)) notFound();
   const dict = getDict(locale);
   const bateria = products.find((product) => product.comingSoon);

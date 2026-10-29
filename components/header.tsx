@@ -60,7 +60,7 @@ export function Header({ locale, dict }: { locale: Locale; dict: Dict }) {
           <ThemeToggle label={dict.nav.theme} />
           <CartButton dict={dict.cart} />
           <Link
-            href={localePath(locale, "/contact")}
+            href={localePath(locale, "/products")}
             className="btn btn-primary hidden lg:inline-flex"
           >
             {dict.nav.cta}
@@ -97,7 +97,7 @@ export function Header({ locale, dict }: { locale: Locale; dict: Dict }) {
               </Link>
             ))}
             <Link
-              href={localePath(locale, "/contact")}
+              href={localePath(locale, "/products")}
               onClick={() => setOpen(false)}
               className="btn btn-primary mt-2"
             >

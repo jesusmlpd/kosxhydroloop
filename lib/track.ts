@@ -33,6 +33,35 @@ function send(kind: "fbq" | "gtag", args: unknown[]) {
 const fbq = (...args: unknown[]) => send("fbq", args);
 const gtag = (...args: unknown[]) => send("gtag", args);
 
+/** Medicion propia del embudo (lib/stats): anonima, sin cookies, a prueba de fallos. */
+export function collect(event: "session" | "view_product" | "add_to_cart" | "checkout", extra: { p?: string; s?: string } = {}) {
+  try {
+    const body = JSON.stringify({ e: event, ...extra });
+    if (!navigator.sendBeacon?.("/api/collect", new Blob([body], { type: "application/json" }))) {
+      void fetch("/api/collect", { method: "POST", body, headers: { "Content-Type": "application/json" }, keepalive: true });
+    }
+  } catch {
+    // La medicion nunca debe romper la tienda.
+  }
+}
+
+/** Una visita por pestana: fuente = utm_source o dominio de origen. */
+export function collectSession() {
+  try {
+    if (sessionStorage.getItem("hl-session")) return;
+    sessionStorage.setItem("hl-session", "1");
+    const params = new URLSearchParams(window.location.search);
+    let source = params.get("utm_source") ?? "";
+    if (!source && document.referrer) {
+      const host = new URL(document.referrer).hostname.replace(/^www\./, "");
+      if (host !== window.location.hostname) source = host;
+    }
+    collect("session", { s: source || "directo" });
+  } catch {
+    // Sin sessionStorage no se cuenta la visita.
+  }
+}
+
 type Item = { id: string; name: string; qty: number; priceCents: number };
 
 function items(list: Item[]) {
@@ -49,6 +78,7 @@ function items(list: Item[]) {
 }
 
 export function trackViewContent(item: Item) {
+  collect("view_product", { p: item.id });
   const value = (item.priceCents * item.qty) / 100;
   fbq("track", "ViewContent", {
     content_ids: [item.id],
@@ -65,6 +95,7 @@ export function trackViewContent(item: Item) {
 }
 
 export function trackAddToCart(list: Item[]) {
+  for (const item of list) collect("add_to_cart", { p: item.id });
   const value = list.reduce((sum, item) => sum + item.priceCents * item.qty, 0) / 100;
   const mapped = items(list);
   fbq("track", "AddToCart", {
@@ -77,6 +108,7 @@ export function trackAddToCart(list: Item[]) {
 }
 
 export function trackInitiateCheckout(list: Item[], totalCents: number) {
+  collect("checkout");
   const mapped = items(list);
   fbq("track", "InitiateCheckout", {
     contents: mapped.contents,
@@ -151,5 +183,61 @@ export function firePendingPurchase() {
     if (payload?.ref) trackPurchase(payload);
   } catch {
     // Datos corruptos: mejor perder un evento que romper la pantalla de exito.
+  }
+}
+
+/**
+ * Guarda de donde llego la visita (utm_campaign / utm_content) para el resto de
+ * la sesion: el parametro se pierde en cuanto el cliente cambia de pagina, y el
+ * mensaje de WhatsApp necesita saber de que anuncio vino.
+ */
+const ATTR_KEY = "hl-attr";
+
+export function captureAttribution() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const campaign = params.get("utm_campaign");
+    const content = params.get("utm_content");
+    if (!campaign && !content) return;
+    const previous = JSON.parse(sessionStorage.getItem(ATTR_KEY) ?? "{}") as Record<string, string>;
+    sessionStorage.setItem(
+      ATTR_KEY,
+      JSON.stringify({
+        ...previous,
+        ...(campaign ? { campaign: campaign.slice(0, 40) } : {}),
+        ...(content ? { content: content.slice(0, 40) } : {}),
+      }),
+    );
+  } catch {
+    // Sin sessionStorage simplemente no hay etiqueta de campana.
+  }
+}
+
+export function readAttribution(): { campaign?: string; content?: string } {
+  try {
+    return JSON.parse(sessionStorage.getItem(ATTR_KEY) ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Clic a WhatsApp = evento Contact. Va por el Pixel y por el servidor con el
+ * mismo event_id (Meta deduplica); el servidor no recibe correo ni telefono,
+ * solo cookies de Meta, IP y navegador.
+ */
+export function trackContact(origin: string) {
+  const eventId = `ct-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  fbq("track", "Contact", { content_name: origin, content_category: "whatsapp" }, { eventID: eventId });
+  gtag("event", "contact", { method: "whatsapp", origin });
+  try {
+    void fetch("/api/track/contact", {
+      method: "POST",
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ eventId, origin, url: window.location.href, ...metaBrowserIds() }),
+    }).catch(() => undefined);
+  } catch {
+    // El Pixel del navegador ya salio; el respaldo del servidor es opcional.
   }
 }

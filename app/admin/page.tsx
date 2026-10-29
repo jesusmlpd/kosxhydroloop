@@ -5,7 +5,9 @@ import { DateRange } from "@/components/admin-date-range";
 import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
 import { computeStats, loadOrders } from "@/lib/admin-data";
 import { formatMoney } from "@/lib/commerce";
-import { PANEL_TZ, addDay, buildPresets, resolveRange, todayInPanel } from "@/lib/date-range";
+import { KpiStrip, type Kpi } from "@/components/admin-kpis";
+import { PANEL_TZ, addDay, buildPresets, resolveRange, spanDays, todayInPanel } from "@/lib/date-range";
+import { SOURCE_LABEL, loadDailyStats, loadSources } from "@/lib/stats";
 
 /** Primer dia seleccionable: desde que existe el checkout. */
 const SALES_FIRST_DAY = "2026-08-26";
@@ -63,12 +65,36 @@ export default async function AdminDashboardPage({
               updatedLabel={updatedLabel}
             />
           </div>
-          <Dashboard stats={computeStats(orders, { since, until })} />
+          <Dashboard
+            stats={computeStats(orders, { since, until })}
+            traffic={await loadTraffic(orders, since, until)}
+          />
         </>
       )}
     </AdminShell>
   );
 }
+
+const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
+const change = (now: number, before: number) => (before > 0 ? ((now - before) / before) * 100 : null);
+const rate = (orders: number, sessions: number) => (sessions > 0 ? (orders / sessions) * 100 : 0);
+
+/** Embudo propio (lib/stats) del rango y del periodo anterior de la misma duracion. */
+async function loadTraffic(orders: NonNullable<Awaited<ReturnType<typeof loadOrders>>>, since: string, until: string) {
+  const span = spanDays(since, until);
+  const prevUntil = addDay(since, -1);
+  const prevSince = addDay(prevUntil, -(span - 1));
+  const dayList = (from: string, to: string) => Array.from({ length: spanDays(from, to) }, (_, i) => addDay(from, i));
+  const days = dayList(since, until);
+  const [now, before, sources] = await Promise.all([
+    loadDailyStats(days),
+    loadDailyStats(dayList(prevSince, prevUntil)),
+    loadSources(days),
+  ]);
+  return { now, before, sources, prev: computeStats(orders, { since: prevSince, until: prevUntil }) };
+}
+
+type Traffic = Awaited<ReturnType<typeof loadTraffic>>;
 
 function NotConnected() {
   return (
@@ -84,29 +110,55 @@ function NotConnected() {
   );
 }
 
-function Dashboard({ stats }: { stats: ReturnType<typeof computeStats> }) {
+function Dashboard({ stats, traffic }: { stats: ReturnType<typeof computeStats>; traffic: Traffic }) {
   const maxDay = Math.max(...stats.byDay.map((day) => day.cents), 1);
   const maxState = Math.max(...stats.byState.map((entry) => entry.count), 1);
 
-  const kpis = [
-    { label: "Ingresos", value: formatMoney(stats.revenueCents, "es") },
-    { label: "Pedidos", value: String(stats.orderCount) },
-    { label: "Ticket promedio", value: formatMoney(stats.avgCents, "es") },
-    { label: "Por enviar", value: String(stats.unshipped) },
+  const sessions = sum(traffic.now.map((day) => day.session));
+  const prevSessions = sum(traffic.before.map((day) => day.session));
+  const conv = rate(stats.orderCount, sessions);
+  const prevConv = rate(traffic.prev.orderCount, prevSessions);
+  const kpis: Kpi[] = [
+    {
+      label: "Sesiones",
+      value: sessions.toLocaleString("es-MX"),
+      series: traffic.now.map((day) => day.session),
+      delta: change(sessions, prevSessions),
+      hint: sessions === 0 ? "Se cuentan desde que se activó la medición" : undefined,
+    },
+    {
+      label: "Ventas totales",
+      value: formatMoney(stats.revenueCents, "es"),
+      series: stats.byDay.map((day) => day.cents),
+      delta: change(stats.revenueCents, traffic.prev.revenueCents),
+    },
+    {
+      label: "Pedidos",
+      value: String(stats.orderCount),
+      series: stats.byDay.map((day) => day.count),
+      delta: change(stats.orderCount, traffic.prev.orderCount),
+      hint: `Ticket promedio ${formatMoney(stats.avgCents, "es")} · Por enviar ${stats.unshipped}`,
+    },
+    {
+      label: "Tasa de conversión",
+      value: `${conv.toFixed(1)}%`,
+      series: traffic.now.map((day, i) => (day.session ? ((stats.byDay[i]?.count ?? 0) / day.session) * 100 : 0)),
+      delta: change(conv, prevConv),
+    },
   ];
+  const funnel = [
+    { label: "Sesiones", value: sessions },
+    { label: "Vieron un producto", value: sum(traffic.now.map((day) => day.view_product)) },
+    { label: "Agregaron al carrito", value: sum(traffic.now.map((day) => day.add_to_cart)) },
+    { label: "Iniciaron el pago", value: sum(traffic.now.map((day) => day.checkout)) },
+    { label: "Compraron", value: stats.orderCount },
+  ];
+  const funnelTop = Math.max(funnel[0].value, 1);
+  const sourceTotal = Math.max(sum(traffic.sources.map((entry) => entry.sessions)), 1);
 
   return (
     <>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {kpis.map((kpi) => (
-          <div key={kpi.label} className="card p-5">
-            <p className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-ink-3">
-              {kpi.label}
-            </p>
-            <p className="mt-2 font-display text-[26px] font-bold tabular-nums">{kpi.value}</p>
-          </div>
-        ))}
-      </div>
+      <KpiStrip kpis={kpis} />
 
       <div className="card mt-4 p-6">
         <h2 className="font-display text-[16px] font-bold">Ventas por día</h2>
@@ -179,31 +231,56 @@ function Dashboard({ stats }: { stats: ReturnType<typeof computeStats> }) {
         </div>
       </div>
 
-      <div className="card mt-4 p-6">
-        <h2 className="font-display text-[16px] font-bold">Tráfico y demográficos de audiencia</h2>
-        <p className="mt-2 max-w-2xl text-[14px] text-ink-2">
-          Este sitio no guarda datos de visitantes (sin base de datos, sin cookies de
-          rastreo propias). El tráfico, la edad, el género y las ciudades de la
-          audiencia se ven en las herramientas que ya alimenta el sitio: el Pixel de
-          Meta y Google Analytics. La configuración está en la pestaña de Marketing.
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <a
-            href="https://business.facebook.com/events_manager2"
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-ghost btn-sm"
-          >
-            Meta Events Manager
-          </a>
-          <a
-            href="https://analytics.google.com"
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-ghost btn-sm"
-          >
-            Google Analytics
-          </a>
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <div className="card p-6">
+          <h2 className="font-display text-[16px] font-bold">Embudo de compra</h2>
+          <ul className="mt-4 space-y-3">
+            {funnel.map((step, i) => (
+              <li key={step.label} className="text-[14px]">
+                <div className="flex items-center justify-between gap-3">
+                  <span>{step.label}</span>
+                  <span className="text-ink-2 tabular-nums">
+                    {step.value.toLocaleString("es-MX")}
+                    {i > 0 && funnel[i - 1].value > 0 ? ` · ${Math.round((step.value / funnel[i - 1].value) * 100)}%` : ""}
+                  </span>
+                </div>
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-mist">
+                  <div className="h-full rounded-full bg-teal" style={{ width: `${Math.min((step.value / funnelTop) * 100, 100)}%` }} />
+                </div>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-[12.5px] text-ink-3">El porcentaje es contra el paso anterior.</p>
+        </div>
+
+        <div className="card p-6">
+          <h2 className="font-display text-[16px] font-bold">Sesiones por fuente</h2>
+          {sessions === 0 ? (
+            <p className="mt-3 text-[14px] text-ink-2">Sin visitas medidas en este rango todavía.</p>
+          ) : (
+            <ul className="mt-4 space-y-3">
+              {traffic.sources
+                .filter((entry) => entry.sessions > 0)
+                .map((entry) => (
+                  <li key={entry.source} className="text-[14px]">
+                    <div className="flex items-center justify-between gap-3">
+                      <span>{SOURCE_LABEL[entry.source]}</span>
+                      <span className="text-ink-2 tabular-nums">
+                        {entry.sessions.toLocaleString("es-MX")} · {Math.round((entry.sessions / sourceTotal) * 100)}%
+                      </span>
+                    </div>
+                    <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-mist">
+                      <div className="h-full rounded-full bg-teal" style={{ width: `${(entry.sessions / sourceTotal) * 100}%` }} />
+                    </div>
+                  </li>
+                ))}
+            </ul>
+          )}
+          <p className="mt-3 text-[12.5px] text-ink-3">
+            Edad, género y ciudades de la audiencia están en{" "}
+            <a href="https://analytics.google.com" target="_blank" rel="noreferrer" className="underline">Google Analytics</a> y el{" "}
+            <a href="https://business.facebook.com/events_manager2" target="_blank" rel="noreferrer" className="underline">Pixel de Meta</a>.
+          </p>
         </div>
       </div>
 

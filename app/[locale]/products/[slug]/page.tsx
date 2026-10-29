@@ -26,7 +26,9 @@ import { fill, isLocale, locales, localePath } from "@/lib/i18n";
 import { pageMeta } from "@/lib/metadata";
 import { breadcrumbSchema, graph, productSchema } from "@/lib/schema";
 import { reviewsAreReal, reviewsFor, summarize } from "@/lib/reviews";
-import { findProduct, products, site, whatsappUrl } from "@/lib/site";
+import { WhatsappLink } from "@/components/whatsapp-link";
+import { findProduct, products, site } from "@/lib/site";
+import { loadStoreSettings } from "@/lib/store-settings-server";
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -53,6 +55,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 export default async function ProductPage({ params }: { params: Params }) {
   const { locale, slug } = await params;
+  await loadStoreSettings();
   if (!isLocale(locale)) notFound();
   const product = findProduct(slug);
   if (!product) notFound();
@@ -238,17 +241,16 @@ export default async function ProductPage({ params }: { params: Params }) {
                         </p>
                       </div>
 
-                      <a
-                        href={whatsappUrl(fill(dict.pdp.waMessage, { product: copy.name }))}
-                        target="_blank"
-                        rel="noreferrer"
+                      <WhatsappLink
+                        origin="pdp"
+                        text={fill(dict.pdp.waMessage, { product: copy.name })}
                         className="mt-3 inline-flex items-center gap-2 text-[14px] font-semibold text-[#1da851] hover:underline"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                           <path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5Zm4.2 11.7c-.2.6-1.2 1.1-1.7 1.1-.4.1-1 .1-1.6-.1a13 13 0 0 1-1.5-.6c-2.6-1.1-4.2-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.3.5-.3.7-.3h.5c.2 0 .4-.1.6.4l.8 2c.1.2.1.4 0 .6l-.3.5-.4.5c-.1.1-.3.3-.1.6.1.3.6 1 1.3 1.7.9.8 1.7 1.1 2 1.2.3.1.4.1.6-.1l.9-1c.2-.3.4-.2.7-.1l1.8.8c.3.2.5.2.5.4.1 0 .1.5-.3 1Z" />
                         </svg>
                         {dict.pdp.waBuy}
-                      </a>
+                      </WhatsappLink>
                     </div>
                   </>
                 ) : (
@@ -268,9 +270,11 @@ export default async function ProductPage({ params }: { params: Params }) {
                   </li>
                   <li className="flex gap-2.5">
                     <Check />
-                    {locale === "en"
-                      ? `Free shipping on orders over ${freeShipping}.`
-                      : `Envío gratis en pedidos desde ${freeShipping}.`}
+                    {commerce.shipping.flatCents <= 0
+                      ? dict.announcement.freeAll
+                      : locale === "en"
+                        ? `Free shipping on orders over ${freeShipping}.`
+                        : `Envío gratis en pedidos desde ${freeShipping}.`}
                   </li>
                   <li className="flex gap-2.5">
                     <Check />
