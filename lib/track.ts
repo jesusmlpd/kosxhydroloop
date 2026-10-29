@@ -33,6 +33,35 @@ function send(kind: "fbq" | "gtag", args: unknown[]) {
 const fbq = (...args: unknown[]) => send("fbq", args);
 const gtag = (...args: unknown[]) => send("gtag", args);
 
+/** Medicion propia del embudo (lib/stats): anonima, sin cookies, a prueba de fallos. */
+export function collect(event: "session" | "view_product" | "add_to_cart" | "checkout", extra: { p?: string; s?: string } = {}) {
+  try {
+    const body = JSON.stringify({ e: event, ...extra });
+    if (!navigator.sendBeacon?.("/api/collect", new Blob([body], { type: "application/json" }))) {
+      void fetch("/api/collect", { method: "POST", body, headers: { "Content-Type": "application/json" }, keepalive: true });
+    }
+  } catch {
+    // La medicion nunca debe romper la tienda.
+  }
+}
+
+/** Una visita por pestana: fuente = utm_source o dominio de origen. */
+export function collectSession() {
+  try {
+    if (sessionStorage.getItem("hl-session")) return;
+    sessionStorage.setItem("hl-session", "1");
+    const params = new URLSearchParams(window.location.search);
+    let source = params.get("utm_source") ?? "";
+    if (!source && document.referrer) {
+      const host = new URL(document.referrer).hostname.replace(/^www\./, "");
+      if (host !== window.location.hostname) source = host;
+    }
+    collect("session", { s: source || "directo" });
+  } catch {
+    // Sin sessionStorage no se cuenta la visita.
+  }
+}
+
 type Item = { id: string; name: string; qty: number; priceCents: number };
 
 function items(list: Item[]) {
@@ -49,6 +78,7 @@ function items(list: Item[]) {
 }
 
 export function trackViewContent(item: Item) {
+  collect("view_product", { p: item.id });
   const value = (item.priceCents * item.qty) / 100;
   fbq("track", "ViewContent", {
     content_ids: [item.id],
@@ -65,6 +95,7 @@ export function trackViewContent(item: Item) {
 }
 
 export function trackAddToCart(list: Item[]) {
+  for (const item of list) collect("add_to_cart", { p: item.id });
   const value = list.reduce((sum, item) => sum + item.priceCents * item.qty, 0) / 100;
   const mapped = items(list);
   fbq("track", "AddToCart", {
@@ -77,6 +108,7 @@ export function trackAddToCart(list: Item[]) {
 }
 
 export function trackInitiateCheckout(list: Item[], totalCents: number) {
+  collect("checkout");
   const mapped = items(list);
   fbq("track", "InitiateCheckout", {
     contents: mapped.contents,
