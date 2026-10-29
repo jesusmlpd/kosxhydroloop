@@ -69,7 +69,11 @@ export const commerce = {
   },
 
   /** Cupones extra al de la promo. El de la promo entra solo. */
-  coupons: [{ code: "BIENVENIDA5", percentOff: 5 }],
+  coupons: [{ code: "BIENVENIDA5", percentOff: 5, endsAt: null }] as Array<{
+    code: string;
+    percentOff: number;
+    endsAt: string | null;
+  }>,
 };
 
 export function formatMoney(cents: number, locale: string, currency: string = commerce.currency) {
@@ -116,7 +120,9 @@ export function findCoupon(code: string | null | undefined, now: number) {
     return { code: commerce.promo.code, percentOff: commerce.promo.percentOff };
   }
 
-  return commerce.coupons.find((coupon) => coupon.code === wanted) ?? null;
+  const found = commerce.coupons.find((coupon) => coupon.code === wanted);
+  if (!found || (found.endsAt !== null && new Date(found.endsAt).getTime() <= now)) return null;
+  return found;
 }
 
 /**

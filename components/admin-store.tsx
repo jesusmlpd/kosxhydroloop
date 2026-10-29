@@ -45,6 +45,12 @@ export function StoreEditor({
   const [popupEs, setPopupEs] = useState<PromoCopy>(initial.promo.popupEs);
   const [popupEn, setPopupEn] = useState<PromoCopy>(initial.promo.popupEn);
 
+  const [coupons, setCoupons] = useState(
+    initial.coupons.map((coupon) => ({ ...coupon, endsAt: dayOf(coupon.endsAt), percentOff: String(coupon.percentOff) })),
+  );
+  const setCoupon = (index: number, patch: Partial<(typeof coupons)[number]>) =>
+    setCoupons((current) => current.map((coupon, i) => (i === index ? { ...coupon, ...patch } : coupon)));
+
   const [forms, setForms] = useState<Record<string, ProductForm>>(() =>
     Object.fromEntries(
       items.map((item) => {
@@ -87,6 +93,12 @@ export function StoreEditor({
       },
       promo: { endsAt: endOfDay(endsAt), bannerEnabled, bannerEs, bannerEn, popupEnabled, popupEs, popupEn },
       products: productsPayload,
+      coupons: coupons.map((coupon) => ({
+        code: coupon.code,
+        percentOff: Number(coupon.percentOff),
+        endsAt: endOfDay(coupon.endsAt),
+        enabled: coupon.enabled,
+      })),
     };
     try {
       const response = await fetch("/api/admin/tienda", {
@@ -168,6 +180,48 @@ export function StoreEditor({
             <Popup title="Ventana (inglés)" value={popupEn} onChange={setPopupEn} />
           </div>
         </div>
+      </section>
+
+      <section className="card p-6">
+        <h2 className="text-[18px]">Cupones de descuento</h2>
+        <p className="mt-1 text-[14px] text-ink-2">
+          El cliente los escribe en el carrito y también se aplican con el enlace de los correos de recuperación. Un
+          cupón apagado o vencido deja de funcionar al instante. Los porcentajes van de 1 a 90.
+        </p>
+        <div className="mt-4 space-y-4">
+          {coupons.map((coupon, index) => (
+            <div key={index} className="grid items-end gap-4 border-t border-line pt-4 first:border-0 first:pt-0 sm:grid-cols-[1.2fr_1fr_1fr_auto_auto]">
+              <Txt label="Código" value={coupon.code} onChange={(code) => setCoupon(index, { code: code.toUpperCase() })} max={24} />
+              <Num label="Descuento (%)" value={coupon.percentOff} onChange={(percentOff) => setCoupon(index, { percentOff })} />
+              <label className="block">
+                <span className="text-[13px] font-medium text-ink-2">Vence el</span>
+                <input
+                  type="date"
+                  value={coupon.endsAt}
+                  onChange={(event) => setCoupon(index, { endsAt: event.target.value })}
+                  className="field mt-1.5"
+                />
+              </label>
+              <Toggle label="Activo" checked={coupon.enabled} onChange={(enabled) => setCoupon(index, { enabled })} />
+              <button
+                type="button"
+                onClick={() => setCoupons((current) => current.filter((_, i) => i !== index))}
+                className="text-[13px] font-medium text-[#a1332f]"
+              >
+                Quitar
+              </button>
+            </div>
+          ))}
+          {coupons.length === 0 ? <p className="text-[14px] text-ink-3">Sin cupones: el campo del carrito no acepta ningún código.</p> : null}
+        </div>
+        <button
+          type="button"
+          onClick={() => setCoupons((current) => [...current, { code: "", percentOff: "10", endsAt: "", enabled: true }])}
+          className="btn btn-ghost mt-4"
+        >
+          Agregar cupón
+        </button>
+        <p className="mt-2 text-[12px] text-ink-3">Vacío en “Vence el” = sin fecha de fin. Los cupones sin código se ignoran al guardar.</p>
       </section>
 
       <section className="card p-6">

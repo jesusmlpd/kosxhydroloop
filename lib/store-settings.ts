@@ -34,6 +34,8 @@ export type StoreSettings = {
     popupEn: PromoCopy;
   };
   products: Record<string, { priceCents?: number; compareAtCents?: number | null; stock?: number }>;
+  /** Cupones activos del checkout. Un cupon apagado o vencido no se acepta. */
+  coupons: Array<{ code: string; percentOff: number; endsAt: string | null; enabled: boolean }>;
 };
 
 export const DEFAULT_SETTINGS: StoreSettings = {
@@ -56,6 +58,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
     },
   },
   products: {},
+  coupons: [{ code: "BIENVENIDA5", percentOff: 5, endsAt: null, enabled: true }],
 };
 
 // Fotografia de lo que dice el codigo, para poder volver a el si el panel
@@ -106,7 +109,25 @@ export function sanitizeSettings(input: unknown): StoreSettings {
       popupEn: copy(promo.popupEn, d.promo.popupEn),
     },
     products: {},
+    coupons: d.coupons,
   };
+
+  if (Array.isArray(raw.coupons)) {
+    const seen = new Set<string>();
+    out.coupons = [];
+    for (const item of raw.coupons as unknown as Array<Record<string, unknown>>) {
+      const code = typeof item?.code === "string" ? item.code.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 24) : "";
+      if (!code || seen.has(code)) continue;
+      seen.add(code);
+      out.coupons.push({
+        code,
+        percentOff: int(item.percentOff, 1, 90, 5),
+        endsAt: date(item.endsAt, null),
+        enabled: item.enabled === undefined ? true : Boolean(item.enabled),
+      });
+      if (out.coupons.length >= 20) break;
+    }
+  }
 
   const items = (raw.products ?? {}) as Record<string, Record<string, unknown> | undefined>;
   for (const product of products) {
@@ -132,6 +153,10 @@ export function applySettings(settings: StoreSettings) {
   commerce.shipping.flatCents = settings.shipping.flatCents;
   commerce.shipping.freeFromCents = settings.shipping.freeFromCents;
   commerce.shipping.freeUntil = settings.shipping.freeUntil;
+
+  commerce.coupons = settings.coupons
+    .filter((coupon) => coupon.enabled)
+    .map(({ code, percentOff, endsAt }) => ({ code, percentOff, endsAt }));
 
   for (const product of products) {
     const base = BASE.products[product.id];
