@@ -19,6 +19,11 @@ export type AdminOrder = {
   state: string;
   notes: string;
   totalCents: number;
+  /** Antes de descuentos y envio (Stripe: amount_subtotal). */
+  subtotalCents: number;
+  discountCents: number;
+  shippingCents: number;
+  coupon: string;
   paid: boolean;
   /** Centavos devueltos al cliente (Stripe: charge.amount_refunded). */
   refundedCents: number;
@@ -102,6 +107,10 @@ export async function loadOrders(limit = 100): Promise<AdminOrder[] | null> {
       ...parsePlace(address),
       notes: session.metadata?.notes ?? "",
       totalCents: session.amount_total ?? 0,
+      subtotalCents: session.amount_subtotal ?? session.amount_total ?? 0,
+      discountCents: session.total_details?.amount_discount ?? 0,
+      shippingCents: session.total_details?.amount_shipping ?? 0,
+      coupon: session.metadata?.coupon ?? "",
       paid: session.payment_status === "paid",
       refundedCents,
       refundState,

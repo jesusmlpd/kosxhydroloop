@@ -1,7 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import type { PromoCopy, StoreSettings } from "@/lib/store-settings";
+import { HERO_FIELDS, type HeroCopy, type HeroField, type PromoCopy, type StoreSettings } from "@/lib/store-settings";
+
+const HERO_LABELS: Record<HeroField, string> = {
+  eyebrow: "Etiqueta de arriba",
+  title: "Título",
+  titleAccent: "Título resaltado",
+  body: "Texto",
+  ctaPrimary: "Botón principal (antes del precio)",
+  ctaSecondary: "Botón secundario",
+  note: "Línea de confianza (debajo de los botones)",
+};
 
 type Item = {
   id: string;
@@ -24,11 +34,14 @@ const endOfDay = (day: string) => (day ? `${day}T23:59:59-06:00` : null);
 export function StoreEditor({
   initial,
   items,
+  heroDefaults,
   canSave,
   usingMemory,
 }: {
   initial: StoreSettings;
   items: Item[];
+  /** Textos de fabrica del hero, para mostrarlos de ejemplo en cada campo. */
+  heroDefaults: { es: HeroCopy; en: HeroCopy };
   canSave: boolean;
   /** Sin Redis real: solo desarrollo, se pierde al reiniciar. */
   usingMemory: boolean;
@@ -44,6 +57,8 @@ export function StoreEditor({
   const [popupEnabled, setPopupEnabled] = useState(initial.promo.popupEnabled);
   const [popupEs, setPopupEs] = useState<PromoCopy>(initial.promo.popupEs);
   const [popupEn, setPopupEn] = useState<PromoCopy>(initial.promo.popupEn);
+
+  const [hero, setHero] = useState(initial.hero);
 
   const [coupons, setCoupons] = useState(
     initial.coupons.map((coupon) => ({ ...coupon, endsAt: dayOf(coupon.endsAt), percentOff: String(coupon.percentOff) })),
@@ -93,6 +108,7 @@ export function StoreEditor({
       },
       promo: { endsAt: endOfDay(endsAt), bannerEnabled, bannerEs, bannerEn, popupEnabled, popupEs, popupEn },
       products: productsPayload,
+      hero,
       coupons: coupons.map((coupon) => ({
         code: coupon.code,
         percentOff: Number(coupon.percentOff),
@@ -179,6 +195,47 @@ export function StoreEditor({
             <Popup title="Ventana (español)" value={popupEs} onChange={setPopupEs} />
             <Popup title="Ventana (inglés)" value={popupEn} onChange={setPopupEn} />
           </div>
+        </div>
+      </section>
+
+      <section className="card p-6">
+        <h2 className="text-[18px]">Textos del inicio (hero)</h2>
+        <p className="mt-1 text-[14px] text-ink-2">
+          Lo primero que se ve en la página de inicio. Deja un campo vacío para usar el texto de fábrica (aparece de
+          ejemplo en gris). El título y el título resaltado van juntos: el resaltado sale en color.
+        </p>
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          {(["es", "en"] as const).map((locale) => (
+            <div key={locale} className="space-y-3 rounded-2xl border border-line p-4">
+              <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-3">
+                {locale === "es" ? "Español" : "Inglés"}
+              </p>
+              {HERO_FIELDS.map((field) => (
+                <label key={field} className="block">
+                  <span className="text-[13px] font-medium text-ink-2">{HERO_LABELS[field]}</span>
+                  {field === "body" ? (
+                    <textarea
+                      rows={3}
+                      maxLength={400}
+                      value={hero[locale][field]}
+                      placeholder={heroDefaults[locale][field]}
+                      onChange={(event) => setHero((cur) => ({ ...cur, [locale]: { ...cur[locale], [field]: event.target.value } }))}
+                      className="field mt-1.5 resize-y"
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      maxLength={120}
+                      value={hero[locale][field]}
+                      placeholder={heroDefaults[locale][field]}
+                      onChange={(event) => setHero((cur) => ({ ...cur, [locale]: { ...cur[locale], [field]: event.target.value } }))}
+                      className="field mt-1.5"
+                    />
+                  )}
+                </label>
+              ))}
+            </div>
+          ))}
         </div>
       </section>
 
