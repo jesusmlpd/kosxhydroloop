@@ -42,6 +42,7 @@ export function RecoveryEditor({
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
   const [testing, setTesting] = useState<string | null>(null);
+  const [testTo, setTestTo] = useState("");
 
   function patchStep(id: string, patch: Partial<Step>) {
     setSettings((current) => ({
@@ -83,13 +84,19 @@ export function RecoveryEditor({
       const response = await fetch("/api/admin/recovery", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stepId, settings }),
+        body: JSON.stringify({ stepId, settings, to: testTo }),
       });
-      const data = (await response.json()) as { ok?: boolean; to?: string };
+      const data = (await response.json()) as { ok?: boolean; to?: string; error?: string };
       setNotice(
         data.ok
           ? { ok: true, text: `Prueba enviada a ${data.to}. Revisa también spam.` }
-          : { ok: false, text: "No se pudo enviar la prueba. ¿Resend está configurado y verificado?" },
+          : {
+              ok: false,
+              text:
+                data.error === "email"
+                  ? "Ese correo no es válido."
+                  : "No se pudo enviar la prueba. ¿Resend está configurado y verificado?",
+            },
       );
     } catch {
       setNotice({ ok: false, text: "No se pudo enviar la prueba." });
@@ -159,6 +166,24 @@ export function RecoveryEditor({
           <span>
             Solo a quien dejó marcada la casilla de recordatorios del checkout
             <span className="mt-0.5 block text-[12px] font-normal text-ink-3">Recomendado.</span>
+          </span>
+        </label>
+      </div>
+
+      <div className="card p-6">
+        <label className="block max-w-md">
+          <span className="text-[13px] font-medium text-ink-2">Enviar las pruebas a</span>
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="off"
+            placeholder="vacío = tu correo de administrador"
+            value={testTo}
+            onChange={(event) => setTestTo(event.target.value)}
+            className="field mt-1.5"
+          />
+          <span className="mt-1 block text-[12px] text-ink-3">
+            Cada botón “Enviar prueba” de abajo manda el correo a esta dirección. Salen con datos de ejemplo.
           </span>
         </label>
       </div>
@@ -265,7 +290,7 @@ export function RecoveryEditor({
             disabled={testing !== null || !canSend}
             className="btn btn-ghost btn-sm mt-5 disabled:opacity-50"
           >
-            {testing === step.id ? "Enviando…" : "Enviarme una prueba"}
+            {testing === step.id ? "Enviando…" : testTo.trim() ? "Enviar prueba" : "Enviarme una prueba"}
           </button>
         </div>
       ))}

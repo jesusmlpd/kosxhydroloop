@@ -11,7 +11,7 @@ import {
   type RecoveryRecord,
 } from "@/lib/recovery";
 
-/** Guarda las reglas del panel y manda correos de prueba al propio administrador. */
+/** Guarda las reglas del panel y manda correos de prueba al administrador o al correo que se indique. */
 export const dynamic = "force-dynamic";
 
 async function authorized() {
@@ -30,13 +30,18 @@ export async function PUT(request: Request) {
 
 export async function POST(request: Request) {
   if (!(await authorized())) return NextResponse.json({ ok: false }, { status: 401 });
-  const body = (await request.json().catch(() => null)) as { stepId?: string; settings?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as { stepId?: string; settings?: unknown; to?: string } | null;
   // Se prueba con lo que hay en pantalla (aunque no este guardado todavia).
   const settings = body?.settings ? sanitizeSettings(body.settings) : await loadSettings();
   const step = settings.steps.find((s) => s.id === body?.stepId);
   if (!step) return NextResponse.json({ ok: false, error: "step" }, { status: 400 });
 
-  const to = adminCredentials().email;
+  // Por omision la prueba llega al correo del administrador; el panel puede indicar otro.
+  const wanted = body?.to?.trim().toLowerCase() ?? "";
+  if (wanted && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(wanted)) {
+    return NextResponse.json({ ok: false, error: "email" }, { status: 400 });
+  }
+  const to = wanted || adminCredentials().email;
   const sample: RecoveryRecord = {
     id: "0".repeat(32),
     ref: "HL-PRUEBA",
