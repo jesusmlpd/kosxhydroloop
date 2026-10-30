@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { ShipForm } from "@/components/admin-ship";
-import { AdminLogin, AdminShell } from "@/components/admin-shell";
-import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
+import { AdminLogin, AdminShell, NoAccess } from "@/components/admin-shell";
+import { adminAccess } from "@/lib/admin-access";
 import { loadOrders } from "@/lib/admin-data";
 import { formatMoney } from "@/lib/commerce";
 
@@ -19,11 +18,12 @@ export default async function AdminOrdersPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  const jar = await cookies();
   const { error } = await searchParams;
-  if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
+  const access = await adminAccess("pedidos");
+  if (access === "login") {
     return <AdminLogin error={Boolean(error)} next="/admin/pedidos" />;
   }
+  if (access === "denied") return <NoAccess />;
 
   const orders = await loadOrders();
   const dateFormat = new Intl.DateTimeFormat("es-MX", {

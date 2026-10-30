@@ -1,6 +1,6 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
+import { apiAccess } from "@/lib/admin-access";
+import { logAudit } from "@/lib/audit";
 
 /**
  * Marca un pedido como enviado guardando la guia EN el propio PaymentIntent
@@ -8,10 +8,8 @@ import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
  * deploys, no hay tabla que migrar y se ve tambien desde su dashboard.
  */
 export async function POST(request: Request) {
-  const jar = await cookies();
-  if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
-    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
-  }
+  const access = await apiAccess("pedidos");
+  if (!("session" in access)) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: access.status });
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) return NextResponse.json({ ok: false, error: "stripe_not_configured" }, { status: 503 });
 
@@ -32,5 +30,6 @@ export async function POST(request: Request) {
       carrier: body.carrier ?? "",
     },
   });
+  await logAudit(access.session.email, "Pedido marcado como enviado", `${body.carrier ?? ""} ${body.tracking ?? ""}`.trim());
   return NextResponse.json({ ok: true });
 }

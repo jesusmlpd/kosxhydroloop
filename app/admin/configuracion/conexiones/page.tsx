@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import { AdminLogin, AdminShell } from "@/components/admin-shell";
-import { ADMIN_COOKIE, adminCredentials, isAdmin } from "@/lib/admin";
+import { AdminLogin, AdminShell, NoAccess } from "@/components/admin-shell";
+import { adminCredentials } from "@/lib/admin";
+import { adminAccess } from "@/lib/admin-access";
 import { kvConfigured } from "@/lib/kv";
 import { site } from "@/lib/site";
 
@@ -18,11 +18,12 @@ export default async function AdminMarketingPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  const jar = await cookies();
   const { error } = await searchParams;
-  if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
+  const access = await adminAccess("configuracion");
+  if (access === "login") {
     return <AdminLogin error={Boolean(error)} next="/admin/configuracion/conexiones" />;
   }
+  if (access === "denied") return <NoAccess />;
 
   const { usingDefaults } = adminCredentials();
 

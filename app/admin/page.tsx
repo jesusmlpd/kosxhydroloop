@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import { AdminLogin, AdminShell } from "@/components/admin-shell";
+import { AdminLogin, AdminShell, NoAccess } from "@/components/admin-shell";
 import { DateRange } from "@/components/admin-date-range";
-import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
+import { adminAccess } from "@/lib/admin-access";
 import { computeStats, loadOrders } from "@/lib/admin-data";
 import { formatMoney } from "@/lib/commerce";
 import { KpiStrip, type Kpi } from "@/components/admin-kpis";
@@ -27,12 +26,13 @@ export default async function AdminDashboardPage({
 }: {
   searchParams: Promise<{ error?: string; desde?: string; hasta?: string }>;
 }) {
-  const jar = await cookies();
   const search = await searchParams;
   const { error } = search;
-  if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
+  const access = await adminAccess("inicio");
+  if (access === "login") {
     return <AdminLogin error={Boolean(error)} next="/admin" />;
   }
+  if (access === "denied") return <NoAccess />;
 
   const orders = await loadOrders();
   // Carga los ajustes en vivo (inventario, cupones, promo) para los avisos.

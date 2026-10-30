@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import { AdminLogin, AdminShell } from "@/components/admin-shell";
+import { AdminLogin, AdminShell, NoAccess } from "@/components/admin-shell";
 import { DateRange } from "@/components/admin-date-range";
-import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
+import { adminAccess } from "@/lib/admin-access";
 import { PANEL_TZ, buildPresets, resolveRange as resolveRangeIn } from "@/lib/date-range";
 import {
   FIRST_DAY,
@@ -51,11 +50,12 @@ function resolveRange(search: Search) {
 }
 
 export default async function AdminReportesPage({ searchParams }: { searchParams: Promise<Search> }) {
-  const jar = await cookies();
   const search = await searchParams;
-  if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
+  const access = await adminAccess("marketing");
+  if (access === "login") {
     return <AdminLogin error={Boolean(search.error)} next="/admin/marketing/meta" />;
   }
+  if (access === "denied") return <NoAccess />;
 
   const { since, until, today } = resolveRange(search);
   const presets = buildPresets({ today, min: FIRST_DAY, lastDaysEnd: "yesterday", maxSpan: MAX_DAYS });
