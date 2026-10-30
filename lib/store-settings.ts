@@ -14,6 +14,20 @@ import { products } from "@/lib/site";
 
 export type PromoCopy = { title: string; body: string; cta: string };
 
+/** Textos del hero del inicio. Vacio = el texto de fabrica (lib/dict). */
+export const HERO_FIELDS = ["eyebrow", "title", "titleAccent", "body", "ctaPrimary", "ctaSecondary", "note"] as const;
+export type HeroField = (typeof HERO_FIELDS)[number];
+export type HeroCopy = Record<HeroField, string>;
+export const EMPTY_HERO: HeroCopy = {
+  eyebrow: "",
+  title: "",
+  titleAccent: "",
+  body: "",
+  ctaPrimary: "",
+  ctaSecondary: "",
+  note: "",
+};
+
 export type StoreSettings = {
   shipping: {
     /** Costo de envio en centavos. 0 = envio gratis para todos. */
@@ -36,6 +50,7 @@ export type StoreSettings = {
   products: Record<string, { priceCents?: number; compareAtCents?: number | null; stock?: number }>;
   /** Cupones activos del checkout. Un cupon apagado o vencido no se acepta. */
   coupons: Array<{ code: string; percentOff: number; endsAt: string | null; enabled: boolean }>;
+  hero: { es: HeroCopy; en: HeroCopy };
 };
 
 export const DEFAULT_SETTINGS: StoreSettings = {
@@ -59,6 +74,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   },
   products: {},
   coupons: [{ code: "BIENVENIDA5", percentOff: 5, endsAt: null, enabled: true }],
+  hero: { es: EMPTY_HERO, en: EMPTY_HERO },
 };
 
 // Fotografia de lo que dice el codigo, para poder volver a el si el panel
@@ -86,6 +102,13 @@ const copy = (value: unknown, fallback: PromoCopy): PromoCopy => {
   return { title: text(v.title, fallback.title, 90), body: text(v.body, fallback.body, 300), cta: text(v.cta, fallback.cta, 40) };
 };
 
+const heroCopy = (value: unknown): HeroCopy => {
+  const v = (value ?? {}) as Record<string, unknown>;
+  const out = { ...EMPTY_HERO };
+  for (const field of HERO_FIELDS) out[field] = text(v[field], "", field === "body" ? 400 : 120);
+  return out;
+};
+
 /** Acepta lo que venga (el panel o la base) y devuelve algo seguro de usar. */
 export function sanitizeSettings(input: unknown): StoreSettings {
   const raw = (input ?? {}) as Record<string, Record<string, unknown> | undefined>;
@@ -110,6 +133,7 @@ export function sanitizeSettings(input: unknown): StoreSettings {
     },
     products: {},
     coupons: d.coupons,
+    hero: { es: heroCopy(raw.hero?.es), en: heroCopy(raw.hero?.en) },
   };
 
   if (Array.isArray(raw.coupons)) {

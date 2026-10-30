@@ -1,6 +1,7 @@
 import { revalidateTag } from "next/cache";
 import { kv, kvAvailable, kvConfigured } from "@/lib/kv";
-import { DEFAULT_SETTINGS, applySettings, sanitizeSettings, type StoreSettings } from "@/lib/store-settings";
+import { getDict } from "@/lib/dict";
+import { HERO_FIELDS, DEFAULT_SETTINGS, applySettings, sanitizeSettings, type StoreSettings } from "@/lib/store-settings";
 
 const KEY = "hl:store-settings";
 const TAG = "store-settings";
@@ -35,10 +36,27 @@ async function read(fresh: boolean): Promise<StoreSettings> {
   }
 }
 
+// Textos de fabrica del hero, para poder volver a ellos si el panel borra uno.
+export const HERO_BASE = {
+  es: { ...getDict("es").hero },
+  en: { ...getDict("en").hero },
+};
+
+/** Pone los textos del hero del panel en el diccionario (solo servidor: el hero se pinta en servidor). */
+function applyHero(settings: StoreSettings) {
+  for (const locale of ["es", "en"] as const) {
+    const hero = getDict(locale).hero;
+    for (const field of HERO_FIELDS) {
+      hero[field] = settings.hero[locale][field] || HERO_BASE[locale][field];
+    }
+  }
+}
+
 /** Lee los ajustes y los aplica al catalogo del proceso. Llamar al inicio de cada pagina o ruta que muestre o cobre precios. */
 export async function loadStoreSettings(): Promise<StoreSettings> {
   const settings = await read(false);
   applySettings(settings);
+  applyHero(settings);
   return settings;
 }
 

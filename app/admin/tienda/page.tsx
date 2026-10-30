@@ -5,8 +5,8 @@ import { StoreEditor } from "@/components/admin-store";
 import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
 import { getDict } from "@/lib/dict";
 import { kvAvailable, kvConfigured } from "@/lib/kv";
-import { CODE_DEFAULTS } from "@/lib/store-settings";
-import { readStoreSettings } from "@/lib/store-settings-server";
+import { CODE_DEFAULTS, HERO_FIELDS, type HeroCopy } from "@/lib/store-settings";
+import { HERO_BASE, readStoreSettings } from "@/lib/store-settings-server";
 import { products } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -34,6 +34,14 @@ export default async function AdminStorePage({ searchParams }: { searchParams: P
       base: CODE_DEFAULTS.products[product.id],
     }));
 
+  // De fabrica, no lo que ya aplico el panel al diccionario de este proceso.
+  const heroDefaults = Object.fromEntries(
+    (["es", "en"] as const).map((locale) => [
+      locale,
+      Object.fromEntries(HERO_FIELDS.map((field) => [field, (HERO_BASE[locale] as unknown as Record<string, string>)[field] ?? ""])),
+    ]),
+  ) as { es: HeroCopy; en: HeroCopy };
+
   return (
     <AdminShell active="/admin/tienda" title="Tienda">
       {!kvAvailable() ? (
@@ -45,7 +53,7 @@ export default async function AdminStorePage({ searchParams }: { searchParams: P
           </p>
         </div>
       ) : null}
-      <StoreEditor initial={settings} items={items} canSave={kvAvailable()} usingMemory={!kvConfigured()} />
+      <StoreEditor initial={settings} items={items} heroDefaults={heroDefaults} canSave={kvAvailable()} usingMemory={!kvConfigured()} />
     </AdminShell>
   );
 }

@@ -53,6 +53,7 @@ export function AdminLogin({ error, next = "/admin" }: { error?: boolean; next?:
 const tabs = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/pedidos", label: "Pedidos" },
+  { href: "/admin/informes", label: "Informes" },
   { href: "/admin/marketing", label: "Marketing" },
   { href: "/admin/reportes", label: "Reportes" },
   { href: "/admin/recuperacion", label: "Recuperación" },
