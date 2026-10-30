@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ccField, resolveInbox } from "@/lib/formsubmit";
 import { emailConfigured } from "@/lib/email";
+import { markPaid } from "@/lib/recovery";
 import { orderFromStripeSession, sendOrderEmails, sendRefundEmails } from "@/lib/order-email";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { sendMetaEvent } from "@/lib/meta-capi";
@@ -45,6 +46,13 @@ export async function POST(request: Request) {
       const paid = event.type === "checkout.session.async_payment_succeeded" || session.payment_status === "paid";
       if (paid) {
         console.log("[stripe] pagado", session.client_reference_id, session.amount_total);
+        // Frena los recordatorios de carrito abandonado de ese correo y, si ya
+        // le habia llegado uno, lo cuenta como recuperado.
+        await markPaid({
+          email: session.customer_details?.email ?? session.customer_email ?? "",
+          ref: session.client_reference_id ?? "",
+          cents: session.amount_total ?? 0,
+        });
         // Correos del pedido (equipo + recibo del cliente) por Resend; el aviso de
         // una linea por FormSubmit queda solo de respaldo si Resend no esta listo.
         const order = orderFromStripeSession(session);

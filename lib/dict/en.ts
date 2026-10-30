@@ -616,6 +616,7 @@ export const en: Dict = {
     },
     pay: "Pay {amount}",
     processing: "Processing",
+    reminders: "Yes, save my cart and send me my discount by email or WhatsApp if I do not finish my order. I can unsubscribe anytime.",
     error: "We could not start the payment. Try again or write to us.",
     emptyCart: "Your cart is empty.",
     secure: "Encrypted connection. Hydroloop never stores your card details.",

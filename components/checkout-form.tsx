@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FreeShippingBar } from "@/components/free-shipping-bar";
 import { PaymentBadges } from "@/components/payment-badges";
 import { OfferCountdown } from "@/components/offer-countdown";
@@ -17,10 +17,21 @@ import { metaBrowserIds, storePendingPurchase, trackInitiateCheckout } from "@/l
 
 type Method = "stripe" | "mercadopago" | "manual";
 
-export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
+export function CheckoutForm({
+  locale,
+  dict,
+  prefill,
+}: {
+  locale: Locale;
+  dict: Dict;
+  /** Datos de quien regresa desde un correo de recuperacion (?r=). */
+  prefill?: { name?: string; email?: string; phone?: string };
+}) {
   const now = useNow();
   const { state, totals, reservationMsLeft, reservationExpired } = useCart(now);
   const [method, setMethod] = useState<Method>("stripe");
+  const leadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastLead = useRef("");
   const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -33,6 +44,29 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
         </Link>
       </div>
     );
+  }
+
+  // Lead: en cuanto hay un correo valido se guarda (aunque no pague), con lo que
+  // lleva en el carrito. La casilla de consentimiento decide si se le escribe.
+  function captureLead(form: HTMLFormElement) {
+    if (leadTimer.current) clearTimeout(leadTimer.current);
+    leadTimer.current = setTimeout(() => {
+      const data = new FormData(form);
+      const email = String(data.get("email") ?? "").trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !state.lines.length) return;
+      const payload = JSON.stringify({
+        email,
+        name: data.get("name"),
+        phone: data.get("phone"),
+        locale,
+        lines: state.lines,
+        coupon: state.coupon,
+        consent: data.get("marketing") === "on",
+      });
+      if (payload === lastLead.current) return;
+      lastLead.current = payload;
+      void fetch("/api/recovery/lead", { method: "POST", body: payload, headers: { "Content-Type": "application/json" }, keepalive: true }).catch(() => {});
+    }, 600);
   }
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -115,20 +149,28 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
   ];
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:items-start">
+    <form
+      onSubmit={onSubmit}
+      onBlur={(event) => captureLead(event.currentTarget)}
+      onChange={(event) => {
+        if ((event.target as unknown as HTMLInputElement).name === "marketing") captureLead(event.currentTarget);
+      }}
+      className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:items-start"
+    >
       <div className="space-y-8">
         <fieldset className="card p-6">
           <legend className="eyebrow px-1">{dict.checkout.contactTitle}</legend>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
-            <Field name="name" label={dict.checkout.fields.name} autoComplete="name" required />
+            <Field name="name" label={dict.checkout.fields.name} autoComplete="name" required defaultValue={prefill?.name} />
             <Field
               name="email"
               type="email"
               label={dict.checkout.fields.email}
               autoComplete="email"
               required
+              defaultValue={prefill?.email}
             />
-            <Field name="phone" label={dict.checkout.fields.phone} autoComplete="tel" required />
+            <Field name="phone" label={dict.checkout.fields.phone} autoComplete="tel" required defaultValue={prefill?.phone} />
           </div>
         </fieldset>
 
@@ -294,10 +336,22 @@ export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dict }) {
           ) : null}
         </dl>
 
+        {/* Consentimiento para recordatorios de carrito abandonado y ofertas. Va
+            SIN marcar (consentimiento expreso) y enlaza el aviso de privacidad. */}
+        <label className="mt-5 flex items-start gap-2.5 text-[13px] leading-snug text-ink-2">
+          <input type="checkbox" name="marketing" className="mt-0.5 h-4 w-4 shrink-0 accent-[#0a7f94]" />
+          <span>
+            {dict.checkout.reminders}{" "}
+            <Link href={localePath(locale, "/legal/privacidad")} target="_blank" className="underline">
+              {dict.footer.privacy}
+            </Link>
+          </span>
+        </label>
+
         <button
           type="submit"
           disabled={status === "sending"}
-          className="btn btn-primary mt-5 w-full disabled:opacity-60"
+          className="btn btn-primary mt-4 w-full disabled:opacity-60"
         >
           {status === "sending"
             ? dict.checkout.processing
@@ -341,7 +395,9 @@ function Field({
   autoComplete,
   inputMode,
   className = "",
+  defaultValue,
 }: {
+  defaultValue?: string;
   name: string;
   label: string;
   type?: string;
@@ -359,6 +415,7 @@ function Field({
         required={required}
         autoComplete={autoComplete}
         inputMode={inputMode}
+        defaultValue={defaultValue}
         className="field mt-1.5"
       />
     </label>

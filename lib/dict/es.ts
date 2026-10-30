@@ -617,6 +617,7 @@ export const es = {
     },
     pay: "Pagar {amount}",
     processing: "Procesando",
+    reminders: "Sí, guárdenme mi carrito y envíenme mi descuento por correo o WhatsApp si no termino mi compra. Puedo darme de baja cuando quiera.",
     error: "No se pudo iniciar el pago. Inténtalo otra vez o escríbenos.",
     emptyCart: "Tu carrito está vacío.",
     secure: "Conexión cifrada. Hydroloop nunca guarda los datos de tu tarjeta.",
