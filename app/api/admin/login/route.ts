@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { ADMIN_COOKIE, adminToken, checkLogin } from "@/lib/admin";
 
-const ADMIN_PATHS = new Set(["/admin", "/admin/pedidos", "/admin/marketing"]);
+// Cualquier pagina del panel (solo letras, numeros y guiones): nunca una URL externa.
+const ADMIN_PATH = /^\/admin(\/[a-z0-9-]+){0,3}$/;
 
 export async function POST(request: Request) {
   const form = await request.formData().catch(() => null);
   const next = String(form?.get("next") ?? "/admin");
   // Solo rutas conocidas del panel: nada de redirigir a donde diga el form.
-  const target = ADMIN_PATHS.has(next) ? next : "/admin";
+  const target = ADMIN_PATH.test(next) ? next : "/admin";
   const url = new URL(target, request.url);
 
   if (!checkLogin(form?.get("email"), form?.get("password"))) {

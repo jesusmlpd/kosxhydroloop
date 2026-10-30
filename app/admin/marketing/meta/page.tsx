@@ -54,7 +54,7 @@ export default async function AdminReportesPage({ searchParams }: { searchParams
   const jar = await cookies();
   const search = await searchParams;
   if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
-    return <AdminLogin error={Boolean(search.error)} next="/admin/reportes" />;
+    return <AdminLogin error={Boolean(search.error)} next="/admin/marketing/meta" />;
   }
 
   const { since, until, today } = resolveRange(search);
@@ -81,7 +81,7 @@ export default async function AdminReportesPage({ searchParams }: { searchParams
   }
 
   return (
-    <AdminShell active="/admin/reportes" title="Reportes">
+    <AdminShell active="/admin/marketing/meta" title="Meta Ads">
       <p className="mt-4 max-w-2xl text-[14.5px] text-ink-2">
         Resultados de las campañas Kick Off en Meta, leídos en vivo. Solo cuenta lo que pasa en los anuncios: las ventas
         se ven en Pedidos y en el área comercial.
@@ -89,7 +89,7 @@ export default async function AdminReportesPage({ searchParams }: { searchParams
 
       <div className="mt-6">
         <DateRange
-          action="/admin/reportes"
+          action="/admin/marketing/meta"
           since={since}
           until={until}
           min={FIRST_DAY}

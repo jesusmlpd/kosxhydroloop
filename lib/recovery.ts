@@ -13,7 +13,7 @@ import { findProductById, products, site } from "@/lib/site";
  * a Stripe se guarda un registro minimo (nombre, correo, telefono, articulos,
  * cupon). Un cron cada 15 minutos manda el recordatorio que toque y se detiene
  * solo si el cliente paga, pide la baja o se acaban los pasos. Todo lo que se
- * puede ajustar vive en Settings y se edita desde /admin/recuperacion.
+ * puede ajustar vive en Settings y se edita desde /admin/marketing/correos.
  */
 
 const DAY = 86_400_000;

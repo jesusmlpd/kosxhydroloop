@@ -8,6 +8,8 @@ import { formatMoney } from "@/lib/commerce";
 import { KpiStrip, type Kpi } from "@/components/admin-kpis";
 import { PANEL_TZ, addDay, buildPresets, resolveRange, spanDays, todayInPanel } from "@/lib/date-range";
 import { SOURCE_LABEL, loadDailyStats, loadSources } from "@/lib/stats";
+import { buildAlerts } from "@/lib/admin-alerts";
+import { loadStoreSettings } from "@/lib/store-settings-server";
 
 /** Primer dia seleccionable: desde que existe el checkout. */
 const SALES_FIRST_DAY = "2026-08-26";
@@ -33,6 +35,9 @@ export default async function AdminDashboardPage({
   }
 
   const orders = await loadOrders();
+  // Carga los ajustes en vivo (inventario, cupones, promo) para los avisos.
+  const settings = await loadStoreSettings();
+  const alerts = buildAlerts({ orders, settings });
   const today = todayInPanel();
   const { since, until } = resolveRange(search, {
     min: SALES_FIRST_DAY,
@@ -49,7 +54,24 @@ export default async function AdminDashboardPage({
   }).format(new Date());
 
   return (
-    <AdminShell active="/admin" title="Dashboard">
+    <AdminShell active="/admin" title="Inicio">
+      {alerts.length ? (
+        <ul className="mt-6 space-y-2">
+          {alerts.map((alert) => (
+            <li
+              key={alert.text}
+              className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-[14px] ${
+                alert.level === "warn" ? "border-[#e8c86f] bg-[#fff8e6]" : "border-line bg-surface"
+              }`}
+            >
+              <span>{alert.text}</span>
+              <a href={alert.href} className="shrink-0 font-semibold text-deep underline">
+                {alert.cta}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
       {orders === null ? (
         <NotConnected />
       ) : (

@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { AdminLogin, AdminShell } from "@/components/admin-shell";
 import { ADMIN_COOKIE, adminCredentials, isAdmin } from "@/lib/admin";
+import { kvConfigured } from "@/lib/kv";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Marketing | Hydroloop®",
+  title: "Conexiones | Hydroloop®",
   robots: { index: false, follow: false },
 };
 
@@ -20,7 +21,7 @@ export default async function AdminMarketingPage({
   const jar = await cookies();
   const { error } = await searchParams;
   if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
-    return <AdminLogin error={Boolean(error)} next="/admin/marketing" />;
+    return <AdminLogin error={Boolean(error)} next="/admin/configuracion/conexiones" />;
   }
 
   const { usingDefaults } = adminCredentials();
@@ -34,7 +35,7 @@ export default async function AdminMarketingPage({
       env: "STRIPE_SECRET_KEY",
       steps: [
         "Copiar la llave secreta desde dashboard.stripe.com (Developers, API keys) a STRIPE_SECRET_KEY.",
-        `Crear el webhook a ${site.url}/api/webhooks/stripe (evento checkout.session.completed) y copiar su secreto a STRIPE_WEBHOOK_SECRET.`,
+        `Crear el webhook a ${site.url}/api/webhooks/stripe (eventos checkout.session.completed, async_payment_succeeded y charge.refunded) y copiar su secreto a STRIPE_WEBHOOK_SECRET.`,
         "Activar los métodos de pago deseados en Settings, Payment methods (OXXO, SPEI y MSI incluidos).",
         "Para Apple Pay: verificar el dominio en Settings, Payment method domains.",
       ],
@@ -78,6 +79,53 @@ export default async function AdminMarketingPage({
       link: { label: "Google Analytics", href: "https://analytics.google.com" },
     },
     {
+      name: "Base de datos (Upstash Redis)",
+      ready: kvConfigured(),
+      detail:
+        "Guarda lo que se edita en el panel (envío, promos, precios, cupones, hero), la medición propia de visitas y los carritos abandonados.",
+      env: "KV_REST_API_URL / KV_REST_API_TOKEN",
+      steps: [
+        "En Vercel, Storage, crear Upstash for Redis y conectarla al proyecto en Production y Preview.",
+        "Las variables se crean solas; hay que volver a publicar para que apliquen.",
+      ],
+      link: { label: "Upstash", href: "https://console.upstash.com" },
+    },
+    {
+      name: "Correos con Resend",
+      ready: Boolean(process.env.RESEND_API_KEY),
+      detail: "Recibos y avisos de pedido, y los correos de recuperación de carritos. Necesita un dominio de envío verificado.",
+      env: "RESEND_API_KEY",
+      steps: [
+        "Verificar el dominio de envío en Resend (registros DNS).",
+        "Poner la llave en RESEND_API_KEY; el remitente se cambia con EMAIL_FROM si hace falta.",
+      ],
+      link: { label: "Resend", href: "https://resend.com/domains" },
+    },
+    {
+      name: "Recordatorios automáticos (cron)",
+      ready: Boolean(process.env.CRON_SECRET),
+      detail: "Protege la tarea que cada 15 minutos manda los correos de carritos abandonados.",
+      env: "CRON_SECRET",
+      steps: ["Definir CRON_SECRET (una cadena larga y aleatoria) en Production y volver a publicar."],
+      link: null,
+    },
+    {
+      name: "Anuncios de Meta (informes)",
+      ready: Boolean(process.env.META_REPORT_TOKEN && process.env.META_AD_ACCOUNT_ID),
+      detail: "Alimenta Marketing, Meta Ads: gasto, resultados y mejores anuncios, leídos en vivo.",
+      env: "META_REPORT_TOKEN / META_AD_ACCOUNT_ID",
+      steps: ["Crear el token de lectura en Meta Business y poner el ID de la cuenta publicitaria."],
+      link: { label: "Meta Business", href: "https://business.facebook.com" },
+    },
+    {
+      name: "API de conversiones de Meta",
+      ready: Boolean(process.env.META_CAPI_TOKEN),
+      detail: "Manda las compras y contactos desde el servidor para que Meta no pierda eventos por bloqueadores.",
+      env: "META_CAPI_TOKEN",
+      steps: ["Generar el token en Events Manager, Configuración del Pixel, API de conversiones."],
+      link: { label: "Meta Events Manager", href: "https://business.facebook.com/events_manager2" },
+    },
+    {
       name: "Correo de pedidos",
       ready: Boolean(process.env.FORMSUBMIT_TO),
       detail:
@@ -92,7 +140,7 @@ export default async function AdminMarketingPage({
   ];
 
   return (
-    <AdminShell active="/admin/marketing" title="Marketing y cobros">
+    <AdminShell active="/admin/configuracion/conexiones" title="Conexiones">
       {usingDefaults ? (
         <div className="card mt-8 border border-[#e8c86f] p-5">
           <p className="text-[14px]">
@@ -104,7 +152,12 @@ export default async function AdminMarketingPage({
         </div>
       ) : null}
 
-      <div className="mt-8 grid gap-4 lg:grid-cols-2">
+      <p className="mt-6 text-[14.5px] text-ink-2">
+        <strong>{integrations.filter((item) => item.ready).length} de {integrations.length}</strong> conexiones listas.
+        Las pendientes dicen qué falta.
+      </p>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
         {integrations.map((item) => (
           <div key={item.name} className="card p-6">
             <div className="flex items-center justify-between gap-3">
