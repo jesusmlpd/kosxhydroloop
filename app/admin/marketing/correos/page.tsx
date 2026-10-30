@@ -20,7 +20,7 @@ export default async function AdminRecoveryPage({ searchParams }: { searchParams
   const jar = await cookies();
   const { error } = await searchParams;
   if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
-    return <AdminLogin error={Boolean(error)} next="/admin/recuperacion" />;
+    return <AdminLogin error={Boolean(error)} next="/admin/marketing/correos" />;
   }
 
   const [settings, stats] = await Promise.all([loadSettings(), loadStats().catch(() => null)]);
@@ -39,7 +39,7 @@ export default async function AdminRecoveryPage({ searchParams }: { searchParams
     : [];
 
   return (
-    <AdminShell active="/admin/recuperacion" title="Recuperación de carritos">
+    <AdminShell active="/admin/marketing/correos" title="Correos: recuperación de carritos">
       {!kvConfigured() ? (
         <div className="card mt-6 border-[#e8c86f] p-5 text-[14px]">
           <p className="font-semibold">

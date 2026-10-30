@@ -15,7 +15,7 @@ import {
 const WEEKDAYS = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"];
 
 type Props = {
-  /** Ruta a la que se navega con ?desde=&hasta= (por ejemplo /admin/reportes). */
+  /** Ruta a la que se navega con ?desde=&hasta= (por ejemplo /admin/marketing/meta). */
   action: string;
   since: string;
   until: string;

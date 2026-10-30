@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatMoney } from "@/lib/commerce";
 import { HERO_FIELDS, type HeroCopy, type HeroField, type PromoCopy, type StoreSettings } from "@/lib/store-settings";
 
 const HERO_LABELS: Record<HeroField, string> = {
@@ -31,13 +32,18 @@ const endOfDay = (day: string) => (day ? `${day}T23:59:59-06:00` : null);
  * Editor de los ajustes de la tienda. Lo guardado aqui lo lee el sitio en vivo:
  * envio, barra y ventana de promo, y precios e inventario por producto.
  */
+export type StoreSection = "productos" | "envio-promos" | "inicio" | "descuentos";
+
 export function StoreEditor({
+  section,
   initial,
   items,
   heroDefaults,
   canSave,
   usingMemory,
 }: {
+  /** Que parte de la tienda se edita en esta pagina; solo eso se guarda. */
+  section: StoreSection;
   initial: StoreSettings;
   items: Item[];
   /** Textos de fabrica del hero, para mostrarlos de ejemplo en cada campo. */
@@ -100,22 +106,29 @@ export function StoreEditor({
       if (form.stock.trim() !== "") entry.stock = Math.round(Number(form.stock));
       if (Object.keys(entry).length) productsPayload[item.id] = entry;
     }
-    const payload: StoreSettings = {
-      shipping: {
-        flatCents: toCents(flat || "0"),
-        freeFromCents: toCents(freeFrom || "0"),
-        freeUntil: endOfDay(freeUntil),
-      },
-      promo: { endsAt: endOfDay(endsAt), bannerEnabled, bannerEs, bannerEn, popupEnabled, popupEs, popupEn },
-      products: productsPayload,
-      hero,
-      coupons: coupons.map((coupon) => ({
-        code: coupon.code,
-        percentOff: Number(coupon.percentOff),
-        endsAt: endOfDay(coupon.endsAt),
-        enabled: coupon.enabled,
-      })),
-    };
+    // Solo se manda lo de esta pagina: el servidor lo mezcla con lo ya guardado.
+    const payload: Partial<StoreSettings> =
+      section === "envio-promos"
+        ? {
+            shipping: {
+              flatCents: toCents(flat || "0"),
+              freeFromCents: toCents(freeFrom || "0"),
+              freeUntil: endOfDay(freeUntil),
+            },
+            promo: { endsAt: endOfDay(endsAt), bannerEnabled, bannerEs, bannerEn, popupEnabled, popupEs, popupEn },
+          }
+        : section === "productos"
+          ? { products: productsPayload }
+          : section === "inicio"
+            ? { hero }
+            : {
+                coupons: coupons.map((coupon) => ({
+                  code: coupon.code,
+                  percentOff: Number(coupon.percentOff),
+                  endsAt: endOfDay(coupon.endsAt),
+                  enabled: coupon.enabled,
+                })),
+              };
     try {
       const response = await fetch("/api/admin/tienda", {
         method: "PUT",
@@ -140,12 +153,16 @@ export function StoreEditor({
 
   const flatNumber = Number(flat || "0");
 
+  const showPreview = section !== "descuentos";
+
   return (
-    <div className="mt-8 space-y-8">
+    <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start">
+    <div className="space-y-8">
       {usingMemory && canSave ? (
         <p className="text-[13px] text-ink-3">Modo desarrollo: los cambios viven en memoria y se pierden al reiniciar.</p>
       ) : null}
 
+      {section === "envio-promos" ? (
       <section className="card p-6">
         <h2 className="text-[18px]">Envío</h2>
         <p className="mt-1 text-[14px] text-ink-2">
@@ -168,7 +185,9 @@ export function StoreEditor({
           </label>
         </div>
       </section>
+      ) : null}
 
+      {section === "envio-promos" ? (
       <section className="card p-6">
         <h2 className="text-[18px]">Promoción: barra y ventana emergente</h2>
         <p className="mt-1 text-[14px] text-ink-2">
@@ -197,7 +216,9 @@ export function StoreEditor({
           </div>
         </div>
       </section>
+      ) : null}
 
+      {section === "inicio" ? (
       <section className="card p-6">
         <h2 className="text-[18px]">Textos del inicio (hero)</h2>
         <p className="mt-1 text-[14px] text-ink-2">
@@ -238,7 +259,9 @@ export function StoreEditor({
           ))}
         </div>
       </section>
+      ) : null}
 
+      {section === "descuentos" ? (
       <section className="card p-6">
         <h2 className="text-[18px]">Cupones de descuento</h2>
         <p className="mt-1 text-[14px] text-ink-2">
@@ -280,7 +303,9 @@ export function StoreEditor({
         </button>
         <p className="mt-2 text-[12px] text-ink-3">Vacío en “Vence el” = sin fecha de fin. Los cupones sin código se ignoran al guardar.</p>
       </section>
+      ) : null}
 
+      {section === "productos" ? (
       <section className="card p-6">
         <h2 className="text-[18px]">Precios e inventario</h2>
         <p className="mt-1 text-[14px] text-ink-2">
@@ -313,6 +338,7 @@ export function StoreEditor({
           ))}
         </div>
       </section>
+      ) : null}
 
       <div className="flex flex-wrap items-center gap-4">
         <button type="button" onClick={save} disabled={saving || !canSave} className="btn btn-primary disabled:opacity-60">
@@ -324,6 +350,21 @@ export function StoreEditor({
           </p>
         ) : null}
       </div>
+    </div>
+    {showPreview ? (
+      <aside className="xl:sticky xl:top-6">
+        <StorePreview
+          section={section}
+          hero={hero}
+          heroDefaults={heroDefaults}
+          banner={{ enabled: bannerEnabled, es: bannerEs, en: bannerEn }}
+          popup={{ enabled: popupEnabled, es: popupEs, en: popupEn }}
+          shipping={{ flat, freeFrom, freeUntil }}
+          items={items}
+          forms={forms}
+        />
+      </aside>
+    ) : null}
     </div>
   );
 }
@@ -396,6 +437,155 @@ function Popup({ title, value, onChange }: { title: string; value: PromoCopy; on
         />
       </label>
       <Txt label="Botón" value={value.cta} onChange={(next) => onChange({ ...value, cta: next })} max={40} />
+    </div>
+  );
+}
+
+/**
+ * Vista previa aproximada de lo que se edita: se actualiza al escribir, sin
+ * guardar. No es el sitio real (para eso esta el enlace "Ver en el sitio"),
+ * sirve para entender que pieza se esta cambiando y como queda el texto.
+ */
+function StorePreview({
+  section,
+  hero,
+  heroDefaults,
+  banner,
+  popup,
+  shipping,
+  items,
+  forms,
+}: {
+  section: StoreSection;
+  hero: { es: HeroCopy; en: HeroCopy };
+  heroDefaults: { es: HeroCopy; en: HeroCopy };
+  banner: { enabled: boolean; es: string; en: string };
+  popup: { enabled: boolean; es: PromoCopy; en: PromoCopy };
+  shipping: { flat: string; freeFrom: string; freeUntil: string };
+  items: Item[];
+  forms: Record<string, ProductForm>;
+}) {
+  const [locale, setLocale] = useState<"es" | "en">("es");
+  const pick = (field: HeroField) => hero[locale][field] || heroDefaults[locale][field];
+  // El hero muestra el precio del Manual ("Comprar desde"), como el sitio.
+  const manual = items.find((item) => item.id === "hl-manual") ?? items[0];
+  const typed = manual ? forms[manual.id]?.price.trim() : "";
+  const lowest = manual ? (typed ? toCents(typed) : manual.base.priceCents) : 0;
+  const flat = Number(shipping.flat || "0");
+  const link = section === "inicio" ? "/es" : section === "productos" ? "/es/products" : "/es";
+
+  return (
+    <div className="card overflow-hidden">
+      <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
+        <p className="text-[13px] font-semibold">Vista previa</p>
+        <div className="flex gap-1 text-[12px] font-semibold">
+          {(["es", "en"] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setLocale(value)}
+              className={`rounded-full px-2.5 py-1 ${locale === value ? "bg-invert text-invert-fg" : "text-ink-2"}`}
+            >
+              {value.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4 p-4">
+        {section === "inicio" ? (
+          <div className="rounded-2xl bg-invert p-5 text-invert-fg">
+            <p className="text-[10.5px] font-bold uppercase tracking-[0.14em] opacity-70">{pick("eyebrow")}</p>
+            <p className="mt-2 font-display text-[22px] font-bold leading-tight">
+              {pick("title")} <span className="text-aqua">{pick("titleAccent")}</span>
+            </p>
+            <p className="mt-2 text-[12.5px] leading-relaxed opacity-85">{pick("body")}</p>
+            <div className="mt-3 flex flex-wrap gap-2 text-[12px] font-semibold">
+              <span className="rounded-full bg-white px-3 py-1.5 text-[#071b23]">
+                {pick("ctaPrimary")} {formatMoney(lowest, locale)}
+              </span>
+              <span className="rounded-full border border-white/40 px-3 py-1.5">{pick("ctaSecondary")}</span>
+            </div>
+            <p className="mt-3 text-[11px] opacity-70">{pick("note")}</p>
+          </div>
+        ) : null}
+
+        {section === "envio-promos" ? (
+          <>
+            <div>
+              <p className="mb-1.5 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-ink-3">Barra de arriba</p>
+              {banner.enabled && banner[locale].trim() ? (
+                <div className="rounded-lg bg-invert px-3 py-2 text-center text-[12px] font-semibold text-invert-fg">
+                  {banner[locale]}
+                </div>
+              ) : (
+                <p className="rounded-lg border border-dashed border-line px-3 py-2 text-[12.5px] text-ink-3">
+                  Apagada o sin texto: no se muestra.
+                </p>
+              )}
+            </div>
+            <div>
+              <p className="mb-1.5 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-ink-3">Ventana emergente</p>
+              {popup.enabled ? (
+                <div className="rounded-2xl border border-line bg-surface p-4 shadow-sm">
+                  <p className="font-display text-[16px] font-bold">{popup[locale].title}</p>
+                  <p className="mt-1.5 text-[12.5px] text-ink-2">{popup[locale].body}</p>
+                  <span className="mt-3 inline-block rounded-full bg-invert px-3.5 py-1.5 text-[12px] font-semibold text-invert-fg">
+                    {popup[locale].cta}
+                  </span>
+                </div>
+              ) : (
+                <p className="rounded-lg border border-dashed border-line px-3 py-2 text-[12.5px] text-ink-3">Apagada: no se muestra.</p>
+              )}
+            </div>
+            <div>
+              <p className="mb-1.5 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-ink-3">Envío en el carrito</p>
+              <p className="rounded-lg bg-mist px-3 py-2 text-[12.5px]">
+                {flat === 0
+                  ? locale === "es"
+                    ? "Envío gratis a todo México"
+                    : "Free shipping across Mexico"
+                  : `${locale === "es" ? "Envío" : "Shipping"} ${formatMoney(toCents(shipping.flat), locale)}${
+                      Number(shipping.freeFrom || "0") > 0
+                        ? ` · ${locale === "es" ? "gratis desde" : "free from"} ${formatMoney(toCents(shipping.freeFrom), locale)}`
+                        : ""
+                    }${shipping.freeUntil ? ` · ${locale === "es" ? "gratis hasta" : "free until"} ${shipping.freeUntil}` : ""}`}
+              </p>
+            </div>
+          </>
+        ) : null}
+
+        {section === "productos" ? (
+          <ul className="space-y-3">
+            {items.map((item) => {
+              const form = forms[item.id];
+              const price = form.price.trim() ? toCents(form.price) : item.base.priceCents;
+              const compare = form.compareAt.trim() ? toCents(form.compareAt) : item.base.compareAtCents;
+              const stock = form.stock.trim() ? Math.round(Number(form.stock)) : item.base.stock;
+              return (
+                <li key={item.id} className="rounded-2xl border border-line p-3">
+                  <p className="font-display text-[14px] font-bold">{item.name}</p>
+                  <p className="mt-1 text-[13px] tabular-nums">
+                    <strong>{formatMoney(price, locale)}</strong>
+                    {compare && compare > price ? (
+                      <span className="ml-2 text-ink-3 line-through">{formatMoney(compare, locale)}</span>
+                    ) : null}
+                  </p>
+                  {stock <= 10 ? (
+                    <p className="mt-1 text-[12px] font-semibold text-[#a1332f]">
+                      {stock === 0 ? (locale === "es" ? "Agotado" : "Sold out") : locale === "es" ? `Quedan ${stock}` : `Only ${stock} left`}
+                    </p>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
+
+        <a href={link} target="_blank" rel="noreferrer" className="block text-center text-[12.5px] font-semibold text-deep underline">
+          Ver en el sitio ↗
+        </a>
+      </div>
     </div>
   );
 }
