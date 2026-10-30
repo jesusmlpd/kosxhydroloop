@@ -5,6 +5,7 @@ import { getDict } from "@/lib/dict";
 import { emailConfigured, sendEmail } from "@/lib/email";
 import { type Locale } from "@/lib/i18n";
 import { kv, kvAvailable } from "@/lib/kv";
+import { markLeadOptedOut, markLeadPurchased, upsertLead } from "@/lib/leads";
 import { shell } from "@/lib/order-email";
 import { findProductById, products, site } from "@/lib/site";
 
@@ -244,6 +245,17 @@ export async function trackCheckout(input: {
   await kv.set(recordKey(record.id), JSON.stringify(record), RECORD_TTL);
   await kv.set(byEmail, record.id, RECORD_TTL);
   await kv.zadd(PENDING, record.createdAt, record.id);
+  // Tambien queda en la lista de leads del panel (Clientes), que no caduca como el registro.
+  await upsertLead({
+    email,
+    name: record.name,
+    phone: record.phone,
+    locale: record.locale,
+    items: record.items,
+    coupon: record.coupon,
+    consent: record.consent,
+    now,
+  }).catch((error) => console.error("[leads] no se guardo", error));
   return record;
 }
 
@@ -263,6 +275,7 @@ const lastSentKey = (email: string) => `rec:last:${emailHash(email)}`;
 
 export async function optOut(email: string) {
   await kv.set(optOutKey(email), "1");
+  await markLeadOptedOut(email).catch(() => null);
 }
 
 /**
@@ -274,6 +287,7 @@ export async function markPaid(input: { email: string; ref: string; cents: numbe
   const now = input.now ?? Date.now();
   try {
     await kv.set(paidKey(input.email), String(now), 30 * 24 * 3600);
+    await markLeadPurchased(input.email).catch(() => null);
     const last = await kv.get(lastSentKey(input.email));
     if (last) {
       const { step, at } = JSON.parse(last) as { step: string; at: number };

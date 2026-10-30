@@ -1,6 +1,7 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { ADMIN_COOKIE, adminCredentials, isAdmin } from "@/lib/admin";
+import { adminCredentials } from "@/lib/admin";
+import { apiAccess } from "@/lib/admin-access";
+import { logAudit } from "@/lib/audit";
 import { sendEmail } from "@/lib/email";
 import { kvAvailable } from "@/lib/kv";
 import {
@@ -14,22 +15,20 @@ import {
 /** Guarda las reglas del panel y manda correos de prueba al administrador o al correo que se indique. */
 export const dynamic = "force-dynamic";
 
-async function authorized() {
-  const jar = await cookies();
-  return isAdmin(jar.get(ADMIN_COOKIE)?.value);
-}
-
 export async function PUT(request: Request) {
-  if (!(await authorized())) return NextResponse.json({ ok: false }, { status: 401 });
+  const access = await apiAccess("marketing");
+  if (!("session" in access)) return NextResponse.json({ ok: false }, { status: access.status });
   if (!kvAvailable()) return NextResponse.json({ ok: false, error: "no_database" }, { status: 503 });
   const body = await request.json().catch(() => null);
   const settings = sanitizeSettings(body);
   await saveSettings(settings);
+  await logAudit(access.session.email, "Cambió la secuencia de correos", settings.enabled ? "encendida" : "apagada");
   return NextResponse.json({ ok: true, settings });
 }
 
 export async function POST(request: Request) {
-  if (!(await authorized())) return NextResponse.json({ ok: false }, { status: 401 });
+  const access = await apiAccess("marketing");
+  if (!("session" in access)) return NextResponse.json({ ok: false }, { status: access.status });
   const body = (await request.json().catch(() => null)) as { stepId?: string; settings?: unknown; to?: string } | null;
   // Se prueba con lo que hay en pantalla (aunque no este guardado todavia).
   const settings = body?.settings ? sanitizeSettings(body.settings) : await loadSettings();

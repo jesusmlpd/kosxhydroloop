@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { ROLE_LABEL, can, type Section } from "@/lib/admin";
+import { currentSession } from "@/lib/admin-access";
 
 /**
  * Piezas compartidas del panel interno: la pantalla de login y el marco con
@@ -50,36 +52,44 @@ export function AdminLogin({ error, next = "/admin" }: { error?: boolean; next?:
   );
 }
 
-type NavLeaf = { href: string; label: string };
-type NavItem = { label: string; icon: string; href?: string; children?: NavLeaf[] };
+type NavLeaf = { href: string; label: string; section: Section };
+type NavItem = { label: string; icon: string; section: Section; href?: string; children?: NavLeaf[] };
 
 /** Menu lateral del panel. Los grupos se abren solos cuando estas dentro de ellos. */
 export const NAV: NavItem[] = [
-  { label: "Inicio", icon: "home", href: "/admin" },
-  { label: "Pedidos", icon: "box", href: "/admin/pedidos" },
-  { label: "Informes", icon: "chart", href: "/admin/informes" },
-  { label: "Descuentos", icon: "tag", href: "/admin/descuentos" },
+  { label: "Inicio", icon: "home", section: "inicio", href: "/admin" },
+  { label: "Pedidos", icon: "box", section: "pedidos", href: "/admin/pedidos" },
+  { label: "Clientes", icon: "users", section: "clientes", href: "/admin/clientes" },
+  { label: "Informes", icon: "chart", section: "informes", href: "/admin/informes" },
+  { label: "Descuentos", icon: "tag", section: "descuentos", href: "/admin/descuentos" },
   {
     label: "Marketing",
     icon: "megaphone",
+    section: "marketing",
     children: [
-      { href: "/admin/marketing/meta", label: "Meta Ads" },
-      { href: "/admin/marketing/correos", label: "Correos" },
+      { href: "/admin/marketing/meta", label: "Meta Ads", section: "marketing" },
+      { href: "/admin/marketing/correos", label: "Correos", section: "marketing" },
     ],
   },
   {
     label: "Tienda",
     icon: "store",
+    section: "tienda",
     children: [
-      { href: "/admin/tienda/productos", label: "Productos" },
-      { href: "/admin/tienda/envio-promos", label: "Envío y promos" },
-      { href: "/admin/tienda/inicio", label: "Página de inicio" },
+      { href: "/admin/tienda/productos", label: "Productos", section: "tienda" },
+      { href: "/admin/tienda/envio-promos", label: "Envío y promos", section: "tienda" },
+      { href: "/admin/tienda/inicio", label: "Página de inicio", section: "tienda" },
     ],
   },
   {
     label: "Configuración",
     icon: "gear",
-    children: [{ href: "/admin/configuracion/conexiones", label: "Conexiones" }],
+    section: "configuracion",
+    children: [
+      { href: "/admin/configuracion/conexiones", label: "Conexiones", section: "configuracion" },
+      { href: "/admin/configuracion/equipo", label: "Equipo", section: "equipo" },
+      { href: "/admin/configuracion/historial", label: "Historial", section: "historial" },
+    ],
   },
 ];
 
@@ -151,18 +161,22 @@ function Menu({ active, items }: { active: string; items: NavItem[] }) {
   );
 }
 
-export function AdminShell({
+export async function AdminShell({
   active,
   title,
   children,
-  nav = NAV,
 }: {
   /** Ruta de la pagina actual; marca el menu. */
   active: string;
   title: string;
   children: React.ReactNode;
-  nav?: NavItem[];
 }) {
+  // El menu solo muestra lo que el rol de quien entro puede abrir.
+  const session = await currentSession();
+  const nav = NAV.map((item) => ({
+    ...item,
+    children: item.children?.filter((child) => !session || can(session.role, child.section)),
+  })).filter((item) => (session ? (item.children ? item.children.length > 0 : can(session.role, item.section)) : true));
   const brand = (
     <Link href="/admin" className="block px-3 py-1">
       <span className="block text-[11px] font-bold uppercase tracking-[0.14em] text-white/55">Hydroloop® · Interno</span>
@@ -171,6 +185,12 @@ export function AdminShell({
   );
   const footer = (
     <div className="no-print space-y-1 border-t border-white/12 pt-3">
+      {session ? (
+        <p className="px-3 pb-1 text-[12.5px] text-white/60">
+          {session.name}
+          <span className="block text-[11px] uppercase tracking-[0.08em]">{ROLE_LABEL[session.role]}</span>
+        </p>
+      ) : null}
       <a href="https://tienda.hydroloop.com.mx" target="_blank" rel="noreferrer" className="block rounded-lg px-3 py-2 text-[13.5px] text-white/70 hover:text-white">
         Ver la tienda ↗
       </a>
@@ -218,5 +238,22 @@ export function AdminShell({
         </div>
       </main>
     </div>
+  );
+}
+
+/** Hay sesion pero el rol no entra a esta seccion. */
+export async function NoAccess() {
+  return (
+    <AdminShell active="" title="Sin acceso">
+      <div className="card mt-8 p-8 text-center">
+        <h2 className="text-[20px]">Tu rol no entra a esta sección</h2>
+        <p className="mx-auto mt-3 max-w-md text-[14.5px] text-ink-2">
+          Si la necesitas, pídele al propietario que te cambie el rol en Configuración, Equipo.
+        </p>
+        <Link href="/admin" className="btn btn-primary mt-5">
+          Ir al inicio
+        </Link>
+      </div>
+    </AdminShell>
   );
 }

@@ -1,7 +1,6 @@
-import { cookies } from "next/headers";
-import { AdminLogin, AdminShell } from "@/components/admin-shell";
+import { AdminLogin, AdminShell, NoAccess } from "@/components/admin-shell";
 import { StoreEditor, type StoreSection } from "@/components/admin-store";
-import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
+import { adminAccess } from "@/lib/admin-access";
 import { getDict } from "@/lib/dict";
 import { kvAvailable, kvConfigured } from "@/lib/kv";
 import { CODE_DEFAULTS, HERO_FIELDS, type HeroCopy } from "@/lib/store-settings";
@@ -22,11 +21,12 @@ export async function renderStorePage({
   intro: string;
   searchParams: Promise<{ error?: string }>;
 }) {
-  const jar = await cookies();
   const { error } = await searchParams;
-  if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
+  const access = await adminAccess(section === "descuentos" ? "descuentos" : "tienda");
+  if (access === "login") {
     return <AdminLogin error={Boolean(error)} next={path} />;
   }
+  if (access === "denied") return <NoAccess />;
 
   const settings = await readStoreSettings();
   const names = getDict("es").products.items as Record<string, { name: string }>;

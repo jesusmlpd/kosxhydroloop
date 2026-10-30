@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import { AdminLogin, AdminShell } from "@/components/admin-shell";
+import { AdminLogin, AdminShell, NoAccess } from "@/components/admin-shell";
 import { DateRange } from "@/components/admin-date-range";
 import { KpiStrip, type Kpi } from "@/components/admin-kpis";
-import { ADMIN_COOKIE, isAdmin } from "@/lib/admin";
+import { adminAccess } from "@/lib/admin-access";
 import { loadOrders } from "@/lib/admin-data";
 import { buildSalesReport, type SalesReport } from "@/lib/admin-report";
 import { formatMoney } from "@/lib/commerce";
@@ -29,11 +28,12 @@ export default async function AdminInformesPage({
 }: {
   searchParams: Promise<{ error?: string; desde?: string; hasta?: string }>;
 }) {
-  const jar = await cookies();
   const search = await searchParams;
-  if (!isAdmin(jar.get(ADMIN_COOKIE)?.value)) {
+  const access = await adminAccess("informes");
+  if (access === "login") {
     return <AdminLogin error={Boolean(search.error)} next="/admin/informes" />;
   }
+  if (access === "denied") return <NoAccess />;
 
   const today = todayInPanel();
   const { since, until } = resolveRange(search, {
