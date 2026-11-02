@@ -217,6 +217,25 @@ export async function sendOrderEmails(order: OrderEmail, options: { customerRece
 }
 
 /** Arma el pedido desde la sesion de Checkout de Stripe y los datos del checkout. */
+type StripeShipping = {
+  name?: string | null;
+  address?: {
+    line1?: string | null;
+    line2?: string | null;
+    city?: string | null;
+    state?: string | null;
+    postal_code?: string | null;
+  } | null;
+};
+
+/** Dirección que pidió Stripe (pago corto); versiones nuevas de la API la mueven a collected_information. */
+function stripeAddress(shipping?: StripeShipping | null) {
+  const a = shipping?.address;
+  if (!a) return "";
+  const street = [a.line1, a.line2].filter(Boolean).join(" ");
+  return [street, a.city, a.state, a.postal_code ? `CP ${a.postal_code}` : ""].filter(Boolean).join(", ");
+}
+
 export function orderFromStripeSession(session: {
   client_reference_id?: string | null;
   amount_total?: number | null;
@@ -224,6 +243,8 @@ export function orderFromStripeSession(session: {
   total_details?: { amount_discount?: number | null; amount_shipping?: number | null } | null;
   customer_email?: string | null;
   customer_details?: { email?: string | null; phone?: string | null; name?: string | null } | null;
+  shipping_details?: StripeShipping | null;
+  collected_information?: { shipping_details?: StripeShipping | null } | null;
   payment_status?: string;
   payment_method_types?: string[] | null;
   metadata?: Record<string, string> | null;
@@ -257,7 +278,9 @@ export function orderFromStripeSession(session: {
       name: meta.name || session.customer_details?.name || "",
       email: session.customer_details?.email ?? session.customer_email ?? "",
       phone: session.customer_details?.phone || meta.phone || "",
-      address: meta.address || "",
+      address:
+        meta.address ||
+        stripeAddress(session.shipping_details ?? session.collected_information?.shipping_details),
       notes: meta.notes || "",
     },
     lines,

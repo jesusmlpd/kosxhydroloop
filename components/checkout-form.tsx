@@ -15,17 +15,20 @@ import { localePath, type Locale } from "@/lib/i18n";
 import { findProduct, findProductById } from "@/lib/site";
 import { metaBrowserIds, storePendingPurchase, trackInitiateCheckout } from "@/lib/track";
 
-type Method = "stripe" | "mercadopago" | "manual";
+type Method = "stripe" | "mercadopago";
 
 export function CheckoutForm({
   locale,
   dict,
   prefill,
+  shortCheckout = false,
 }: {
   locale: Locale;
   dict: Dict;
   /** Datos de quien regresa desde un correo de recuperacion (?r=). */
   prefill?: { name?: string; email?: string; phone?: string };
+  /** Pago corto: solo nombre y correo; Stripe pide dirección y teléfono. */
+  shortCheckout?: boolean;
 }) {
   const now = useNow();
   const { state, totals, reservationMsLeft, reservationExpired } = useCart(now);
@@ -97,6 +100,7 @@ export function CheckoutForm({
           lines: state.lines,
           coupon: state.coupon,
           customer,
+          short: shortCheckout,
           locale,
           tracking: metaBrowserIds(),
         }),
@@ -145,7 +149,6 @@ export function CheckoutForm({
           },
         ]
       : []),
-    { id: "manual", title: dict.checkout.methods.manual, body: dict.checkout.methods.manualBody },
   ];
 
   return (
@@ -170,10 +173,20 @@ export function CheckoutForm({
               required
               defaultValue={prefill?.email}
             />
-            <Field name="phone" label={dict.checkout.fields.phone} autoComplete="tel" required defaultValue={prefill?.phone} />
+            {shortCheckout ? null : (
+              <Field name="phone" label={dict.checkout.fields.phone} autoComplete="tel" required defaultValue={prefill?.phone} />
+            )}
           </div>
+          {shortCheckout ? (
+            <p className="mt-3 text-[12px] text-ink-3">
+              {locale === "en"
+                ? "Next, a secure screen asks for your shipping address and phone."
+                : "Después, una pantalla segura te pide la dirección de envío y el teléfono."}
+            </p>
+          ) : null}
         </fieldset>
 
+        {shortCheckout ? null : (
         <fieldset className="card p-6">
           <legend className="eyebrow px-1">{dict.checkout.shippingTitle}</legend>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
@@ -207,6 +220,7 @@ export function CheckoutForm({
           </div>
           <p className="mt-3 text-[12px] text-ink-3">{dict.checkout.requiredNote}</p>
         </fieldset>
+        )}
 
         <fieldset className="card p-6">
           <legend className="eyebrow px-1">{dict.checkout.paymentTitle}</legend>

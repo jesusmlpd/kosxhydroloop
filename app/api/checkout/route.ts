@@ -16,25 +16,33 @@ import { loadStoreSettings } from "@/lib/store-settings-server";
  */
 export async function POST(request: Request) {
   // Precios, inventario y envio del panel: el cobro usa los mismos que ve el cliente.
-  await loadStoreSettings();
+  const settings = await loadStoreSettings();
   const body = (await request.json().catch(() => null)) as
     | {
         method?: PaymentMethod;
         lines?: CartLine[];
         coupon?: string | null;
         customer?: Customer;
+        short?: boolean;
         locale?: string;
         tracking?: { fbp?: string | null; fbc?: string | null };
       }
     | null;
 
-  if (!body?.lines?.length || !body.customer || !body.method) {
+  // El pedido "por confirmar" por correo se retiró: todo pago pasa por una pasarela.
+  if (!body?.lines?.length || !body.customer || !body.method || body.method === ("manual" as string)) {
     return NextResponse.json({ ok: false, error: "bad_request" }, { status: 400 });
   }
 
   const locale: Locale = isLocale(body.locale ?? "") ? (body.locale as Locale) : "es";
   const customer = body.customer;
-  const missing = (["name", "email", "phone", "street", "neighborhood", "city", "state", "zip"] as const).filter(
+  // Pago corto (si el panel lo tiene encendido): solo nombre y correo; Stripe pide
+  // dirección y teléfono. Mercado Pago sigue pidiendo todo.
+  const short = Boolean(body.short) && settings.checkout.short && body.method === "stripe";
+  const required = short
+    ? (["name", "email"] as const)
+    : (["name", "email", "phone", "street", "neighborhood", "city", "state", "zip"] as const);
+  const missing = required.filter(
     (field) => !String(customer[field] ?? "").trim(),
   );
   if (missing.length || !customer.email.includes("@")) {
@@ -88,6 +96,12 @@ export async function POST(request: Request) {
         // Sin payment_method_types explicito, Stripe usa los metodos activos en
         // el dashboard: tarjeta, Apple Pay, Google Pay, OXXO, SPEI, MSI.
         customer_email: customer.email,
+        ...(short
+          ? {
+              shipping_address_collection: { allowed_countries: ["MX" as const] },
+              phone_number_collection: { enabled: true },
+            }
+          : {}),
         client_reference_id: ref,
         locale: locale === "en" ? "en" : "es",
         line_items: totals.lines.map((line) => ({
@@ -125,7 +139,9 @@ export async function POST(request: Request) {
           state: customer.state,
           zip: customer.zip,
           phone: customer.phone,
-          address: `${customer.street} ${customer.interior ?? ""}, ${customer.neighborhood}, ${customer.city}, ${customer.state}, CP ${customer.zip}`,
+          address: short
+            ? ""
+            : `${customer.street} ${customer.interior ?? ""}, ${customer.neighborhood}, ${customer.city}, ${customer.state}, CP ${customer.zip}`,
           notes: customer.notes ?? "",
         },
         success_url: `${base}/order/success?ref=${ref}&session_id={CHECKOUT_SESSION_ID}`,
@@ -214,29 +230,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true, url: preference.init_point, ref });
     }
 
-    // Pedido sin cobro en linea: se avisa por correo y se cierra el ciclo.
-    const delivered = await notifyOrder({
-      ref,
-      method: "manual",
-      status: "por confirmar",
-      customer,
-      totals,
-      names,
-      locale,
-      origin,
-    });
-
-    // Si el correo no salio, no se manda al cliente a una pantalla de exito
-    // que promete un pedido que nadie recibio.
-    if (!delivered) {
-      return NextResponse.json({ ok: false, error: "order_not_delivered" }, { status: 503 });
-    }
-
-    return NextResponse.json({
-      ok: true,
-      url: `${base}/order/success?ref=${ref}&mode=manual`,
-      ref,
-    });
+    return NextResponse.json({ ok: false, error: "bad_request" }, { status: 400 });
   } catch (error) {
     console.error("checkout", error);
     return NextResponse.json({ ok: false, error: "gateway" }, { status: 502 });

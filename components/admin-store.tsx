@@ -65,6 +65,7 @@ export function StoreEditor({
   const [popupEn, setPopupEn] = useState<PromoCopy>(initial.promo.popupEn);
 
   const [hero, setHero] = useState(initial.hero);
+  const [shortCheckout, setShortCheckout] = useState(initial.checkout.short);
 
   const [coupons, setCoupons] = useState(
     initial.coupons.map((coupon) => ({ ...coupon, endsAt: dayOf(coupon.endsAt), percentOff: String(coupon.percentOff) })),
@@ -116,6 +117,7 @@ export function StoreEditor({
               freeUntil: endOfDay(freeUntil),
             },
             promo: { endsAt: endOfDay(endsAt), bannerEnabled, bannerEs, bannerEn, popupEnabled, popupEs, popupEn },
+            checkout: { short: shortCheckout },
           }
         : section === "productos"
           ? { products: productsPayload }
@@ -183,6 +185,19 @@ export function StoreEditor({
             />
             <span className="mt-1 block text-[12px] text-ink-3">Vacío = sin fecha. Solo si hay costo de envío.</span>
           </label>
+        </div>
+      </section>
+      ) : null}
+
+      {section === "envio-promos" ? (
+      <section className="card p-6">
+        <h2 className="text-[18px]">Pago corto</h2>
+        <p className="mt-1 text-[14px] text-ink-2">
+          Encendido: el formulario del pago pide solo nombre y correo, y Stripe pide la dirección y el teléfono en su
+          propia pantalla. Apagado: el formulario completo de siempre (11 campos).
+        </p>
+        <div className="mt-4">
+          <Toggle label="Pago corto" checked={shortCheckout} onChange={setShortCheckout} />
         </div>
       </section>
       ) : null}

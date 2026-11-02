@@ -51,6 +51,10 @@ export type StoreSettings = {
   /** Cupones activos del checkout. Un cupon apagado o vencido no se acepta. */
   coupons: Array<{ code: string; percentOff: number; endsAt: string | null; enabled: boolean }>;
   hero: { es: HeroCopy; en: HeroCopy };
+  checkout: {
+    /** Pago corto: solo nombre y correo; Stripe pide dirección y teléfono en su pantalla. */
+    short: boolean;
+  };
 };
 
 export const DEFAULT_SETTINGS: StoreSettings = {
@@ -75,6 +79,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   products: {},
   coupons: [{ code: "BIENVENIDA5", percentOff: 5, endsAt: null, enabled: true }],
   hero: { es: EMPTY_HERO, en: EMPTY_HERO },
+  checkout: { short: true },
 };
 
 // Fotografia de lo que dice el codigo, para poder volver a el si el panel
@@ -134,6 +139,7 @@ export function sanitizeSettings(input: unknown): StoreSettings {
     products: {},
     coupons: d.coupons,
     hero: { es: heroCopy(raw.hero?.es), en: heroCopy(raw.hero?.en) },
+    checkout: { short: raw.checkout?.short === undefined ? d.checkout.short : Boolean(raw.checkout.short) },
   };
 
   if (Array.isArray(raw.coupons)) {
