@@ -5,6 +5,7 @@ import { getDict } from "@/lib/dict";
 import { isLocale } from "@/lib/i18n";
 import { loadRecord } from "@/lib/recovery";
 import { pageMeta } from "@/lib/metadata";
+import { loadStoreSettings } from "@/lib/store-settings-server";
 
 export async function generateMetadata({
   params,
@@ -36,6 +37,7 @@ export default async function CheckoutPage({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dict = getDict(locale);
+  const settings = await loadStoreSettings();
   // Quien regresa desde un correo de recuperacion llega con sus datos puestos.
   // El id es opaco (128 bits): los datos nunca viajan en la URL.
   const { r } = await searchParams;
@@ -47,7 +49,7 @@ export default async function CheckoutPage({
       <div className="shell">
         <h1 className="text-[clamp(28px,4vw,44px)]">{dict.checkout.title}</h1>
         <div className="mt-8">
-          <CheckoutForm locale={locale} dict={dict} prefill={prefill} />
+          <CheckoutForm locale={locale} dict={dict} prefill={prefill} shortCheckout={settings.checkout.short} />
         </div>
       </div>
     </section>

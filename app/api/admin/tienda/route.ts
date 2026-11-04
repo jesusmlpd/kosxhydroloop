@@ -19,13 +19,13 @@ export async function PUT(request: Request) {
   // cupones): se mezcla con lo ya guardado para no pisar lo de las demas.
   if (!body || typeof body !== "object") return NextResponse.json({ ok: false, error: "bad_body" }, { status: 400 });
   const parts = Object.fromEntries(
-    (["shipping", "promo", "products", "coupons", "hero"] as const).filter((key) => key in body).map((key) => [key, body[key]]),
+    (["shipping", "promo", "products", "coupons", "hero", "checkout"] as const).filter((key) => key in body).map((key) => [key, body[key]]),
   );
   if (!Object.keys(parts).length) return NextResponse.json({ ok: false, error: "empty" }, { status: 400 });
   const settings = sanitizeSettings({ ...(await readStoreSettings()), ...parts });
   try {
     await saveStoreSettings(settings);
-    const labels: Record<string, string> = { shipping: "envío", promo: "promoción", products: "productos", coupons: "cupones", hero: "textos del inicio" };
+    const labels: Record<string, string> = { shipping: "envío", promo: "promoción", products: "productos", coupons: "cupones", hero: "textos del inicio", checkout: "pago corto" };
     await logAudit(access.session.email, "Cambió ajustes de la tienda", Object.keys(parts).map((key) => labels[key]).join(", "));
   } catch (error) {
     console.error("[tienda] no se pudo guardar", error);
