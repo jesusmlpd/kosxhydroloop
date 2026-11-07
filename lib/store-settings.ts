@@ -60,19 +60,19 @@ export type StoreSettings = {
 export const DEFAULT_SETTINGS: StoreSettings = {
   shipping: { flatCents: 0, freeFromCents: 0, freeUntil: null },
   promo: {
-    endsAt: "2026-10-31T23:59:59-06:00",
+    endsAt: "2026-11-30T23:59:59-06:00",
     bannerEnabled: true,
-    bannerEs: "Hasta el 31 de octubre: envío gratis en todos los modelos + 3 meses sin intereses",
-    bannerEn: "Until October 31: free shipping on every model + 3 interest-free installments",
+    bannerEs: "Hasta el 30 de noviembre: envío gratis en todos los modelos + 3 meses sin intereses",
+    bannerEn: "Until November 30: free shipping on every model + 3 interest-free installments",
     popupEnabled: true,
     popupEs: {
       title: "Envío gratis a todo México",
-      body: "Termina tu compra hoy: envío gratis en todos los modelos y hasta 3 meses sin intereses. Promoción válida hasta el 31 de octubre.",
+      body: "Termina tu compra hoy: envío gratis en todos los modelos y hasta 3 meses sin intereses. Promoción válida hasta el 30 de noviembre.",
       cta: "Ver productos",
     },
     popupEn: {
       title: "Free shipping across Mexico",
-      body: "Finish your order today: free shipping on every model and up to 3 months interest-free. Offer valid until October 31.",
+      body: "Finish your order today: free shipping on every model and up to 3 months interest-free. Offer valid until November 30.",
       cta: "See products",
     },
   },
