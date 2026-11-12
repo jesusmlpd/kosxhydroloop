@@ -83,7 +83,7 @@ export default async function AdminReportesPage({ searchParams }: { searchParams
   return (
     <AdminShell active="/admin/marketing/meta" title="Meta Ads">
       <p className="mt-4 max-w-2xl text-[14.5px] text-ink-2">
-        Resultados de las campañas Kick Off en Meta, leídos en vivo. Solo cuenta lo que pasa en los anuncios: las ventas
+        Resultados de las campañas de la agencia en Meta (WhatsApp y tienda web), leídos en vivo. Solo cuenta lo que pasa en los anuncios: las ventas
         se ven en Pedidos y en el área comercial.
       </p>
 

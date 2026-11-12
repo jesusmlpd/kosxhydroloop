@@ -7,8 +7,8 @@
  * debe poder leer (ads_read, read_insights y, para Instagram,
  * instagram_basic e instagram_manage_insights).
  *
- * Alcance: las campañas cuyo nombre contiene "Kick Off", que son las que
- * ejecuta la agencia. El resto de la cuenta no entra al reporte.
+ * Alcance: las campañas que ejecuta la agencia: las que llevan "Kick Off" en el
+ * nombre y las de la tienda web (HLP_WEB_...). El resto de la cuenta no entra.
  */
 
 const GRAPH = `https://graph.facebook.com/${process.env.META_GRAPH_VERSION ?? "v25.0"}`;
@@ -16,6 +16,9 @@ const GRAPH = `https://graph.facebook.com/${process.env.META_GRAPH_VERSION ?? "v
 /** Primer día de las campañas Kick Off. El rango pedido nunca baja de aquí. */
 export const FIRST_DAY = "2026-09-21";
 const SCOPE = "Kick Off";
+/** Campañas de la tienda web (no llevan "Kick Off" en el nombre). */
+const WEB_PREFIX = "HLP_WEB";
+const inScope = (name: string) => name.includes(SCOPE) || name.startsWith(WEB_PREFIX);
 /** Las conversaciones, el costo por conversación y los desgloses cuentan solo las campañas de mensajes. */
 const MESSAGING = "WhatsApp";
 const TIME_ZONE = "America/Mexico_City";
@@ -201,11 +204,13 @@ function totalsOf(row: Row | undefined): Totals {
 export async function buildReport(since: string, until: string): Promise<Report> {
   const { account, instagram } = config();
   const range = JSON.stringify({ since, until });
-  const filtering = JSON.stringify([{ field: "campaign.name", operator: "CONTAIN", value: SCOPE }]);
-  const messagingFiltering = JSON.stringify([
-    { field: "campaign.name", operator: "CONTAIN", value: SCOPE },
-    { field: "campaign.name", operator: "CONTAIN", value: MESSAGING },
-  ]);
+  // CONTAIN no admite "o": se listan las campañas y se filtra por id.
+  const all = await graph<{ id: string; name: string }>(`${account}/campaigns`, { fields: "name", limit: "500" });
+  const scoped = all.filter((c) => inScope(c.name));
+  const byId = (list: typeof scoped) =>
+    JSON.stringify([{ field: "campaign.id", operator: "IN", value: list.length ? list.map((c) => c.id) : ["0"] }]);
+  const filtering = byId(scoped);
+  const messagingFiltering = byId(scoped.filter((c) => c.name.includes(MESSAGING)));
   const insights = (params: Record<string, string>, messagingOnly = false) =>
     graph(`${account}/insights`, {
       time_range: range,
@@ -242,7 +247,7 @@ export async function buildReport(since: string, until: string): Promise<Report>
     })
     .sort((a, b) => b.spend - a.spend);
 
-  // Gasto y alcance salen de todas las campañas Kick Off; las conversaciones y sus costos, de las de WhatsApp.
+  // Gasto y alcance salen de todas las campañas del alcance (Kick Off y tienda web); las conversaciones y sus costos, de las de WhatsApp.
   const messaging = campaigns.filter((c) => c.name.includes(MESSAGING));
   const messagingSpend = messaging.reduce((sum, c) => sum + c.spend, 0);
   const conversations = messaging.reduce((sum, c) => sum + c.conversations, 0);
