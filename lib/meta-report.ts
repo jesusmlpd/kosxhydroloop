@@ -7,18 +7,16 @@
  * debe poder leer (ads_read, read_insights y, para Instagram,
  * instagram_basic e instagram_manage_insights).
  *
- * Alcance: las campañas que ejecuta la agencia: las que llevan "Kick Off" en el
- * nombre y las de la tienda web (HLP_WEB_...). El resto de la cuenta no entra.
+ * Alcance: toda campaña de la cuenta que haya tenido gasto o datos en el rango
+ * pedido, sin importar su nombre. Las conversaciones se cuentan solo en las de
+ * mensajes (las de WhatsApp o las que registraron conversaciones).
  */
 
 const GRAPH = `https://graph.facebook.com/${process.env.META_GRAPH_VERSION ?? "v25.0"}`;
 
 /** Primer día de las campañas Kick Off. El rango pedido nunca baja de aquí. */
 export const FIRST_DAY = "2026-09-21";
-const SCOPE = "Kick Off";
-/** Campañas de la tienda web (no llevan "Kick Off" en el nombre). */
-const WEB_PREFIX = "HLP_WEB";
-const inScope = (name: string) => name.includes(SCOPE) || name.startsWith(WEB_PREFIX);
+
 /** Las conversaciones, el costo por conversación y los desgloses cuentan solo las campañas de mensajes. */
 const MESSAGING = "WhatsApp";
 const TIME_ZONE = "America/Mexico_City";
@@ -204,30 +202,32 @@ function totalsOf(row: Row | undefined): Totals {
 export async function buildReport(since: string, until: string): Promise<Report> {
   const { account, instagram } = config();
   const range = JSON.stringify({ since, until });
-  // CONTAIN no admite "o": se listan las campañas y se filtra por id.
-  const all = await graph<{ id: string; name: string }>(`${account}/campaigns`, { fields: "name", limit: "500" });
-  const scoped = all.filter((c) => inScope(c.name));
-  const byId = (list: typeof scoped) =>
-    JSON.stringify([{ field: "campaign.id", operator: "IN", value: list.length ? list.map((c) => c.id) : ["0"] }]);
-  const filtering = byId(scoped);
-  const messagingFiltering = byId(scoped.filter((c) => c.name.includes(MESSAGING)));
-  const insights = (params: Record<string, string>, messagingOnly = false) =>
+  // Sin filtro por nombre: Meta solo devuelve las campañas con datos en el rango.
+  const insights = (params: Record<string, string>, messagingIds?: string[]) =>
     graph(`${account}/insights`, {
       time_range: range,
-      filtering: messagingOnly ? messagingFiltering : filtering,
+      ...(messagingIds
+        ? { filtering: JSON.stringify([{ field: "campaign.id", operator: "IN", value: messagingIds }]) }
+        : {}),
       limit: "500",
       ...params,
     });
   const base = "spend,impressions,reach,frequency,inline_link_clicks,inline_link_click_ctr,actions";
 
-  const [accountRows, campaignRows, dayRows, adRows, platformRows, regionRows, ageRows] = await Promise.all([
+  const campaignRows = await insights({ level: "campaign", fields: `campaign_id,campaign_name,${base}` });
+  // Campañas de mensajes del rango: las de WhatsApp o las que registraron conversaciones.
+  const messagingIds = campaignRows
+    .filter((row) => row.campaign_name.includes(MESSAGING) || action(row, CONVERSATION) > 0)
+    .map((row) => row.campaign_id);
+  const ids = messagingIds.length ? messagingIds : ["0"];
+
+  const [accountRows, dayRows, adRows, platformRows, regionRows, ageRows] = await Promise.all([
     insights({ level: "account", fields: base }),
-    insights({ level: "campaign", fields: `campaign_id,campaign_name,${base}` }),
-    insights({ level: "account", time_increment: "1", fields: "spend,actions" }, true),
+    insights({ level: "account", time_increment: "1", fields: "spend,actions" }, ids),
     insights({ level: "ad", fields: `ad_id,ad_name,campaign_name,${base}` }),
-    insights({ level: "account", breakdowns: "publisher_platform", fields: "spend,actions" }, true),
-    insights({ level: "account", breakdowns: "region", fields: "spend,actions" }, true),
-    insights({ level: "account", breakdowns: "age,gender", fields: "spend,actions" }, true),
+    insights({ level: "account", breakdowns: "publisher_platform", fields: "spend,actions" }, ids),
+    insights({ level: "account", breakdowns: "region", fields: "spend,actions" }, ids),
+    insights({ level: "account", breakdowns: "age,gender", fields: "spend,actions" }, ids),
   ]);
 
   const campaigns: CampaignStat[] = campaignRows
@@ -247,8 +247,8 @@ export async function buildReport(since: string, until: string): Promise<Report>
     })
     .sort((a, b) => b.spend - a.spend);
 
-  // Gasto y alcance salen de todas las campañas del alcance (Kick Off y tienda web); las conversaciones y sus costos, de las de WhatsApp.
-  const messaging = campaigns.filter((c) => c.name.includes(MESSAGING));
+  // Gasto y alcance salen de todas las campañas con datos en el rango; las conversaciones y sus costos, de las de mensajes.
+  const messaging = campaigns.filter((c) => messagingIds.includes(c.id));
   const messagingSpend = messaging.reduce((sum, c) => sum + c.spend, 0);
   const conversations = messaging.reduce((sum, c) => sum + c.conversations, 0);
   const deepConversations = messaging.reduce((sum, c) => sum + c.deepConversations, 0);
