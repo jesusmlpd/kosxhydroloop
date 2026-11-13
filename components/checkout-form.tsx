@@ -287,7 +287,8 @@ export function CheckoutForm({
             return item && !item.accessory;
           });
           const inCart = kit ? totals.lines.some((line) => line.id === kit.id) : true;
-          if (!kit || !hasUnit || inCart || kit.stock <= 0) return null;
+          // Durante el Buen Fin el kit va de regalo: no se ofrece como extra de pago.
+          if (!kit || !hasUnit || inCart || kit.stock <= 0 || totals.giftKits > 0) return null;
           return (
             <div className="mt-4 flex items-center gap-3 rounded-2xl border border-dashed border-line-strong bg-mist p-3.5">
               <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-line bg-white">
@@ -329,6 +330,12 @@ export function CheckoutForm({
                 {dict.cart.discount} {totals.couponCode ? `(${totals.couponCode})` : null}
               </dt>
               <dd className="tabular-nums">-{formatMoney(totals.discountCents, locale)}</dd>
+            </div>
+          ) : null}
+          {totals.giftKits > 0 ? (
+            <div className="flex justify-between text-[#0f7a5f] dark:text-[#5fd6b0]">
+              <dt>{dict.cart.giftKit.replace("{n}", String(totals.giftKits))}</dt>
+              <dd>{dict.cart.shippingFree}</dd>
             </div>
           ) : null}
           <div className="flex justify-between">

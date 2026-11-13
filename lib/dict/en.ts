@@ -553,6 +553,7 @@ export const en: Dict = {
     discount: "Discount",
     shipping: "Shipping",
     shippingFree: "Free",
+    giftKit: "Free installation kit ×{n} (Buen Fin)",
     taxIncluded: "Tax included",
     total: "Total",
     checkout: "Go to checkout",

@@ -23,6 +23,20 @@ export const commerce = {
     freeUntil: null as string | null,
   },
 
+  /**
+   * Buen Fin 2026: con 1 o más equipos va un kit de instalación de regalo (se
+   * empaca, no es una línea del carrito) y con 2 o más equipos, 10% de descuento
+   * en los equipos. Solo dentro de la ventana de fechas y con el interruptor del
+   * panel encendido.
+   */
+  buenFin: {
+    enabled: true,
+    startsAt: "2026-11-13T00:00:00-06:00",
+    endsAt: "2026-11-17T23:59:59-06:00",
+    minUnitsForDiscount: 2,
+    percentOff: 10,
+  },
+
   /** Reserva del carrito. En minutos. Poner 0 la apaga. */
   reservation: {
     minutes: 15,
@@ -106,6 +120,8 @@ export type Totals = {
   taxIncludedCents: number;
   totalCents: number;
   couponCode: string | null;
+  /** Kits de instalación de regalo (Buen Fin): uno por equipo. 0 fuera de la promo. */
+  giftKits: number;
 };
 
 /** Cupon valido, en mayusculas, o null. El de una promo vencida no cuenta. */
@@ -138,6 +154,7 @@ export function priceCart(
     priceCents: number;
     compareAtCents?: number | null;
     stock: number;
+    accessory?: boolean;
   }>,
   options: { couponCode?: string | null; now?: number } = {},
 ): Totals {
@@ -162,7 +179,21 @@ export function priceCart(
 
   const subtotalCents = priced.reduce((sum, line) => sum + line.lineCents, 0);
   const coupon = findCoupon(options.couponCode, now);
-  const discountCents = coupon ? Math.round((subtotalCents * coupon.percentOff) / 100) : 0;
+  const couponDiscount = coupon ? Math.round((subtotalCents * coupon.percentOff) / 100) : 0;
+
+  // Buen Fin: los equipos son lo que no es accesorio. El descuento no se suma al
+  // del cupón: se aplica el que más le convenga al cliente.
+  const isEquipment = (id: string) => catalog.find((item) => item.id === id)?.accessory !== true;
+  const equipmentUnits = priced.filter((line) => isEquipment(line.id)).reduce((sum, line) => sum + line.qty, 0);
+  const equipmentCents = priced.filter((line) => isEquipment(line.id)).reduce((sum, line) => sum + line.lineCents, 0);
+  const promoLive = buenFinLive(now);
+  const buenFinDiscount =
+    promoLive && equipmentUnits >= commerce.buenFin.minUnitsForDiscount
+      ? Math.round((equipmentCents * commerce.buenFin.percentOff) / 100)
+      : 0;
+  const useBuenFin = buenFinDiscount > couponDiscount;
+  const discountCents = useBuenFin ? buenFinDiscount : couponDiscount;
+  const giftKits = promoLive ? equipmentUnits : 0;
   const afterDiscount = subtotalCents - discountCents;
 
   const freeShippingPromo =
@@ -191,8 +222,15 @@ export function priceCart(
     freeShippingMissingCents,
     taxIncludedCents,
     totalCents,
-    couponCode: coupon?.code ?? null,
+    couponCode: useBuenFin ? "BUENFIN" : (coupon?.code ?? null),
+    giftKits,
   };
+}
+
+/** true dentro de la ventana del Buen Fin y con el interruptor del panel encendido. */
+export function buenFinLive(now = Date.now()) {
+  const { enabled, startsAt, endsAt } = commerce.buenFin;
+  return enabled && now >= new Date(startsAt).getTime() && now <= new Date(endsAt).getTime();
 }
 
 /** true mientras dure la promo de envio gratis sin minimo. */

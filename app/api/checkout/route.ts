@@ -54,6 +54,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "empty_cart" }, { status: 422 });
   }
 
+  // Buen Fin: el kit de regalo no es una línea del pedido, se avisa para empacarlo.
+  if (totals.giftKits > 0) {
+    const gift = `Buen Fin: incluir ${totals.giftKits} kit(s) de instalación gratis.`;
+    customer.notes = [customer.notes, gift].filter(Boolean).join(" · ");
+  }
+
   const dict = getDict(locale);
   const names = Object.fromEntries(
     totals.lines.map((line) => [
