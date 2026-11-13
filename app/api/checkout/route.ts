@@ -119,6 +119,18 @@ export async function POST(request: Request) {
           },
         })),
         discounts,
+        ...(totals.giftKits > 0
+          ? {
+              custom_text: {
+                submit: {
+                  message:
+                    locale === "en"
+                      ? `Includes ${totals.giftKits} free installation kit(s) (Buen Fin).`
+                      : `Incluye ${totals.giftKits} kit(s) de instalación de regalo (Buen Fin).`,
+                },
+              },
+            }
+          : {}),
         shipping_options: [
           {
             shipping_rate_data: {

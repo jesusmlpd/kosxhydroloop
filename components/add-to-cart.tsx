@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { QuantityStepper } from "@/components/quantity-stepper";
 import { cart } from "@/lib/cart";
-import { formatMoney } from "@/lib/commerce";
+import { useNow } from "@/lib/clock";
+import { buenFinLive, formatMoney } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
 import type { Locale } from "@/lib/i18n";
 import { findProduct, type Product } from "@/lib/site";
@@ -27,7 +28,9 @@ export function AddToCart({
   const [withKit, setWithKit] = useState(false);
   const soldOut = product.stock <= 0;
   // El bundle del kit solo aplica a los equipos, no al kit mismo.
-  const kit = !product.accessory ? findProduct("kit-caja-de-instalacion") : undefined;
+  const now = useNow();
+  // En el Buen Fin el kit va de regalo con cada equipo: no se ofrece de pago.
+  const kit = !product.accessory && !buenFinLive(now) ? findProduct("kit-caja-de-instalacion") : undefined;
 
   function addAll(options: { open: boolean }) {
     cart.add(product.id, qty, options);

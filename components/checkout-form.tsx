@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { FreeShippingBar } from "@/components/free-shipping-bar";
+import { GiftKitRow } from "@/components/gift-kit-row";
+import { InstallTutorialLink } from "@/components/install-tutorial-link";
 import { PaymentBadges } from "@/components/payment-badges";
 import { OfferCountdown } from "@/components/offer-countdown";
 import { ReservationTimer } from "@/components/reservation-timer";
@@ -277,6 +279,7 @@ export function CheckoutForm({
               </li>
             );
           })}
+          <GiftKitRow qty={totals.giftKits} locale={locale} dict={dict} compact />
         </ul>
 
         {(() => {
@@ -311,6 +314,10 @@ export function CheckoutForm({
           );
         })()}
 
+        <div className="mt-4">
+          <InstallTutorialLink dict={dict} />
+        </div>
+
         <div className="mt-4 border-t border-line pt-4">
           <FreeShippingBar
             missingCents={totals.freeShippingMissingCents}
@@ -330,12 +337,6 @@ export function CheckoutForm({
                 {dict.cart.discount} {totals.couponCode ? `(${totals.couponCode})` : null}
               </dt>
               <dd className="tabular-nums">-{formatMoney(totals.discountCents, locale)}</dd>
-            </div>
-          ) : null}
-          {totals.giftKits > 0 ? (
-            <div className="flex justify-between text-[#0f7a5f] dark:text-[#5fd6b0]">
-              <dt>{dict.cart.giftKit.replace("{n}", String(totals.giftKits))}</dt>
-              <dd>{dict.cart.shippingFree}</dd>
             </div>
           ) : null}
           <div className="flex justify-between">

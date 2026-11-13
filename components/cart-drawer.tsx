@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FreeShippingBar } from "@/components/free-shipping-bar";
+import { GiftKitRow } from "@/components/gift-kit-row";
+import { InstallTutorialLink } from "@/components/install-tutorial-link";
 import { QuantityStepper } from "@/components/quantity-stepper";
 import { ReservationTimer } from "@/components/reservation-timer";
 import { cart, useCart } from "@/lib/cart";
@@ -157,6 +159,7 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
                     </li>
                   );
                 })}
+                <GiftKitRow qty={totals.giftKits} locale={locale} dict={dict} compact />
               </ul>
 
               {/* Upsell de accesorios: solo si hay un equipo en el carrito y
@@ -173,7 +176,9 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
                         product.accessory &&
                         product.buyable &&
                         product.stock > 0 &&
-                        !ids.has(product.id),
+                        !ids.has(product.id) &&
+                        // En el Buen Fin el kit va de regalo: no se ofrece de pago.
+                        !(totals.giftKits > 0 && product.slug === "kit-caja-de-instalacion"),
                     )
                   : [];
                 if (!addons.length) return null;
@@ -210,6 +215,10 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
                   </div>
                 );
               })()}
+
+              <div className="mt-6">
+                <InstallTutorialLink dict={dict} />
+              </div>
 
               <div className="mt-6 border-t border-line pt-5">
                 <FreeShippingBar
@@ -289,12 +298,6 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
                   <div className="flex justify-between text-[#0f7a5f] dark:text-[#5fd6b0]">
                     <dt>{dict.cart.discount}</dt>
                     <dd className="tabular-nums">-{formatMoney(totals.discountCents, locale)}</dd>
-                  </div>
-                ) : null}
-                {totals.giftKits > 0 ? (
-                  <div className="flex justify-between text-[#0f7a5f] dark:text-[#5fd6b0]">
-                    <dt>{dict.cart.giftKit.replace("{n}", String(totals.giftKits))}</dt>
-                    <dd>{dict.cart.shippingFree}</dd>
                   </div>
                 ) : null}
                 <div className="flex justify-between">
