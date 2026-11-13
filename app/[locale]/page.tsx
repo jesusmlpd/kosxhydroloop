@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { BuenFinStrip } from "@/components/buen-fin";
 import { Counter } from "@/components/counter";
 import { FaqList } from "@/components/faq-list";
 import { Marquee } from "@/components/marquee";
@@ -39,7 +40,7 @@ export async function generateMetadata({
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  await loadStoreSettings();
+  const settings = await loadStoreSettings();
   if (!isLocale(locale)) notFound();
   const dict = getDict(locale);
   const bateria = products.find((product) => product.comingSoon);
@@ -187,6 +188,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       <Marquee items={dict.ticker} />
+
+      {/* Buen Fin: las promos y la cuenta regresiva (se apaga solo al terminar) */}
+      <BuenFinStrip locale={locale} dict={dict} settings={settings} />
 
       {/* Numeros con contador */}
       <section className="section pb-0">

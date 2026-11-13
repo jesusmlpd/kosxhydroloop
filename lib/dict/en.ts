@@ -465,6 +465,23 @@ export const en: Dict = {
     mx: "Made in Mexico · Warranty up to 2 years",
   },
 
+  buenFin: {
+    title: "Hydroloop Buen Fin",
+    dates: "November 13 to 17",
+    kitTitle: "Free installation kit",
+    kit: "FREE installation kit with your unit",
+    discountTitle: "10% off 2 units",
+    discount: "10% off when you buy 2 or more units",
+    shippingTitle: "Free shipping + installments",
+    shipping: "Free shipping across Mexico",
+    msi: "3 interest-free installments with participating cards",
+    cta: "See products",
+    endsIn: "Ends in",
+    open: "See the Buen Fin deals",
+    close: "Close",
+    note: "While supplies last.",
+  },
+
   recentlyViewed: {
     title: "Recently viewed",
   },

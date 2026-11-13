@@ -466,6 +466,23 @@ export const es = {
     mx: "Hecho en México · Garantía de hasta 2 años",
   },
 
+  buenFin: {
+    title: "Buen Fin Hydroloop",
+    dates: "Del 13 al 17 de noviembre",
+    kitTitle: "Kit de instalación gratis",
+    kit: "Kit de instalación GRATIS con tu equipo",
+    discountTitle: "10% con 2 equipos",
+    discount: "10% de descuento al llevar 2 o más equipos",
+    shippingTitle: "Envío gratis + MSI",
+    shipping: "Envío gratis a todo México",
+    msi: "3 meses sin intereses con tarjetas participantes",
+    cta: "Ver productos",
+    endsIn: "Termina en",
+    open: "Ver las promos del Buen Fin",
+    close: "Cerrar",
+    note: "Hasta agotar existencias.",
+  },
+
   recentlyViewed: {
     title: "Vistos recientemente",
   },
