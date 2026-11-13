@@ -8,6 +8,7 @@ import { CartFromUrl } from "@/components/cart-from-url";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { AnnouncementBar } from "@/components/announcement-bar";
+import { BuenFinBubble } from "@/components/buen-fin";
 import { PromoPopup } from "@/components/promo-popup";
 import { StoreHydrator } from "@/components/store-hydrator";
 import { PurchaseToasts } from "@/components/social-proof";
@@ -133,6 +134,7 @@ export default async function LocaleLayout({
         <Footer locale={locale} dict={dict} />
         <CartDrawer locale={locale} dict={dict} />
         <PromoPopup locale={locale} settings={settings} />
+        <BuenFinBubble locale={locale} dict={dict} settings={settings} />
         <WhatsappFab label={dict.contact.whatsappCta} />
         <PurchaseToasts
           dict={dict.socialProof}
