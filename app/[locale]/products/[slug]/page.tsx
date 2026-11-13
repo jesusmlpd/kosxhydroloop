@@ -372,7 +372,7 @@ export default async function ProductPage({ params }: { params: Params }) {
       </section>
 
       {/* Tutorial oficial de instalacion */}
-      {!product.accessory && !product.comingSoon ? (
+      {!product.comingSoon ? (
         <section className="section pt-0">
           <div className="shell grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <Reveal>
