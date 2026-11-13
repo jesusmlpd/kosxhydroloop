@@ -51,6 +51,8 @@ export type StoreSettings = {
   /** Cupones activos del checkout. Un cupon apagado o vencido no se acepta. */
   coupons: Array<{ code: string; percentOff: number; endsAt: string | null; enabled: boolean }>;
   hero: { es: HeroCopy; en: HeroCopy };
+  /** Promo Buen Fin (kit gratis y 10% con 2 equipos, 13 al 17 de noviembre). Encendida por defecto. */
+  buenFin: { enabled: boolean };
   checkout: {
     /** Pago corto: solo nombre y correo; Stripe pide dirección y teléfono en su pantalla. */
     short: boolean;
@@ -79,6 +81,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   products: {},
   coupons: [{ code: "BIENVENIDA5", percentOff: 5, endsAt: null, enabled: true }],
   hero: { es: EMPTY_HERO, en: EMPTY_HERO },
+  buenFin: { enabled: true },
   checkout: { short: true },
 };
 
@@ -139,6 +142,7 @@ export function sanitizeSettings(input: unknown): StoreSettings {
     products: {},
     coupons: d.coupons,
     hero: { es: heroCopy(raw.hero?.es), en: heroCopy(raw.hero?.en) },
+    buenFin: { enabled: raw.buenFin?.enabled === undefined ? d.buenFin.enabled : Boolean(raw.buenFin.enabled) },
     checkout: { short: raw.checkout?.short === undefined ? d.checkout.short : Boolean(raw.checkout.short) },
   };
 
@@ -183,6 +187,7 @@ export function applySettings(settings: StoreSettings) {
   commerce.shipping.flatCents = settings.shipping.flatCents;
   commerce.shipping.freeFromCents = settings.shipping.freeFromCents;
   commerce.shipping.freeUntil = settings.shipping.freeUntil;
+  commerce.buenFin.enabled = settings.buenFin.enabled;
 
   commerce.coupons = settings.coupons
     .filter((coupon) => coupon.enabled)

@@ -291,6 +291,12 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
                     <dd className="tabular-nums">-{formatMoney(totals.discountCents, locale)}</dd>
                   </div>
                 ) : null}
+                {totals.giftKits > 0 ? (
+                  <div className="flex justify-between text-[#0f7a5f] dark:text-[#5fd6b0]">
+                    <dt>{dict.cart.giftKit.replace("{n}", String(totals.giftKits))}</dt>
+                    <dd>{dict.cart.shippingFree}</dd>
+                  </div>
+                ) : null}
                 <div className="flex justify-between">
                   <dt className="text-ink-2">{dict.cart.shipping}</dt>
                   <dd className="tabular-nums">

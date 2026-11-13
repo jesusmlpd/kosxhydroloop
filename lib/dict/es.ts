@@ -554,6 +554,7 @@ export const es = {
     discount: "Descuento",
     shipping: "Envío",
     shippingFree: "Gratis",
+    giftKit: "Kit de instalación de regalo ×{n} (Buen Fin)",
     taxIncluded: "IVA incluido",
     total: "Total",
     checkout: "Ir a pagar",

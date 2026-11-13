@@ -66,6 +66,7 @@ export function StoreEditor({
 
   const [hero, setHero] = useState(initial.hero);
   const [shortCheckout, setShortCheckout] = useState(initial.checkout.short);
+  const [buenFinOn, setBuenFinOn] = useState(initial.buenFin.enabled);
 
   const [coupons, setCoupons] = useState(
     initial.coupons.map((coupon) => ({ ...coupon, endsAt: dayOf(coupon.endsAt), percentOff: String(coupon.percentOff) })),
@@ -118,6 +119,7 @@ export function StoreEditor({
             },
             promo: { endsAt: endOfDay(endsAt), bannerEnabled, bannerEs, bannerEn, popupEnabled, popupEs, popupEn },
             checkout: { short: shortCheckout },
+            buenFin: { enabled: buenFinOn },
           }
         : section === "productos"
           ? { products: productsPayload }
@@ -185,6 +187,20 @@ export function StoreEditor({
             />
             <span className="mt-1 block text-[12px] text-ink-3">Vacío = sin fecha. Solo si hay costo de envío.</span>
           </label>
+        </div>
+      </section>
+      ) : null}
+
+      {section === "envio-promos" ? (
+      <section className="card p-6">
+        <h2 className="text-[18px]">Promo Buen Fin (13 al 17 de noviembre)</h2>
+        <p className="mt-1 text-[14px] text-ink-2">
+          Con la promo encendida y dentro de esas fechas: 10% de descuento en los equipos al llevar 2 o más (no se suma a
+          un cupón: se aplica el mejor), y un kit de instalación de regalo por equipo, que se avisa en el pedido para
+          empacarlo. Fuera de las fechas se apaga sola.
+        </p>
+        <div className="mt-4">
+          <Toggle label="Promo Buen Fin" checked={buenFinOn} onChange={setBuenFinOn} />
         </div>
       </section>
       ) : null}
