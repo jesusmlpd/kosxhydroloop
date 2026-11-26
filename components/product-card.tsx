@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { MercadoLibreButton } from "@/components/mercado-libre-button";
 import { QuickAdd } from "@/components/quick-add";
 import { Stars } from "@/components/stars";
 import { StockBadge } from "@/components/stock-badge";
@@ -85,6 +86,9 @@ export function ProductCard({
                 </span>
               </p>
               <QuickAdd product={product} dict={dict} locale={locale} />
+              {product.mercadoLibreUrl ? (
+                <MercadoLibreButton href={product.mercadoLibreUrl} productId={product.id} locale={locale} />
+              ) : null}
             </div>
           )}
         </div>

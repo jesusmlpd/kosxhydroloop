@@ -138,6 +138,8 @@ export const distributorRegions: Array<{ region: string; items: Distributor[] }>
 ];
 
 export type Product = {
+  /** Publicación en Mercado Libre; vacío = sin botón. Se llena desde los ajustes. */
+  mercadoLibreUrl?: string;
   id: string;
   slug: string;
   sku: string;
