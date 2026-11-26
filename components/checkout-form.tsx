@@ -155,6 +155,8 @@ export function CheckoutForm({
 
   return (
     <form
+      // Clarity no graba lo que haya en el formulario de pago.
+      data-clarity-mask="true"
       onSubmit={onSubmit}
       onBlur={(event) => captureLead(event.currentTarget)}
       onChange={(event) => {
