@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { CheckoutCoupon } from "@/components/checkout-coupon";
 import { FreeShippingBar } from "@/components/free-shipping-bar";
 import { GiftKitRow } from "@/components/gift-kit-row";
 import { InstallTutorialLink } from "@/components/install-tutorial-link";
@@ -325,6 +326,8 @@ export function CheckoutForm({
             dict={dict.cart}
           />
         </div>
+
+        <CheckoutCoupon dict={dict} couponCode={totals.couponCode} now={now} />
 
         <dl className="mt-4 space-y-1.5 border-t border-line pt-4 text-[14px]">
           <div className="flex justify-between">
