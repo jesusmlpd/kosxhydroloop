@@ -7,10 +7,15 @@ import { captureAttribution, collectSession } from "@/lib/track";
 
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
+// El ID de Clarity es publico. Solo corre en builds de produccion.
+const CLARITY_ID =
+  process.env.NODE_ENV === "production"
+    ? (process.env.NEXT_PUBLIC_CLARITY_ID ?? "zjvp8wmorj")
+    : undefined;
 
 /**
- * Pixel de Meta y GA4, ambos opcionales por variable de entorno. Sin IDs no se
- * inyecta ni un byte de script. Las navegaciones internas del app router no
+ * Pixel de Meta y GA4, ambos opcionales por variable de entorno, y Microsoft
+ * Clarity (mapas de calor y grabaciones). Las navegaciones internas del app router no
  * recargan la pagina, asi que el PageView de cada ruta se dispara a mano.
  */
 export function Analytics() {
@@ -32,7 +37,7 @@ export function Analytics() {
     window.gtag?.("event", "page_view", { page_path: pathname });
   }, [pathname]);
 
-  if (!PIXEL_ID && !GA4_ID) return null;
+  if (!PIXEL_ID && !GA4_ID && !CLARITY_ID) return null;
 
   return (
     <>
@@ -59,6 +64,16 @@ window.__hlQueue=(window.__hlQueue||[]).filter(function(e){if(e[0]==='fbq'){wind
             />
           </noscript>
         </>
+      ) : null}
+
+      {CLARITY_ID ? (
+        <Script id="ms-clarity" strategy="afterInteractive">
+          {`(function(c,l,a,r,i,t,y){
+c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "${CLARITY_ID}");`}
+        </Script>
       ) : null}
 
       {GA4_ID ? (
