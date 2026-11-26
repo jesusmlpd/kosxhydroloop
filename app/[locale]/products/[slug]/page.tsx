@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/add-to-cart";
 import { DeliveryEstimate } from "@/components/delivery-estimate";
 import { FaqList } from "@/components/faq-list";
+import { MercadoLibreButton } from "@/components/mercado-libre-button";
 import { OfferCountdown } from "@/components/offer-countdown";
 import { PaymentBadges } from "@/components/payment-badges";
 import { ProductCard } from "@/components/product-card";
@@ -215,6 +216,14 @@ export default async function ProductPage({ params }: { params: Params }) {
                         locale={locale}
                         checkoutHref={localePath(locale, "/checkout")}
                       />
+                      {product.mercadoLibreUrl ? (
+                        <MercadoLibreButton
+                          href={product.mercadoLibreUrl}
+                          productId={product.id}
+                          locale={locale}
+                          className="mt-3"
+                        />
+                      ) : null}
                       {productReviews.length ? (
                         <a
                           href="#opiniones"

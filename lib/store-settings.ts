@@ -51,6 +51,8 @@ export type StoreSettings = {
   /** Cupones activos del checkout. Un cupon apagado o vencido no se acepta. */
   coupons: Array<{ code: string; percentOff: number; endsAt: string | null; enabled: boolean }>;
   hero: { es: HeroCopy; en: HeroCopy };
+  /** Enlace de Mercado Libre por id de producto. Vacio = sin boton. */
+  mercadoLibre: Record<string, string>;
   /** Promo Buen Fin (kit gratis y 10% con 2 equipos, 13 al 17 de noviembre). Encendida por defecto. */
   buenFin: { enabled: boolean };
   checkout: {
@@ -81,6 +83,10 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   products: {},
   coupons: [{ code: "BIENVENIDA5", percentOff: 5, endsAt: null, enabled: true }],
   hero: { es: EMPTY_HERO, en: EMPTY_HERO },
+  mercadoLibre: {
+    "hl-manual": "https://meli.la/1bTzKe5",
+    "hl-wifi": "https://meli.la/33meSJu",
+  },
   buenFin: { enabled: true },
   checkout: { short: true },
 };
@@ -109,6 +115,16 @@ const copy = (value: unknown, fallback: PromoCopy): PromoCopy => {
   const v = (value ?? {}) as Record<string, unknown>;
   return { title: text(v.title, fallback.title, 90), body: text(v.body, fallback.body, 300), cta: text(v.cta, fallback.cta, 40) };
 };
+
+/** Solo se aceptan enlaces https de Mercado Libre. */
+export function isMercadoLibreUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && /(^|\.)(meli\.la|mercadolibre\.com(\.mx)?)$/.test(url.hostname);
+  } catch {
+    return false;
+  }
+}
 
 const heroCopy = (value: unknown): HeroCopy => {
   const v = (value ?? {}) as Record<string, unknown>;
@@ -141,10 +157,19 @@ export function sanitizeSettings(input: unknown): StoreSettings {
     },
     products: {},
     coupons: d.coupons,
+    mercadoLibre: { ...d.mercadoLibre },
     hero: { es: heroCopy(raw.hero?.es), en: heroCopy(raw.hero?.en) },
     buenFin: { enabled: raw.buenFin?.enabled === undefined ? d.buenFin.enabled : Boolean(raw.buenFin.enabled) },
     checkout: { short: raw.checkout?.short === undefined ? d.checkout.short : Boolean(raw.checkout.short) },
   };
+
+  if (raw.mercadoLibre) {
+    out.mercadoLibre = {};
+    for (const product of products) {
+      const link = text(raw.mercadoLibre[product.id], "", 600);
+      if (isMercadoLibreUrl(link)) out.mercadoLibre[product.id] = link;
+    }
+  }
 
   if (Array.isArray(raw.coupons)) {
     const seen = new Set<string>();
@@ -194,6 +219,7 @@ export function applySettings(settings: StoreSettings) {
     .map(({ code, percentOff, endsAt }) => ({ code, percentOff, endsAt }));
 
   for (const product of products) {
+    product.mercadoLibreUrl = settings.mercadoLibre[product.id] ?? "";
     const base = BASE.products[product.id];
     const over = settings.products[product.id] ?? {};
     product.priceCents = over.priceCents ?? base.priceCents;

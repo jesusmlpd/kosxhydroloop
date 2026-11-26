@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { formatMoney } from "@/lib/commerce";
-import { HERO_FIELDS, type HeroCopy, type HeroField, type PromoCopy, type StoreSettings } from "@/lib/store-settings";
+import { HERO_FIELDS, isMercadoLibreUrl, type HeroCopy, type HeroField, type PromoCopy, type StoreSettings } from "@/lib/store-settings";
 
 const HERO_LABELS: Record<HeroField, string> = {
   eyebrow: "Etiqueta de arriba",
@@ -90,6 +90,8 @@ export function StoreEditor({
     ),
   );
 
+  const [mlLinks, setMlLinks] = useState<Record<string, string>>(initial.mercadoLibre);
+
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
 
@@ -97,6 +99,12 @@ export function StoreEditor({
     setForms((current) => ({ ...current, [id]: { ...current[id], ...patch } }));
 
   async function save() {
+    // Un enlace mal escrito se descartaria en silencio: mejor avisar antes.
+    const badLink = section === "productos" && Object.values(mlLinks).some((link) => link.trim() && !isMercadoLibreUrl(link.trim()));
+    if (badLink) {
+      setNotice({ ok: false, text: "Revisa los enlaces de Mercado Libre: deben empezar con https://meli.la/ o ser de mercadolibre.com.mx." });
+      return;
+    }
     setSaving(true);
     setNotice(null);
     const productsPayload: StoreSettings["products"] = {};
@@ -122,7 +130,7 @@ export function StoreEditor({
             buenFin: { enabled: buenFinOn },
           }
         : section === "productos"
-          ? { products: productsPayload }
+          ? { products: productsPayload, mercadoLibre: mlLinks }
           : section === "inicio"
             ? { hero }
             : {
@@ -366,6 +374,27 @@ export function StoreEditor({
                 placeholder={String(item.base.stock)}
               />
             </div>
+          ))}
+        </div>
+      </section>
+      ) : null}
+
+      {section === "productos" ? (
+      <section className="card p-6">
+        <h2 className="text-[18px]">Botón de Mercado Libre</h2>
+        <p className="mt-1 text-[14px] text-ink-2">
+          Pega el enlace de la publicación de cada producto. El botón sale en su página y en su tarjeta de la tienda. Deja
+          el campo vacío para no mostrarlo.
+        </p>
+        <div className="mt-4 space-y-4">
+          {items.map((item) => (
+            <Txt
+              key={item.id}
+              label={item.name}
+              value={mlLinks[item.id] ?? ""}
+              onChange={(link) => setMlLinks((current) => ({ ...current, [item.id]: link }))}
+              max={600}
+            />
           ))}
         </div>
       </section>
