@@ -515,3 +515,20 @@
   html, body, main { background: #fff !important; }
   .card { break-inside: avoid; box-shadow: none !important; }
 }
+
+/* Black Friday: negro y amarillo. Va fuera de las capas para ganarle a :root. */
+:root[data-promo="blackfriday"] {
+  --btn-bg: #ffd400;
+  --btn-fg: #0b0b0b;
+  --invert-bg: #0b0b0b;
+  --invert-fg: #ffffff;
+}
+html[data-promo="blackfriday"] header {
+  border-bottom: 3px solid #ffd400;
+}
+/* El amarillo queda para la tienda: Mercado Libre pasa a un estilo discreto. */
+html[data-promo="blackfriday"] .btn-ml {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--line-strong);
+}

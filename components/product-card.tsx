@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BlackFridayPrice } from "@/components/black-friday";
 import { MercadoLibreButton } from "@/components/mercado-libre-button";
 import { QuickAdd } from "@/components/quick-add";
 import { Stars } from "@/components/stars";
@@ -85,6 +86,7 @@ export function ProductCard({
                   {dict.products.ivaIncluded}
                 </span>
               </p>
+              <BlackFridayPrice priceCents={product.priceCents} locale={locale} dict={dict.blackFriday} />
               <QuickAdd product={product} dict={dict} locale={locale} />
               {product.mercadoLibreUrl ? (
                 <MercadoLibreButton href={product.mercadoLibreUrl} productId={product.id} locale={locale} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BlackFridayBar, useBlackFriday } from "@/components/black-friday";
 import { OfferCountdown } from "@/components/offer-countdown";
 import { commerce, formatMoney } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
@@ -22,6 +23,7 @@ export function AnnouncementBar({
   settings: StoreSettings;
 }) {
   const [slide, setSlide] = useState(0);
+  const blackFriday = useBlackFriday();
 
   const { promo } = settings;
   const bannerText = locale === "en" ? promo.bannerEn : promo.bannerEs;
@@ -47,6 +49,14 @@ export function AnnouncementBar({
     return () => window.clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (blackFriday.live) {
+    return (
+      <div className="flex min-h-[42px] items-center justify-center bg-black px-4 text-center text-[13.5px] text-white">
+        <BlackFridayBar dict={dict.blackFriday} />
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex min-h-[42px] items-center justify-center overflow-hidden bg-invert px-4 text-center text-[13.5px] text-invert-fg">

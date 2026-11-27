@@ -378,7 +378,7 @@ export const en: Dict = {
   },
 
   pdp: {
-    msi: "or up to 12 payments of {monthly} with participating cards",
+    msi: "or 3 interest-free payments of {monthly} with participating cards",
     delivery: "Get it between {from} and {to}",
     deliveryNote: "ordering today, standard shipping",
     risk: "7 day returns and up to a 2 year warranty. Zero-risk purchase.",
@@ -463,6 +463,22 @@ export const en: Dict = {
     shipping: "Free shipping on orders over {amount}",
     promo: "Until October 31: free shipping on every model + 3 interest-free installments",
     mx: "Made in Mexico · Warranty up to 2 years",
+  },
+
+  blackFriday: {
+    title: "Black Friday + Cyber Monday",
+    lastDay: "Cyber Monday: last day",
+    headline: "Storewide, shipping all over Mexico",
+    codeLabel: "With code",
+    endsIn: "Ends in",
+    apply: "Apply {code} ({percent}% off)",
+    applyAndShop: "Apply {code} and shop",
+    price: "{price} with {code}",
+    bubble: "{percent}% off the whole store with code {code}.",
+    bar: "{percent}% OFF with {code}",
+    open: "See the Black Friday deal",
+    close: "Close",
+    note: "Cannot be combined with other coupons. While supplies last.",
   },
 
   buenFin: {

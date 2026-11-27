@@ -379,7 +379,7 @@ export const es = {
   },
 
   pdp: {
-    msi: "o hasta 12 pagos de {monthly} con tarjetas participantes",
+    msi: "o 3 meses sin intereses de {monthly} con tarjetas participantes",
     delivery: "Recíbelo entre el {from} y el {to}",
     deliveryNote: "pidiendo hoy, con envío estándar",
     risk: "Devolución de 7 días y garantía de hasta 2 años. Compra sin riesgo.",
@@ -464,6 +464,22 @@ export const es = {
     shipping: "Envío gratis en pedidos desde {amount}",
     promo: "Hasta el 31 de octubre: envío gratis en todos los modelos + 3 meses sin intereses",
     mx: "Hecho en México · Garantía de hasta 2 años",
+  },
+
+  blackFriday: {
+    title: "Black Friday + Cyber Monday",
+    lastDay: "Cyber Monday: último día",
+    headline: "En toda la tienda, con envío a todo México",
+    codeLabel: "Con el código",
+    endsIn: "Termina en",
+    apply: "Aplicar {code} ({percent}% menos)",
+    applyAndShop: "Aplicar {code} y comprar",
+    price: "{price} con {code}",
+    bubble: "{percent}% de descuento en toda la tienda con el código {code}.",
+    bar: "{percent}% OFF con {code}",
+    open: "Ver la promo de Black Friday",
+    close: "Cerrar",
+    note: "No se acumula con otros cupones. Hasta agotar existencias.",
   },
 
   buenFin: {

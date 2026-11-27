@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { BlackFridayHero } from "@/components/black-friday";
 import { BuenFinStrip } from "@/components/buen-fin";
 import { Counter } from "@/components/counter";
 import { FaqList } from "@/components/faq-list";
@@ -66,6 +67,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           ),
         }}
       />
+      <BlackFridayHero locale={locale} dict={dict} />
       {/* ---------------------------------------------------------------
           Hero. La foto real del equipo cayendo al agua, a sangre completa:
           producto a la izquierda, copy a la derecha sobre agua oscurecida.

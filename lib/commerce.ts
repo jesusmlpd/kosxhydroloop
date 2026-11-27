@@ -37,6 +37,21 @@ export const commerce = {
     percentOff: 10,
   },
 
+  /** Meses sin intereses que se anuncian (autorizado: solo 3). */
+  msiMonths: 3,
+
+  /**
+   * Black Friday + Cyber Monday 2026: cupón que solo vale dentro de la ventana y
+   * con el interruptor del panel encendido. Se edita en el panel.
+   */
+  blackFriday: {
+    enabled: true,
+    code: "BLACK10",
+    percentOff: 10,
+    startsAt: "2026-11-27T00:00:00-06:00",
+    endsAt: "2026-11-30T23:59:59-06:00",
+  },
+
   /** Reserva del carrito. En minutos. Poner 0 la apaga. */
   reservation: {
     minutes: 15,
@@ -129,6 +144,10 @@ export function findCoupon(code: string | null | undefined, now: number) {
   if (!code) return null;
   const wanted = code.trim().toUpperCase();
   if (!wanted) return null;
+
+  if (wanted === commerce.blackFriday.code) {
+    return blackFridayLive(now) ? { code: wanted, percentOff: commerce.blackFriday.percentOff } : null;
+  }
 
   const promoLive =
     commerce.promo.endsAt === null || new Date(commerce.promo.endsAt).getTime() > now;
@@ -243,4 +262,10 @@ export function promoRemaining(now = Date.now()) {
   if (!commerce.promo.endsAt) return null;
   const remaining = new Date(commerce.promo.endsAt).getTime() - now;
   return remaining > 0 ? remaining : null;
+}
+
+/** true dentro de la ventana de Black Friday y con el interruptor del panel encendido. */
+export function blackFridayLive(now = Date.now()) {
+  const { enabled, startsAt, endsAt } = commerce.blackFriday;
+  return enabled && now >= new Date(startsAt).getTime() && now <= new Date(endsAt).getTime();
 }

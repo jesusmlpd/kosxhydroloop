@@ -8,6 +8,7 @@ import { CartFromUrl } from "@/components/cart-from-url";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { AnnouncementBar } from "@/components/announcement-bar";
+import { BlackFridayBubble, BlackFridayTheme } from "@/components/black-friday";
 import { BuenFinBubble } from "@/components/buen-fin";
 import { PromoPopup } from "@/components/promo-popup";
 import { StoreHydrator } from "@/components/store-hydrator";
@@ -114,6 +115,7 @@ export default async function LocaleLayout({
       </head>
       <body className="flex min-h-dvh flex-col bg-paper text-ink">
         <StoreHydrator settings={settings} />
+        <BlackFridayTheme />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -135,6 +137,7 @@ export default async function LocaleLayout({
         <CartDrawer locale={locale} dict={dict} />
         <PromoPopup locale={locale} settings={settings} />
         <BuenFinBubble locale={locale} dict={dict} settings={settings} />
+        <BlackFridayBubble locale={locale} dict={dict} />
         <WhatsappFab label={dict.contact.whatsappCta} />
         <PurchaseToasts
           dict={dict.socialProof}

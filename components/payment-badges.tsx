@@ -187,7 +187,7 @@ function Msi() {
         fontSize="5.4"
         fill="#5b7b86"
       >
-        3 a 12
+        3 meses
       </text>
     </svg>
   );
