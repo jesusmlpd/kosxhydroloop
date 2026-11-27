@@ -378,7 +378,7 @@ export const en: Dict = {
   },
 
   pdp: {
-    msi: "or up to 12 payments of {monthly} with participating cards",
+    msi: "or 3 interest-free payments of {monthly} with participating cards",
     delivery: "Get it between {from} and {to}",
     deliveryNote: "ordering today, standard shipping",
     risk: "7 day returns and up to a 2 year warranty. Zero-risk purchase.",

@@ -184,7 +184,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                     </div>
                     <p className="mt-1.5 text-[13.5px] text-ink-2">
                       {fill(dict.pdp.msi, {
-                        monthly: formatMoney(Math.ceil(product.priceCents / 12 / 100) * 100, locale),
+                        monthly: formatMoney(Math.ceil(product.priceCents / commerce.msiMonths / 100) * 100, locale),
                       })}
                     </p>
                     <BlackFridayPrice priceCents={product.priceCents} locale={locale} dict={dict.blackFriday} />

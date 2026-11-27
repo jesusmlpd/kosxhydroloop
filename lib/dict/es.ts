@@ -379,7 +379,7 @@ export const es = {
   },
 
   pdp: {
-    msi: "o hasta 12 pagos de {monthly} con tarjetas participantes",
+    msi: "o 3 meses sin intereses de {monthly} con tarjetas participantes",
     delivery: "Recíbelo entre el {from} y el {to}",
     deliveryNote: "pidiendo hoy, con envío estándar",
     risk: "Devolución de 7 días y garantía de hasta 2 años. Compra sin riesgo.",

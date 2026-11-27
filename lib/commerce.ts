@@ -37,6 +37,9 @@ export const commerce = {
     percentOff: 10,
   },
 
+  /** Meses sin intereses que se anuncian (autorizado: solo 3). */
+  msiMonths: 3,
+
   /**
    * Black Friday + Cyber Monday 2026: cupón que solo vale dentro de la ventana y
    * con el interruptor del panel encendido. Se edita en el panel.
