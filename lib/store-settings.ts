@@ -55,6 +55,7 @@ export type StoreSettings = {
   mercadoLibre: Record<string, string>;
   /** Promo Buen Fin (kit gratis y 10% con 2 equipos, 13 al 17 de noviembre). Encendida por defecto. */
   buenFin: { enabled: boolean };
+  blackFriday: { enabled: boolean; code: string; percentOff: number; startsAt: string; endsAt: string };
   checkout: {
     /** Pago corto: solo nombre y correo; Stripe pide dirección y teléfono en su pantalla. */
     short: boolean;
@@ -88,6 +89,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
     "hl-wifi": "https://meli.la/33meSJu",
   },
   buenFin: { enabled: true },
+  blackFriday: { ...commerce.blackFriday },
   checkout: { short: true },
 };
 
@@ -160,6 +162,15 @@ export function sanitizeSettings(input: unknown): StoreSettings {
     mercadoLibre: { ...d.mercadoLibre },
     hero: { es: heroCopy(raw.hero?.es), en: heroCopy(raw.hero?.en) },
     buenFin: { enabled: raw.buenFin?.enabled === undefined ? d.buenFin.enabled : Boolean(raw.buenFin.enabled) },
+    blackFriday: {
+      enabled: raw.blackFriday?.enabled === undefined ? d.blackFriday.enabled : Boolean(raw.blackFriday.enabled),
+      code:
+        text(raw.blackFriday?.code, d.blackFriday.code).toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 24) ||
+        d.blackFriday.code,
+      percentOff: int(raw.blackFriday?.percentOff, 1, 90, d.blackFriday.percentOff),
+      startsAt: date(raw.blackFriday?.startsAt, d.blackFriday.startsAt) ?? d.blackFriday.startsAt,
+      endsAt: date(raw.blackFriday?.endsAt, d.blackFriday.endsAt) ?? d.blackFriday.endsAt,
+    },
     checkout: { short: raw.checkout?.short === undefined ? d.checkout.short : Boolean(raw.checkout.short) },
   };
 
@@ -213,6 +224,7 @@ export function applySettings(settings: StoreSettings) {
   commerce.shipping.freeFromCents = settings.shipping.freeFromCents;
   commerce.shipping.freeUntil = settings.shipping.freeUntil;
   commerce.buenFin.enabled = settings.buenFin.enabled;
+  Object.assign(commerce.blackFriday, settings.blackFriday);
 
   commerce.coupons = settings.coupons
     .filter((coupon) => coupon.enabled)

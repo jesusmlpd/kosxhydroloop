@@ -68,6 +68,14 @@ export function StoreEditor({
   const [shortCheckout, setShortCheckout] = useState(initial.checkout.short);
   const [buenFinOn, setBuenFinOn] = useState(initial.buenFin.enabled);
 
+  const [blackFriday, setBlackFriday] = useState({
+    enabled: initial.blackFriday.enabled,
+    code: initial.blackFriday.code,
+    percentOff: String(initial.blackFriday.percentOff),
+    startsAt: dayOf(initial.blackFriday.startsAt),
+    endsAt: dayOf(initial.blackFriday.endsAt),
+  });
+
   const [coupons, setCoupons] = useState(
     initial.coupons.map((coupon) => ({ ...coupon, endsAt: dayOf(coupon.endsAt), percentOff: String(coupon.percentOff) })),
   );
@@ -128,6 +136,14 @@ export function StoreEditor({
             promo: { endsAt: endOfDay(endsAt), bannerEnabled, bannerEs, bannerEn, popupEnabled, popupEs, popupEn },
             checkout: { short: shortCheckout },
             buenFin: { enabled: buenFinOn },
+            blackFriday: {
+              enabled: blackFriday.enabled,
+              code: blackFriday.code,
+              percentOff: Number(blackFriday.percentOff),
+              // Una fecha vacía vuelve a la de fábrica.
+              startsAt: blackFriday.startsAt ? `${blackFriday.startsAt}T00:00:00-06:00` : "",
+              endsAt: endOfDay(blackFriday.endsAt) ?? "",
+            },
           }
         : section === "productos"
           ? { products: productsPayload, mercadoLibre: mlLinks }
@@ -195,6 +211,39 @@ export function StoreEditor({
             />
             <span className="mt-1 block text-[12px] text-ink-3">Vacío = sin fecha. Solo si hay costo de envío.</span>
           </label>
+        </div>
+      </section>
+      ) : null}
+
+      {section === "envio-promos" ? (
+      <section className="card p-6">
+        <h2 className="text-[18px]">Black Friday + Cyber Monday</h2>
+        <p className="mt-1 text-[14px] text-ink-2">
+          Pone el sitio en negro y amarillo, con portada, contador y burbuja, y activa el cupón. Solo funciona entre las
+          dos fechas (de las 00:00 del inicio a las 23:59 del final, hora del centro). Mientras dura, reemplaza la barra y
+          la ventana de promoción.
+        </p>
+        <div className="mt-4">
+          <Toggle
+            label="Promo Black Friday"
+            checked={blackFriday.enabled}
+            onChange={(enabled) => setBlackFriday((cur) => ({ ...cur, enabled }))}
+          />
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Txt label="Código" value={blackFriday.code} max={24} onChange={(code) => setBlackFriday((cur) => ({ ...cur, code: code.toUpperCase() }))} />
+          <Num label="Descuento (%)" value={blackFriday.percentOff} onChange={(percentOff) => setBlackFriday((cur) => ({ ...cur, percentOff }))} />
+          {(["startsAt", "endsAt"] as const).map((key) => (
+            <label key={key} className="block">
+              <span className="text-[13px] font-medium text-ink-2">{key === "startsAt" ? "Empieza el" : "Termina el"}</span>
+              <input
+                type="date"
+                value={blackFriday[key]}
+                onChange={(event) => setBlackFriday((cur) => ({ ...cur, [key]: event.target.value }))}
+                className="field mt-1.5"
+              />
+            </label>
+          ))}
         </div>
       </section>
       ) : null}

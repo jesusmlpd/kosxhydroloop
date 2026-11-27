@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BlackFridayApply, useBlackFriday } from "@/components/black-friday";
 import { cart } from "@/lib/cart";
 import { findCoupon } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
@@ -18,6 +19,7 @@ export function CheckoutCoupon({
 }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
+  const blackFriday = useBlackFriday();
 
   function onApply() {
     const found = findCoupon(value, now || 0);
@@ -50,6 +52,7 @@ export function CheckoutCoupon({
 
   return (
     <div className="mt-4">
+      {blackFriday.live ? <BlackFridayApply dict={dict.blackFriday} className="btn-sm mb-2.5 w-full" /> : null}
       <div className="flex gap-2">
         <input
           value={value}

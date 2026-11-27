@@ -465,6 +465,22 @@ export const en: Dict = {
     mx: "Made in Mexico · Warranty up to 2 years",
   },
 
+  blackFriday: {
+    title: "Black Friday + Cyber Monday",
+    lastDay: "Cyber Monday: last day",
+    headline: "Storewide, shipping all over Mexico",
+    codeLabel: "With code",
+    endsIn: "Ends in",
+    apply: "Apply {code} ({percent}% off)",
+    applyAndShop: "Apply {code} and shop",
+    price: "{price} with {code}",
+    bubble: "{percent}% off the whole store with code {code}.",
+    bar: "{percent}% OFF with {code}",
+    open: "See the Black Friday deal",
+    close: "Close",
+    note: "Cannot be combined with other coupons. While supplies last.",
+  },
+
   buenFin: {
     title: "Hydroloop Buen Fin",
     dates: "November 13 to 17",

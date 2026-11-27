@@ -10,6 +10,7 @@ import { QuantityStepper } from "@/components/quantity-stepper";
 import { ReservationTimer } from "@/components/reservation-timer";
 import { cart, useCart } from "@/lib/cart";
 import { useNow } from "@/lib/clock";
+import { BlackFridayApply, useBlackFriday } from "@/components/black-friday";
 import { commerce, findCoupon, formatMoney, promoRemaining } from "@/lib/commerce";
 import type { Dict } from "@/lib/dict";
 import { fill, localePath, type Locale } from "@/lib/i18n";
@@ -20,6 +21,7 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
   const { state, totals, reservationMsLeft, reservationExpired } = useCart(now);
   const [coupon, setCoupon] = useState("");
   const [couponError, setCouponError] = useState(false);
+  const blackFriday = useBlackFriday();
   const open = state.open;
 
   useEffect(() => {
@@ -247,6 +249,7 @@ export function CartDrawer({ locale, dict }: { locale: Locale; dict: Dict }) {
                   </div>
                 ) : (
                   <>
+                  {blackFriday.live ? <BlackFridayApply dict={dict.blackFriday} className="btn-sm mb-2.5 w-full" /> : null}
                   {promoRemaining() !== null ? (
                     <button
                       type="button"

@@ -20,7 +20,7 @@ export function MercadoLibreButton({
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => window.gtag?.("event", "mercado_libre_click", { item_id: productId })}
-      className={`btn w-full bg-[#ffe600] text-[#2d3277] hover:brightness-95 ${className}`}
+      className={`btn btn-ml w-full bg-[#ffe600] text-[#2d3277] hover:brightness-95 ${className}`}
     >
       {locale === "es" ? "Comprar en Mercado Libre" : "Buy on Mercado Libre"}
       <span aria-hidden="true">↗</span>

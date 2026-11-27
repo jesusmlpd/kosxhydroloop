@@ -466,6 +466,22 @@ export const es = {
     mx: "Hecho en México · Garantía de hasta 2 años",
   },
 
+  blackFriday: {
+    title: "Black Friday + Cyber Monday",
+    lastDay: "Cyber Monday: último día",
+    headline: "En toda la tienda, con envío a todo México",
+    codeLabel: "Con el código",
+    endsIn: "Termina en",
+    apply: "Aplicar {code} ({percent}% menos)",
+    applyAndShop: "Aplicar {code} y comprar",
+    price: "{price} con {code}",
+    bubble: "{percent}% de descuento en toda la tienda con el código {code}.",
+    bar: "{percent}% OFF con {code}",
+    open: "Ver la promo de Black Friday",
+    close: "Cerrar",
+    note: "No se acumula con otros cupones. Hasta agotar existencias.",
+  },
+
   buenFin: {
     title: "Buen Fin Hydroloop",
     dates: "Del 13 al 17 de noviembre",

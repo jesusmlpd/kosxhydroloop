@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useBlackFriday } from "@/components/black-friday";
 import { localePath, type Locale } from "@/lib/i18n";
 import { notExpired, type StoreSettings } from "@/lib/store-settings";
 
@@ -18,6 +19,7 @@ export function PromoPopup({ locale, settings }: { locale: Locale; settings: Sto
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { promo } = settings;
+  const blackFriday = useBlackFriday();
   const copy = locale === "en" ? promo.popupEn : promo.popupEs;
   const quiet = /\/(checkout|thank-you|order)(\/|$)/.test(pathname);
   const eligible = promo.popupEnabled && copy.title !== "" && !quiet;
@@ -51,7 +53,8 @@ export function PromoPopup({ locale, settings }: { locale: Locale; settings: Sto
     }
   }
 
-  if (!open || !eligible) return null;
+  // Durante Black Friday no sale: anunciaría otra promoción.
+  if (!open || !eligible || blackFriday.live) return null;
 
   return (
     <div className="fixed inset-0 z-[70] grid place-items-center bg-black/50 px-5" onClick={close}>

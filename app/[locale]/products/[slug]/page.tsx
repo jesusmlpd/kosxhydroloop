@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/add-to-cart";
+import { BlackFridayPrice } from "@/components/black-friday";
 import { DeliveryEstimate } from "@/components/delivery-estimate";
 import { FaqList } from "@/components/faq-list";
 import { MercadoLibreButton } from "@/components/mercado-libre-button";
@@ -186,6 +187,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                         monthly: formatMoney(Math.ceil(product.priceCents / 12 / 100) * 100, locale),
                       })}
                     </p>
+                    <BlackFridayPrice priceCents={product.priceCents} locale={locale} dict={dict.blackFriday} />
                     {promoRemaining() !== null ? (
                       <p className="mt-2 inline-flex items-center gap-2 rounded-full bg-foam px-3.5 py-1.5 text-[13.5px] font-semibold text-deep dark:bg-[#0d3a45] dark:text-aqua">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
